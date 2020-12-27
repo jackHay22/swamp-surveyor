@@ -1,0 +1,12 @@
+{
+  "window_width_p" : 256,
+  "window_height_p" : 160,
+  "window_scale" : 5,
+  "tile_dim" : 8,
+  "debug" : false,
+  "tileset_path" : "resources/tiles_all.png",
+  "map_layer_paths" : [],
+  "entity_layer_idx" : 0,
+  "entity_cfg_paths" : [],
+  "player_idx" : 0
+}
