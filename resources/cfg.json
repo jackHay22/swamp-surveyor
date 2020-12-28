@@ -7,6 +7,8 @@
   "tileset_path" : "resources/tiles_all.png",
   "map_layer_paths" : [],
   "entity_layer_idx" : 0,
+  "entity_layer_solid" : [1,2,3,9,10,14,15,16,21,20,23,25,29],
+  "entity_layer_water" : [17,18,19,26,27,28],
   "entity_cfg_paths" : [],
   "player_idx" : 0
 }
