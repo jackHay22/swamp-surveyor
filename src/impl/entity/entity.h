@@ -43,7 +43,7 @@ namespace entity {
       IDLE_RIGHT,
       MOVE_LEFT,
       MOVE_RIGHT
-    } state = IDLE_RIGHT;
+    } state = MOVE_RIGHT;
 
   public:
     /**
@@ -52,15 +52,12 @@ namespace entity {
      * @param y                  entity position y (center)
      * @param w                  entity bounds width
      * @param h                  entity bounds height
-     * @param anim_frames        the number of frames per animation
-     * @param ticks_per_frame    the number of ticks per frame
-     * @param texture_paths      paths for each of the 4 basic animations
+     * @param anim_cfg_paths     the paths to the configuration files for each animation
      * @param renderer           the renderer for loading textures
      */
     entity_t(int x, int y,
              int w, int h,
-             int anim_frames, int ticks_per_frame,
-             const std::vector<std::string>& texture_paths,
+             const std::vector<std::string>& anim_cfg_paths,
              SDL_Renderer& renderer);
     entity_t(const entity_t&) = delete;
     entity_t& operator=(const entity_t&) = delete;

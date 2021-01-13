@@ -22,23 +22,22 @@ namespace launcher {
     int window_height_p = 160;
     float window_scale = 5;
     int tile_dim = 8;
-
     //default debug mode
     bool debug = false;
-
     //tileset path
     std::string tileset_path = "";
-
     //resource information
     std::vector<std::string> map_layer_paths = {};
     //index of entity tilee layer map list
     int entity_layer_idx = 2;
-
+    //indices of tiles that are solid ground
+    std::vector<int> entity_layer_solid = {};
+    //indices of tiles that are liquid (water)
+    std::vector<int> entity_layer_water = {};
     //entity files
     std::vector<std::string> entity_cfg_paths = {};
     //index of player in entity cfg list
     int player_idx = 0;
-
   } launch_cfg_t;
 
   /**

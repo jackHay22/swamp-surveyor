@@ -25,10 +25,12 @@ namespace engine {
   /**
    * Start the render loop
    * @param renderer the sdl renderer
+   * @param camera   the camera
    * @manager the gamestate manager
    * @return success or failure
    */
   bool start_renderer(SDL_Renderer& renderer,
+                      SDL_Rect& camera,
                       std::shared_ptr<state::state_manager_t> manager);
 }}
 

@@ -18,9 +18,15 @@ namespace tilemap {
    */
   tilemap_t::tilemap_t(const std::vector<std::string>& rsrc_paths,
                        std::shared_ptr<tilemap::tileset_t> tileset,
-                       int entity_layer_idx) : bg_layers(), fg_layers() {
+                       int entity_layer_idx,
+                       const std::vector<int>& entity_layer_solid,
+                       const std::vector<int>& entity_layer_water)
+    : bg_layers(), fg_layers(),
+      entity_layer_solid(entity_layer_solid),
+      entity_layer_water(entity_layer_water) {
+
     //sanity check
-    if ((entity_layer_idx <= rsrc_paths.size()) || (entity_layer_idx < 0)) {
+    if ((entity_layer_idx >= rsrc_paths.size()) || (entity_layer_idx < 0)) {
       throw exceptions::rsrc_exception_t("tilemap entity layer index out of bounds");
     }
 

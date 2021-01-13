@@ -15,17 +15,14 @@ namespace entity {
    * @param y                  entity position y (center)
    * @param w                  entity bounds width
    * @param h                  entity bounds height
-   * @param anim_frames        the number of frames per animation
-   * @param ticks_per_frame    the number of ticks per frame
    * @param texture_paths      paths for each of the 4 basic animations
    * @param renderer           the renderer for loading textures
    */
   player_t::player_t(int x, int y,
-                     int w, int h,
-                     int anim_frames, int ticks_per_frame,
-                     const std::vector<std::string>& texture_paths,
-                     SDL_Renderer& renderer)
-    : entity_t(x,y,w,h,anim_frames,ticks_per_frame,texture_paths,renderer)
+           int w, int h,
+           const std::vector<std::string>& anim_cfg_paths,
+           SDL_Renderer& renderer)
+    : entity_t(x,y,w,h,anim_cfg_paths,renderer)
     {}
 
   /**

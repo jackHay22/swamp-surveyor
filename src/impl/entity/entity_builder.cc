@@ -26,13 +26,8 @@ namespace entity {
     int width = 0;
     int height = 0;
 
-    //the animations for this entity
+    //the animation configurations for this entity
     std::vector<std::string> anim_paths;
-    //the number of frames in each anim
-    int anim_frames = 8;
-    //the number of ticks per frame (i.e. animation speed)
-    int ticks_per_frame = 2;
-
   };
 
   /**
@@ -47,9 +42,7 @@ namespace entity {
              {"pos_y", c.pos_y},
              {"width", c.width},
              {"height", c.height},
-             {"anim_paths", c.anim_paths},
-             {"anim_frames", c.anim_frames},
-             {"ticks_per_frame", c.ticks_per_frame}
+             {"anim_paths", c.anim_paths}
            };
   }
 
@@ -65,8 +58,6 @@ namespace entity {
     j.at("width").get_to(c.width);
     j.at("height").get_to(c.height);
     j.at("anim_paths").get_to(c.anim_paths);
-    j.at("anim_frames").get_to(c.anim_frames);
-    j.at("ticks_per_frame").get_to(c.ticks_per_frame);
   }
 
   /**
@@ -93,8 +84,6 @@ namespace entity {
                                                   cfg.pos_y,
                                                   cfg.width,
                                                   cfg.height,
-                                                  cfg.anim_frames,
-                                                  cfg.ticks_per_frame,
                                                   cfg.anim_paths,
                                                   renderer);
       }
@@ -102,6 +91,10 @@ namespace entity {
       //unknown entity type
       throw exceptions::rsrc_exception_t("unknown entity type: " + cfg.entity_type);
 
+    } catch (exceptions::rsrc_exception_t& e) {
+      //rethrow a resource exception
+      throw e;
+      
     } catch (...) {
       throw exceptions::rsrc_exception_t("failed to load as json: " + path);
     }

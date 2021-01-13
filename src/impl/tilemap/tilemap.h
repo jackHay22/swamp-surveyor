@@ -7,6 +7,7 @@
 #ifndef _IO_JACKHAY_SWAMP_TILEMAP_H
 #define _IO_JACKHAY_SWAMP_TILEMAP_H
 
+#include <vector>
 #include <string>
 #include "layer.h"
 #include <SDL2/SDL_image.h>
@@ -29,10 +30,17 @@ namespace tilemap {
     //the layers in front of the entity
     std::vector<std::unique_ptr<tilemap::layer_t>> fg_layers;
 
+    //the indices of tiles that are solid ground
+    std::vector<int> entity_layer_solid;
+    //the indices of tiles that are water
+    std::vector<int> entity_layer_water;
+
   public:
     tilemap_t(const std::vector<std::string>& rsrc_paths,
               std::shared_ptr<tilemap::tileset_t> tileset,
-              int entity_layer);
+              int entity_layer,
+              const std::vector<int>& entity_layer_solid,
+              const std::vector<int>& entity_layer_water);
     tilemap_t(const tilemap_t&) = delete;
     tilemap_t& operator=(const tilemap_t&) = delete;
 

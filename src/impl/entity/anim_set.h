@@ -20,14 +20,13 @@ namespace entity {
   struct anim_set_t {
   private:
     //number of animation frames
-    int anim_frames;
+    int anim_frames = 8;
     //size of anim frames
     int frame_width = 0;
     int frame_height = 0;
-
     //timing
-    int ticks_per_frame;
-    int current_frame;
+    int duration = 1;
+    int current_frame = 0;
 
     //the texture
     SDL_Texture* texture = NULL;
@@ -42,9 +41,7 @@ namespace entity {
 
   public:
     anim_set_t(const std::string& path,
-               SDL_Renderer& renderer,
-               int anim_frames,
-               int ticks_per_frame);
+               SDL_Renderer& renderer);
     anim_set_t(const anim_set_t&) = delete;
     anim_set_t& operator=(const anim_set_t&) = delete;
 

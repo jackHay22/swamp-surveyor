@@ -68,7 +68,7 @@ namespace state {
    */
   void tilemap_state_t::render(SDL_Renderer& renderer) const {
     //render background layer
-    tilemap->render_bg(renderer, this->camera);
+    //tilemap->render_bg(renderer, this->camera);
 
     //render entities
     for (size_t i=0; i<entities.size(); i++) {
@@ -76,6 +76,6 @@ namespace state {
     }
 
     //render foreground layer
-    tilemap->render_fg(renderer, this->camera);
+    //tilemap->render_fg(renderer, this->camera);
   }
 }}
