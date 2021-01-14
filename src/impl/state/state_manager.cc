@@ -31,9 +31,31 @@ namespace state {
   }
 
   /**
+   * Check whether the game is running
+   * @return whether the game is running
+   */
+  bool state_manager_t::is_running() {
+    std::shared_lock<std::shared_mutex> state_lock(lock);
+    return this->running;
+  }
+
+  /**
+   * Set the running state
+   * @param running the state to set
+   */
+  void state_manager_t::set_running(bool running) {
+    std::unique_lock<std::shared_mutex> state_lock(lock);
+    this->running = running;
+  }
+
+  /**
    * Update this tile
    */
   void state_manager_t::update() {
+    //get a blocking lock on the state
+    std::unique_lock<std::shared_mutex> state_lock(lock);
+
+    //update the state
     states.at(current_state)->update();
   }
 
@@ -41,7 +63,13 @@ namespace state {
    * Render the current gamestate
    * @param renderer the renderer
    */
-  void state_manager_t::render(SDL_Renderer& renderer) const {
-    states.at(current_state)->render(renderer);
+  void state_manager_t::render(SDL_Renderer& renderer) {
+    //attempt to lock the state
+    std::unique_lock<std::shared_mutex> state_lock(lock,std::defer_lock);
+
+    //if lock acquired, render
+    if (state_lock.try_lock()) {
+      states.at(current_state)->render(renderer);
+    }
   }
 }}

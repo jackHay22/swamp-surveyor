@@ -6,10 +6,15 @@
 
 #include "engine.h"
 #include <pthread.h>
+#include <chrono>
+#include <thread>
 #include "logger.h"
 
 namespace impl {
 namespace engine {
+
+  //the duration in milliseconds to sleep between updates
+  const int TICK_SLEEP = 50;
 
   /**
    * Pthread handler for update cycle
@@ -19,6 +24,15 @@ namespace engine {
     //shared ptr to the manager
     std::shared_ptr<state::state_manager_t> manager =
       *((std::shared_ptr<state::state_manager_t>*) manager_v);
+
+    //update state while the system is running
+    while (manager->is_running()) {
+      //update the game state
+      manager->update();
+
+      //sleep until the next tick
+      std::this_thread::sleep_for(std::chrono::milliseconds(TICK_SLEEP));
+    }
 
     pthread_exit(NULL);
   }
@@ -59,12 +73,12 @@ namespace engine {
     bool running = true;
 
     //run
-    while (running) {
+    while (manager->is_running()) {
       //check events
       while (SDL_PollEvent(&e) != 0 ) {
         //check for a quit event
         if (e.type == SDL_QUIT) {
-          running = false;
+          manager->set_running(false);
         } else {
           //handle event (player)
           manager->handle_event(e);

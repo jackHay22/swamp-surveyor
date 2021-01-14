@@ -3,7 +3,7 @@
   "window_height_p" : 160,
   "window_scale" : 5,
   "tile_dim" : 8,
-  "debug" : false,
+  "debug" : true,
   "tileset_path" : "resources/swamp_1.png",
   "map_layer_paths" : [
     "resources/swamp_1_background.txt",

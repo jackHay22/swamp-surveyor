@@ -106,16 +106,19 @@ namespace launcher {
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1,
                               SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-    //set the scale of the renderer
-    SDL_RenderSetScale(renderer,cfg.window_scale,cfg.window_scale);
-
-    //clear
-    SDL_SetRenderDrawColor(renderer,0xFF,0xFF,0xFF,0xFF);
-
     if (renderer == NULL) {
       logger::log_err("failed to init renderer: " + std::string(SDL_GetError()));
       return false;
     }
+
+    //set scale quality
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY,0);
+
+    //set the logical size of the renderer
+    SDL_RenderSetLogicalSize(renderer,cfg.window_width_p,cfg.window_height_p);
+
+    //clear
+    SDL_SetRenderDrawColor(renderer,0xFF,0xFF,0xFF,0xFF);
 
     //setup png initialization
     if(!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {

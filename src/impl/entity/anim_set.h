@@ -27,6 +27,8 @@ namespace entity {
     //timing
     int duration = 1;
     int current_frame = 0;
+    //ticks since last update
+    int ticks = 0;
 
     //the texture
     SDL_Texture* texture = NULL;

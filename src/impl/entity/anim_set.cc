@@ -106,8 +106,13 @@ namespace entity {
   * Update the animation
   */
   void anim_set_t::update() {
-    current_frame++;
-    current_frame %= anim_frames;
+    ticks++;
+
+    if (ticks >= duration) {
+      ticks = 0;
+      current_frame++;
+      current_frame %= anim_frames;
+    }
   }
 
   /**

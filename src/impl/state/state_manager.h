@@ -11,6 +11,7 @@
 #include <SDL2/SDL.h>
 #include <memory>
 #include <vector>
+#include <shared_mutex>
 #include "state.h"
 
 namespace impl {
@@ -23,6 +24,11 @@ namespace state {
   private:
     //the game states
     std::vector<std::unique_ptr<state_t>> states;
+
+    //the lock for render/update on shared state
+    std::shared_mutex lock;
+
+    bool running = true;
 
     //the current state of the game
     enum {
@@ -48,6 +54,19 @@ namespace state {
     void add_state(std::unique_ptr<state_t> s);
 
     /**
+     * Check whether the game is running
+     * Note: not const; needs to lock mutex
+     * @return whether the game is running
+     */
+    bool is_running();
+
+    /**
+     * Set the running state
+     * @param running the state to set
+     */
+    void set_running(bool running);
+
+    /**
      * Update the current state
      */
     void update();
@@ -56,7 +75,7 @@ namespace state {
      * Render the current gamestate
      * @param renderer the renderer
      */
-    void render(SDL_Renderer& renderer) const;
+    void render(SDL_Renderer& renderer);
   };
 }}
 

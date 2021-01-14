@@ -43,7 +43,7 @@ namespace entity {
       IDLE_RIGHT,
       MOVE_LEFT,
       MOVE_RIGHT
-    } state = MOVE_RIGHT;
+    } state = IDLE_RIGHT;
 
   public:
     /**

@@ -30,7 +30,7 @@ namespace utils {
     }
 
     //load to texture
-    SDL_SetColorKey(surface,SDL_TRUE,SDL_MapRGB(surface->format, 0, 0xFF, 0xFF));
+    SDL_SetColorKey(surface,SDL_TRUE,SDL_MapRGB(surface->format,0,0xFF,0xFF));
 
     //use pixels to create texture
     SDL_Texture *texture = SDL_CreateTextureFromSurface(&renderer,surface);
