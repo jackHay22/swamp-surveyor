@@ -3,20 +3,9 @@
   "window_height_p" : 128,
   "window_scale" : 6,
   "tile_dim" : 8,
-  "debug" : true,
+  "debug" : false,
   "debug_font" : "/usr/share/fonts/noto/NotoSans-Light.ttf",
-  "tileset_path" : "resources/swamp_1.png",
-  "map_layer_paths" : [
-    "resources/swamp_1_background.txt",
-    "resources/swamp_1_background_near.txt",
-    "resources/swamp_1_ground.txt",
-    "resources/swamp_1_foreground.txt"
-  ],
-  "entity_layer_idx" : 2,
-  "entity_layer_solid" : [1,2,3,9,10,14,15,16,21,20,23,25,29],
-  "entity_layer_water" : [17,18,19,26,27,28],
-  "entity_cfg_paths" : [
-    "resources/player.json"
-  ],
-  "player_idx" : 0
+  "level_cfgs" : [
+    "resources/level_1.json"
+  ]
 }

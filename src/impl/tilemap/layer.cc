@@ -142,7 +142,6 @@ namespace tilemap {
 
     //check each tile
     this->for_each_const([&collided,other](tile_t& tile){
-
       //look for the first solid collided tile
       if (!collided && tile.is_collided(other)) {
         collided = tile.is_solid();

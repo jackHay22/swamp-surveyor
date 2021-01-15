@@ -1,6 +1,6 @@
 {
   "entity_type" : "player",
-  "width" : 8,
+  "width" : 10,
   "height" : 24,
   "anim_paths" : [
     "resources/player_idle_l.json",

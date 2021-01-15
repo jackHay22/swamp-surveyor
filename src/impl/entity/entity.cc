@@ -13,7 +13,6 @@ namespace entity {
 
   //the gravity applied to an entity per tick
   #define GRAVITY_PER_TICK 1
-  #define WALK_PER_TICK 1
 
   /**
    * Constructor
@@ -50,8 +49,7 @@ namespace entity {
     //generate bounding box
     SDL_Rect r = {x - (w / 2),
                   y - (h / 2),
-                  x + (w / 2),
-                  y + (h / 2)};
+                  w,h};
     return r;
   }
 
@@ -66,48 +64,71 @@ namespace entity {
   }
 
   /**
-   * Update this entity at the tick
+   * Update the entity (after directional updates)
    */
   void entity_t::update() {
-    //store the previous position
-    this->last_x = this->x;
-    this->last_y = this->y;
-
-    //update the y posiiton of the entity
-    this->y += GRAVITY_PER_TICK;
-
-    //check for walk
-    if (state == MOVE_LEFT) {
-      this->x -= WALK_PER_TICK;
-    }
-
-    if (state == MOVE_RIGHT) {
-      this->x += WALK_PER_TICK;
-    }
-
     //update the current animation
     anims.at(state)->update();
   }
 
   /**
+   * Update this entity at the tick
+   */
+  void entity_t::update_x() {
+    //store the previous position
+    this->last_x = this->x;
+
+    //check for walk
+    if (state == MOVE_LEFT) {
+      this->x -= 1;
+    }
+
+    if (state == MOVE_RIGHT) {
+      this->x += 1;
+    }
+  }
+
+  /**
+   * Update this entity at the tick in the y direction
+   */
+  void entity_t::update_y() {
+    //store the previous position
+    this->last_y = this->y;
+
+    //update the y positon of the entity
+    this->y += GRAVITY_PER_TICK;
+  }
+
+  /**
    * Restore the previous position of the entity
    */
-  void entity_t::step_back() {
+  void entity_t::step_back_x() {
     this->x = this->last_x;
+  }
+
+  /**
+   * Restore the previous position of the entity
+   */
+  void entity_t::step_back_y() {
     this->y = this->last_y;
   }
 
   /**
    * Render the entity
    * @param renderer the renderer to use
+   * @param camera   the camera
    */
-  void entity_t::render(SDL_Renderer& renderer) const {
+  void entity_t::render(SDL_Renderer& renderer, const SDL_Rect& camera) const {
     //render the current animation
-    anims.at(state)->render(renderer, x - (w / 2), y - (h / 2));
+    anims.at(state)->render(renderer,
+                            (x - (w / 2)) - camera.x,
+                            (y - (h / 2)) - camera.y);
 
     if (debug) {
-      //get the current bounds
-      SDL_Rect bounds = this->get_bounds();
+      //get the current bounds (corrected by camera view)
+      SDL_Rect bounds = {(x - (w / 2)) - camera.x,
+                         (y - (h / 2)) - camera.y,
+                         w,h};
 
       //set the draw color
       SDL_SetRenderDrawColor(&renderer,0,255,0,127);

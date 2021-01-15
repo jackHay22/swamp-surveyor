@@ -82,20 +82,36 @@ namespace entity {
     void get_center(int& x, int& y) const;
 
     /**
-     * Update this entity at the tick
+     * Update the entity (after directional updates)
      */
     void update();
 
     /**
-     * Restore the previous position of the entity
+     * Update this entity at the tick in the x direction
      */
-    void step_back();
+    void update_x();
+
+    /**
+     * Update this entity at the tick in the y direction
+     */
+    void update_y();
+
+    /**
+     * Restore the previous position of the entity (x dir)
+     */
+    void step_back_x();
+
+    /**
+     * Restore the position of the entity (y dir)
+     */
+    void step_back_y();
 
     /**
      * Render the entity
      * @param renderer the renderer to use
+     * @param camera   the camera
      */
-    void render(SDL_Renderer& renderer) const;
+    void render(SDL_Renderer& renderer, const SDL_Rect& camera) const;
   };
 }}
 

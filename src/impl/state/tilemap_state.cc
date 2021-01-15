@@ -14,14 +14,17 @@ namespace state {
    * Constructor
    * @param tilemap    the tilemap this state uses
    * @param entities   the entities in this state
+   * @param insects    the insects in the map
    * @param player_idx the index of the player in the entity list
    */
   tilemap_state_t::tilemap_state_t(std::shared_ptr<tilemap::tilemap_t> tilemap,
                                    std::vector<std::shared_ptr<entity::entity_t>>& entities,
+                                   std::shared_ptr<entity::insects_t> insects,
                                    int player_idx, SDL_Rect& camera)
     : state_t(camera),
       tilemap(tilemap),
-      entities(entities) {
+      entities(entities),
+      insects(insects) {
     //sanity check
     if (player_idx >= entities.size()) {
       throw exceptions::rsrc_exception_t("not enough entities found in list");
@@ -51,15 +54,30 @@ namespace state {
     //update tilemap
     tilemap->update();
 
-    //update players
+    //update entities
     for (size_t i=0; i<entities.size(); i++) {
-      entities.at(i)->update();
+      //update each entity in the y direction
+      entities.at(i)->update_y();
 
       //check for a collision
       if (tilemap->is_collided(entities.at(i)->get_bounds())) {
-        entities.at(i)->step_back();
+        entities.at(i)->step_back_y();
       }
+
+      //update the entity in the x direction
+      entities.at(i)->update_x();
+
+      //check for a collision
+      if (tilemap->is_collided(entities.at(i)->get_bounds())) {
+        entities.at(i)->step_back_x();
+      }
+
+      //update entity
+      entities.at(i)->update();
     }
+
+    //update the insects
+    insects->update();
 
     //center the camera on the player
     int center_x, center_y;
@@ -99,8 +117,11 @@ namespace state {
 
     //render entities
     for (size_t i=0; i<entities.size(); i++) {
-      entities.at(i)->render(renderer);
+      entities.at(i)->render(renderer,this->camera);
     }
+
+    //render insect swarm
+    insects->render(renderer,this->camera);
 
     //render foreground layer
     tilemap->render_fg(renderer, this->camera);

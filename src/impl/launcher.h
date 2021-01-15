@@ -25,20 +25,8 @@ namespace launcher {
     //default debug mode
     bool debug = false;
     std::string debug_font = "/usr/share/fonts/noto/NotoSans-Light.ttf";
-    //tileset path
-    std::string tileset_path = "";
-    //resource information
-    std::vector<std::string> map_layer_paths = {};
-    //index of entity tilee layer map list
-    int entity_layer_idx = 2;
-    //indices of tiles that are solid ground
-    std::vector<int> entity_layer_solid = {};
-    //indices of tiles that are liquid (water)
-    std::vector<int> entity_layer_water = {};
-    //entity files
-    std::vector<std::string> entity_cfg_paths = {};
-    //index of player in entity cfg list
-    int player_idx = 0;
+    //the configurations for each level
+    std::vector<std::string> level_cfgs = {};
   } launch_cfg_t;
 
   /**

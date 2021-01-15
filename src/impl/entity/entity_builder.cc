@@ -29,20 +29,6 @@ namespace entity {
   };
 
   /**
-   * Conversion from cfg to json
-   * @param j the json
-   * @param c the cfg to convert
-   */
-  void to_json(nlohmann::json& j, const entity_cfg_t& c) {
-    j = nlohmann::json{
-             {"entity_type", c.entity_type},
-             {"width", c.width},
-             {"height", c.height},
-             {"anim_paths", c.anim_paths}
-           };
-  }
-
-  /**
    * Conversion to cfg from json
    * @param j the json to load
    * @param c the cfg to load into
@@ -65,11 +51,12 @@ namespace entity {
   std::shared_ptr<entity_t> load_entity(const std::string& path,
                                         SDL_Renderer& renderer,
                                         bool debug) {
-    //load the config file
-    std::ifstream in_stream(path);
-    nlohmann::json config;
 
     try {
+      //load the config file
+      std::ifstream in_stream(path);
+      nlohmann::json config;
+
       in_stream >> config;
       entity_cfg_t cfg = config.get<entity_cfg_t>();
 

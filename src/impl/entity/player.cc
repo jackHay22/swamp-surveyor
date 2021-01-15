@@ -52,8 +52,9 @@ namespace entity {
     }
   }
 
+
   /**
-   * Update this entity at the tick
+   * Update the entity
    */
   void player_t::update() {
     entity_t::update();
@@ -62,8 +63,9 @@ namespace entity {
   /**
    * Render the entity
    * @param renderer the renderer to use
+   * @param camera the camera
    */
-  void player_t::render(SDL_Renderer& renderer) const {
-    entity_t::render(renderer);
+  void player_t::render(SDL_Renderer& renderer, const SDL_Rect& camera) const {
+    entity_t::render(renderer,camera);
   }
 }}

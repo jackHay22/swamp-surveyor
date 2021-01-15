@@ -15,6 +15,7 @@
 #include "../tilemap/tilemap.h"
 #include "../entity/entity.h"
 #include "../entity/player.h"
+#include "../entity/insects.h"
 
 namespace impl {
 namespace state {
@@ -33,10 +34,14 @@ namespace state {
     //the index of the player in the entity list
     std::shared_ptr<entity::player_t> player;
 
+    //insects in the map
+    std::shared_ptr<entity::insects_t> insects;
+
   public:
     //constructor
     tilemap_state_t(std::shared_ptr<tilemap::tilemap_t> tilemap,
                     std::vector<std::shared_ptr<entity::entity_t>>& entities,
+                    std::shared_ptr<entity::insects_t> insects,
                     int player_idx, SDL_Rect& camera);
     tilemap_state_t(const tilemap_state_t&) = delete;
     tilemap_state_t& operator=(const tilemap_state_t&) = delete;

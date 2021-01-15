@@ -32,19 +32,6 @@ namespace entity {
   };
 
   /**
-   * Conversion from cfg to json
-   * @param j the json
-   * @param c the cfg to convert
-   */
-  void to_json(json& j, const anim_cfg_t& c) {
-    j = json{{"rsrc_path", c.rsrc_path},
-             {"frame_width", c.frame_width},
-             {"frame_height", c.frame_height},
-             {"anim_frames", c.anim_frames},
-             {"duration", c.duration}};
-  }
-
-  /**
    * Conversion to cfg from json
    * @param j the json to load
    * @param c the cfg to load into

@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <json/nlohmann_json.h>
 #include <fstream>
+#include "impl/exceptions.h"
 #include "impl/logger.h"
 #include "impl/launcher.h"
 
@@ -40,6 +41,10 @@ int setup(bool debug, const std::string& cfg_path) {
     if (!impl::launcher::init_from_cfg(cfg)) {
       return EXIT_FAILURE;
     }
+
+  } catch (impl::exceptions::rsrc_exception_t& e) {
+    impl::logger::log_err("failed to load cfg: " + e.trace());
+    return EXIT_FAILURE;
 
   } catch (...) {
     impl::logger::log_err("failed to load cfg as json: " + cfg_path);

@@ -66,7 +66,7 @@ namespace tilemap {
 
     //set map pixel dimensions
     this->width_p = entity_layer->get_layer_cols() * dim;
-    this->height_p = entity_layer->get_layer_cols() * dim;
+    this->height_p = (entity_layer->get_layer_rows() - 1) * dim;
   }
 
   /**

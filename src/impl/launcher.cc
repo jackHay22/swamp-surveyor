@@ -8,40 +8,15 @@
 #include "logger.h"
 #include "engine.h"
 #include "exceptions.h"
-#include "tilemap/tilemap.h"
-#include "tilemap/tileset.h"
-#include "entity/entity.h"
-#include "entity/entity_builder.h"
 #include "state/state_manager.h"
 #include "state/tilemap_state.h"
+#include "state/state_builder.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 
 namespace impl {
 namespace launcher {
-
-  /**
-   * Conversion from cfg to json
-   * @param j the json
-   * @param c the cfg to convert
-   */
-  void to_json(json& j, const launch_cfg_t& c) {
-    j = json{{"window_width_p", c.window_width_p},
-             {"window_height_p", c.window_height_p},
-             {"window_scale", c.window_scale},
-             {"tile_dim", c.tile_dim},
-             {"debug", c.debug},
-             {"debug_font", c.debug_font},
-             {"tileset_path", c.tileset_path},
-             {"map_layer_paths", c.map_layer_paths},
-             {"entity_layer_idx", c.entity_layer_idx},
-             {"entity_layer_solid", c.entity_layer_solid},
-             {"entity_layer_water", c.entity_layer_water},
-             {"entity_cfg_paths", c.entity_cfg_paths},
-             {"player_idx", c.player_idx}
-           };
-  }
 
   /**
    * Conversion to cfg from json
@@ -55,13 +30,7 @@ namespace launcher {
     j.at("tile_dim").get_to(c.tile_dim);
     j.at("debug").get_to(c.debug);
     j.at("debug_font").get_to(c.debug_font);
-    j.at("tileset_path").get_to(c.tileset_path);
-    j.at("map_layer_paths").get_to(c.map_layer_paths);
-    j.at("entity_layer_idx").get_to(c.entity_layer_idx);
-    j.at("entity_layer_solid").get_to(c.entity_layer_solid);
-    j.at("entity_layer_water").get_to(c.entity_layer_water);
-    j.at("entity_cfg_paths").get_to(c.entity_cfg_paths);
-    j.at("player_idx").get_to(c.player_idx);
+    j.at("level_cfgs").get_to(c.level_cfgs);
   }
 
   /**
@@ -138,50 +107,20 @@ namespace launcher {
     SDL_Rect camera = {0,0,cfg.window_width_p,cfg.window_height_p};
 
     //the game state manager
-    std::shared_ptr<state::state_manager_t> state_manager;
+    std::shared_ptr<state::state_manager_t> state_manager =
+      std::make_shared<state::state_manager_t>();
 
-    try {
-      //initialize the tileset from image
-      std::shared_ptr<tilemap::tileset_t> tileset =
-        std::make_shared<tilemap::tileset_t>(cfg.tileset_path,
-                                             cfg.tile_dim,
-                                             *renderer,
-                                             cfg.debug);
-
-      //the tilemap from layer paths
-      std::shared_ptr<tilemap::tilemap_t> tilemap =
-        std::make_shared<tilemap::tilemap_t>(cfg.map_layer_paths,
-                                             tileset,
-                                             cfg.entity_layer_idx,
-                                             cfg.tile_dim,
-                                             cfg.entity_layer_solid,
-                                             cfg.entity_layer_water,
-                                             cfg.debug);
-
-      //entities list
-      std::vector<std::shared_ptr<entity::entity_t>> entities;
-
-      //load entities, add to state manager
-      for (const std::string& epath : cfg.entity_cfg_paths) {
-        entities.push_back(entity::load_entity(epath,*renderer,cfg.debug));
-      }
-
-      //init state manager
-      state_manager = std::make_shared<state::state_manager_t>();
+    //load each level
+    for (const std::string& lpath : cfg.level_cfgs) {
       //add tilemap state
-      state_manager->add_state(std::make_unique<state::tilemap_state_t>(tilemap,
-                                                                        entities,
-                                                                        cfg.player_idx,
-                                                                        camera));
-
-    } catch (exceptions::rsrc_exception_t& e) {
-      logger::log_err(e.trace());
-      return false;
-    } catch (...) {
-      logger::log_err("unknown exception when loading resoures");
-      return false;
+      state_manager->add_state(state::load_tm_state(lpath,
+                                                    *renderer,
+                                                    camera,
+                                                    cfg.tile_dim,
+                                                    cfg.debug));
     }
 
+    //return value after cleaning resources
     bool success = true;
 
     //start entity update loop

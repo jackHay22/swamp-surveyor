@@ -23,7 +23,7 @@ namespace exceptions {
   public:
     //constructor with path
     rsrc_exception_t(const std::string& path)
-      : path(path), detail("resource not found") {}
+      : path(path), detail("occured loading ") {}
     rsrc_exception_t(const std::string& path,
                      const std::string& detail)
       : path(path), detail(detail) {}

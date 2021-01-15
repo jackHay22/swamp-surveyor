@@ -48,15 +48,16 @@ namespace entity {
     void handle_event(const SDL_Event& e);
 
     /**
-     * Update this entity at the tick
+     * Update the entity
      */
     void update();
 
     /**
      * Render the entity
      * @param renderer the renderer to use
+     * @param camera the camera
      */
-    void render(SDL_Renderer& renderer) const;
+    void render(SDL_Renderer& renderer, const SDL_Rect& camera) const;
   };
 }}
 
