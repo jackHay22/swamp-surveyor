@@ -24,6 +24,7 @@ namespace launcher {
     int tile_dim = 8;
     //default debug mode
     bool debug = false;
+    std::string debug_font = "/usr/share/fonts/noto/NotoSans-Light.ttf";
     //tileset path
     std::string tileset_path = "";
     //resource information

@@ -21,10 +21,12 @@ namespace entity {
    * Throws rsrc_exception_t
    * @param  path the path to the cfg file
    * @param  renderer the renderer for loading textures
+   * @param  debug    whether debug mode enabled
    * @return      the entity
    */
   std::shared_ptr<entity_t> load_entity(const std::string& path,
-                                        SDL_Renderer& renderer);
+                                        SDL_Renderer& renderer,
+                                        bool debug);
 }}
 
 #endif /*_IO_JACKHAY_SWAMP_ENTITY_BUILDER_H*/

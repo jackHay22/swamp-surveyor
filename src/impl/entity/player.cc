@@ -20,10 +20,11 @@ namespace entity {
    * @param renderer           the renderer for loading textures
    */
   player_t::player_t(int x, int y,
-           int w, int h,
-           const std::vector<std::string>& anim_cfg_paths,
-           SDL_Renderer& renderer)
-    : entity_t(x,y,w,h,anim_cfg_paths,renderer)
+                     int w, int h,
+                     const std::vector<std::string>& anim_cfg_paths,
+                     SDL_Renderer& renderer,
+                     bool debug)
+    : entity_t(x,y,w,h,anim_cfg_paths,renderer,debug)
     {}
 
   /**

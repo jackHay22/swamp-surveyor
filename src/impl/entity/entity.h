@@ -36,6 +36,9 @@ namespace entity {
     //texture animations
     std::vector<std::unique_ptr<anim_set_t>> anims;
 
+    //whether debug mode enabled
+    bool debug;
+
   protected:
     //the current state of the entity, can be set by subclasses
     enum {
@@ -58,7 +61,8 @@ namespace entity {
     entity_t(int x, int y,
              int w, int h,
              const std::vector<std::string>& anim_cfg_paths,
-             SDL_Renderer& renderer);
+             SDL_Renderer& renderer,
+             bool debug);
     entity_t(const entity_t&) = delete;
     entity_t& operator=(const entity_t&) = delete;
 
@@ -69,6 +73,13 @@ namespace entity {
      * @return the bounding box for this entity
      */
     SDL_Rect get_bounds() const;
+
+    /**
+     * Get the center of the entity
+     * @param x the x position set by the call
+     * @param y the y position set by the call
+     */
+    void get_center(int& x, int& y) const;
 
     /**
      * Update this entity at the tick

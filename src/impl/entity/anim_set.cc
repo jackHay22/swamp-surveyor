@@ -7,6 +7,7 @@
 #include "anim_set.h"
 #include <json/nlohmann_json.h>
 #include <fstream>
+#include <iostream>
 #include "../exceptions.h"
 #include "../utils.h"
 #include "../logger.h"
@@ -131,15 +132,12 @@ namespace entity {
     sample_bounds.h = this->frame_height;
 
     //the x y position to render at
-    SDL_Rect image_bounds = {x, y,
-                             x + this->frame_width,
-                             y + this->frame_height};
+    SDL_Rect image_bounds = {x,y,this->frame_width,this->frame_height};
 
     //render the current animation frame
-    SDL_RenderCopyEx(&renderer,
-                     this->texture,
-                     &sample_bounds,
-                     &image_bounds,
-                     0,NULL,SDL_FLIP_NONE);
+    SDL_RenderCopy(&renderer,
+                   this->texture,
+                   &sample_bounds,
+                   &image_bounds);
   }
 }}

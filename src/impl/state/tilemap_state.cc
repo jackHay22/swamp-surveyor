@@ -60,6 +60,33 @@ namespace state {
         entities.at(i)->step_back();
       }
     }
+
+    //center the camera on the player
+    int center_x, center_y;
+    player->get_center(center_x,center_y);
+
+    //set the x and y
+    this->camera.x = center_x - (this->camera.w / 2);
+    this->camera.y = center_y - (this->camera.h / 2);
+
+    //bound the camera
+    if (camera.x < 0) {
+      camera.x = 0;
+    }
+
+    if (camera.y < 0) {
+      camera.y = 0;
+    }
+
+    //bound the camera by total map width
+    if (camera.x > (this->tilemap->get_width() - camera.w)) {
+      camera.x = this->tilemap->get_width() - camera.w;
+    }
+
+    //bound the camera by total map height
+    if (camera.y > (this->tilemap->get_height() - camera.h)) {
+      camera.y = this->tilemap->get_height() - camera.h;
+    }
   }
 
   /**
@@ -68,7 +95,7 @@ namespace state {
    */
   void tilemap_state_t::render(SDL_Renderer& renderer) const {
     //render background layer
-    //tilemap->render_bg(renderer, this->camera);
+    tilemap->render_bg(renderer, this->camera);
 
     //render entities
     for (size_t i=0; i<entities.size(); i++) {
@@ -76,6 +103,6 @@ namespace state {
     }
 
     //render foreground layer
-    //tilemap->render_fg(renderer, this->camera);
+    tilemap->render_fg(renderer, this->camera);
   }
 }}

@@ -16,6 +16,7 @@
 #include "state/tilemap_state.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 namespace impl {
 namespace launcher {
@@ -31,6 +32,7 @@ namespace launcher {
              {"window_scale", c.window_scale},
              {"tile_dim", c.tile_dim},
              {"debug", c.debug},
+             {"debug_font", c.debug_font},
              {"tileset_path", c.tileset_path},
              {"map_layer_paths", c.map_layer_paths},
              {"entity_layer_idx", c.entity_layer_idx},
@@ -52,6 +54,7 @@ namespace launcher {
     j.at("window_scale").get_to(c.window_scale);
     j.at("tile_dim").get_to(c.tile_dim);
     j.at("debug").get_to(c.debug);
+    j.at("debug_font").get_to(c.debug_font);
     j.at("tileset_path").get_to(c.tileset_path);
     j.at("map_layer_paths").get_to(c.map_layer_paths);
     j.at("entity_layer_idx").get_to(c.entity_layer_idx);
@@ -77,12 +80,6 @@ namespace launcher {
       return false;
     }
 
-    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-      logger::log_err("failed to init sdl_image: " +
-                     std::string(IMG_GetError()));
-      return false;
-    }
-
     //get the scaled window dimensions
     int actual_width = cfg.window_width_p * cfg.window_scale;
     int actual_height = cfg.window_height_p * cfg.window_scale;
@@ -92,6 +89,12 @@ namespace launcher {
       window_title += " [debug]";
       logger::log_info("init window " + window_title + " - " + std::to_string(actual_width) +
                        "x" + std::to_string(actual_height));
+    }
+
+    //set scale quality
+    if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY,"0")) {
+      logger::log_err("failed to set sdl render quality");
+      return false;
     }
 
     //create a window with the given dimensions
@@ -111,23 +114,28 @@ namespace launcher {
       return false;
     }
 
-    //set scale quality
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY,0);
-
     //set the logical size of the renderer
     SDL_RenderSetLogicalSize(renderer,cfg.window_width_p,cfg.window_height_p);
 
     //clear
     SDL_SetRenderDrawColor(renderer,0xFF,0xFF,0xFF,0xFF);
 
+    int img_init_flags = IMG_INIT_PNG;
+
     //setup png initialization
-    if(!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+    if(!(IMG_Init(img_init_flags) & img_init_flags)) {
       logger::log_err("failed to init png load: " + std::string(IMG_GetError()));
       return false;
     }
 
+    //setup ttf
+    if (TTF_Init() < 0) {
+      logger::log_err("failed to init ttf: " + std::string(TTF_GetError()));
+      return false;
+    }
+
     //create the camera
-    SDL_Rect camera = {0,0,actual_width,actual_height};
+    SDL_Rect camera = {0,0,cfg.window_width_p,cfg.window_height_p};
 
     //the game state manager
     std::shared_ptr<state::state_manager_t> state_manager;
@@ -137,22 +145,25 @@ namespace launcher {
       std::shared_ptr<tilemap::tileset_t> tileset =
         std::make_shared<tilemap::tileset_t>(cfg.tileset_path,
                                              cfg.tile_dim,
-                                             *renderer);
+                                             *renderer,
+                                             cfg.debug);
 
       //the tilemap from layer paths
       std::shared_ptr<tilemap::tilemap_t> tilemap =
         std::make_shared<tilemap::tilemap_t>(cfg.map_layer_paths,
                                              tileset,
                                              cfg.entity_layer_idx,
+                                             cfg.tile_dim,
                                              cfg.entity_layer_solid,
-                                             cfg.entity_layer_water);
+                                             cfg.entity_layer_water,
+                                             cfg.debug);
 
       //entities list
       std::vector<std::shared_ptr<entity::entity_t>> entities;
 
       //load entities, add to state manager
       for (const std::string& epath : cfg.entity_cfg_paths) {
-        entities.push_back(entity::load_entity(epath,*renderer));
+        entities.push_back(entity::load_entity(epath,*renderer,cfg.debug));
       }
 
       //init state manager
@@ -178,7 +189,7 @@ namespace launcher {
       logger::log_err("failed to start update thread");
       success = false;
     } else {
-      if (!engine::start_renderer(*renderer,camera,state_manager)) {
+      if (!engine::start_renderer(*renderer,state_manager,cfg.debug,cfg.debug_font)) {
         logger::log_err("failed to start renderer");
         success = false;
       }

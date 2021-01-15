@@ -17,7 +17,7 @@ namespace impl {
 namespace tilemap {
 
   /**
-   * Defines a loaded tileset
+   * Defines a loaded tilemap
    */
   struct tilemap_t {
   private:
@@ -35,12 +35,21 @@ namespace tilemap {
     //the indices of tiles that are water
     std::vector<int> entity_layer_water;
 
+    //the dimensions of the map in pixels for camera
+    int width_p;
+    int height_p;
+
+    //if debug mode enabled
+    bool debug;
+
   public:
     tilemap_t(const std::vector<std::string>& rsrc_paths,
               std::shared_ptr<tilemap::tileset_t> tileset,
               int entity_layer,
+              int dim,
               const std::vector<int>& entity_layer_solid,
-              const std::vector<int>& entity_layer_water);
+              const std::vector<int>& entity_layer_water,
+              bool debug);
     tilemap_t(const tilemap_t&) = delete;
     tilemap_t& operator=(const tilemap_t&) = delete;
 
@@ -50,6 +59,18 @@ namespace tilemap {
      * @return       whether the bounding box collides
      */
     bool is_collided(const SDL_Rect& other) const;
+
+    /**
+     * Get the width of the map in pixels
+     * @return the width of the map in pixels
+     */
+    int get_width() const;
+
+    /**
+     * Get the height of the map in pixels
+     * @return the height of the map in pixels
+     */
+    int get_height() const;
 
     /**
      * Update any updatable tiles

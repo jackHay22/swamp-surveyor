@@ -7,6 +7,7 @@
 #include "tileset.h"
 #include "../exceptions.h"
 #include "../utils.h"
+#include <iostream>
 
 namespace impl {
 namespace tilemap {
@@ -19,8 +20,9 @@ namespace tilemap {
    */
   tileset_t::tileset_t(const std::string& rsrc_path,
                        int tile_dim,
-                       SDL_Renderer& renderer)
-    : tile_dim(tile_dim) {
+                       SDL_Renderer& renderer,
+                       bool debug)
+    : tile_dim(tile_dim), debug(debug) {
     //load resource
     load(rsrc_path, renderer);
   }
@@ -44,7 +46,7 @@ namespace tilemap {
     int width, height = 0;
 
     //load the texture
-    this->texture = utils::load_texture(rsrc_path,renderer, width, height);
+    this->texture = utils::load_texture(rsrc_path,renderer,width,height);
 
     //Get image dimensions
     this->tiles_wide = width / this->tile_dim;
@@ -60,22 +62,24 @@ namespace tilemap {
    * @param type the index of the tile in the tileset
    */
   void tileset_t::render(SDL_Renderer& renderer, int x, int y, int type) const {
-    //create a clip for this tile given the type
-    SDL_Rect sample_bounds;
-    //determine the coords of the tile within the set
-    sample_bounds.x = (this->tiles_wide % type) * this->tile_dim;
-    sample_bounds.y = (this->tiles_high / type) * this->tile_dim;
-    sample_bounds.w = this->tile_dim;
-    sample_bounds.h = this->tile_dim;
 
-    //bound the image
-    SDL_Rect image_bounds = {x, y, x + this->tile_dim, y + this->tile_dim};
+    if (type >= 0) {
+      SDL_Rect sample_bounds;
+      //determine the coords of the tile within the set
+      sample_bounds.x = (type % this->tiles_wide) * this->tile_dim;
+      sample_bounds.y = (type / this->tiles_wide) * this->tile_dim;
+      sample_bounds.w = this->tile_dim;
+      sample_bounds.h = this->tile_dim;
 
-    //render the texture
-    SDL_RenderCopy(&renderer,
-                   this->texture,
-                   &sample_bounds,
-                   &image_bounds);
+      //bound the image
+      SDL_Rect image_bounds = {x,y,this->tile_dim,this->tile_dim};
+
+      //render the texture
+      SDL_RenderCopy(&renderer,
+                     this->texture,
+                     &sample_bounds,
+                     &image_bounds);
+    }
   }
 
 }}

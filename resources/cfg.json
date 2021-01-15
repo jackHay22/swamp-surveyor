@@ -1,9 +1,10 @@
 {
   "window_width_p" : 256,
-  "window_height_p" : 160,
-  "window_scale" : 5,
+  "window_height_p" : 128,
+  "window_scale" : 6,
   "tile_dim" : 8,
   "debug" : true,
+  "debug_font" : "/usr/share/fonts/noto/NotoSans-Light.ttf",
   "tileset_path" : "resources/swamp_1.png",
   "map_layer_paths" : [
     "resources/swamp_1_background.txt",

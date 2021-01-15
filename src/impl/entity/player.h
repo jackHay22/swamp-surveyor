@@ -36,7 +36,8 @@ namespace entity {
     player_t(int x, int y,
              int w, int h,
              const std::vector<std::string>& anim_cfg_paths,
-             SDL_Renderer& renderer);
+             SDL_Renderer& renderer,
+             bool debug);
     player_t(const player_t&) = delete;
     player_t& operator=(const player_t&) = delete;
 

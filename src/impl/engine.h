@@ -9,6 +9,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include <memory>
 #include "state/state_manager.h"
 
@@ -25,13 +26,15 @@ namespace engine {
   /**
    * Start the render loop
    * @param renderer the sdl renderer
-   * @param camera   the camera
-   * @manager the gamestate manager
+   * @param manager the gamestate manager
+   * @param debug whether debug enabled
+   * @param debug_font_name the font to use
    * @return success or failure
    */
   bool start_renderer(SDL_Renderer& renderer,
-                      SDL_Rect& camera,
-                      std::shared_ptr<state::state_manager_t> manager);
+                      std::shared_ptr<state::state_manager_t> manager,
+                      const bool debug,
+                      const std::string& debug_font_name);
 }}
 
 #endif /*_IO_JACKHAY_SWAMP_ENGINE_H*/

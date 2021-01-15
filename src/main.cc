@@ -32,8 +32,10 @@ int setup(bool debug, const std::string& cfg_path) {
     impl::launcher::launch_cfg_t cfg =
       config.get<impl::launcher::launch_cfg_t>();
 
-    //override debug mode
-    cfg.debug = debug;
+    if (debug) {
+      //override debug mode
+      cfg.debug = debug;
+    }
 
     if (!impl::launcher::init_from_cfg(cfg)) {
       return EXIT_FAILURE;

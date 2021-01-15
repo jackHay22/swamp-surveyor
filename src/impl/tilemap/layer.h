@@ -9,6 +9,7 @@
 
 #include <vector>
 #include <memory>
+#include <functional>
 #include "tile.h"
 #include "update_tile.h"
 #include "tileset.h"
@@ -32,12 +33,48 @@ namespace tilemap {
     //the tileset that this map uses
     std::shared_ptr<tileset_t> tileset;
 
+    //if debug mode enabled
+    bool debug;
+
+    /**
+     * Do some function on each tile
+     */
+    void for_each(std::function<void(tile_t&)> fn);
+
+    /**
+     * Do some function on each tile
+     */
+    void for_each_const(std::function<void(tile_t&)> fn) const;
+
   public:
     //constructor (throws exception if can't load)
     layer_t(const std::string& rsrc_path,
-            std::shared_ptr<tilemap::tileset_t> tileset);
+            int dim,
+            std::shared_ptr<tilemap::tileset_t> tileset,
+            bool debug);
     layer_t(const layer_t&) = delete;
     layer_t& operator=(const layer_t&) = delete;
+
+    /**
+     * Get the number of tile rows loaded in the map
+     * @return the number of rows in this layer
+     */
+    int get_layer_rows() const;
+
+    /**
+     * Get the number of tile cols loaded in the map
+     * @return the number of cols in this layer
+     */
+    int get_layer_cols() const;
+
+    /**
+     * Set tiles in this layer to be solid/liquid if their indices
+     * are in the list provided
+     * @param solid a list of tile indices that are solid
+     * @param liquid a list of tile inndices that are liquid
+     */
+    void set_natured_tiles(const std::vector<int>& solid,
+                           const std::vector<int>& liquid);
 
     /**
      * Check if a bounding box collides into a solid tile in

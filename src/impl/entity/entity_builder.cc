@@ -20,9 +20,7 @@ namespace entity {
   struct entity_cfg_t {
     //the type of entity
     std::string entity_type = "undefined";
-    //player position, bounds
-    int pos_x = 0;
-    int pos_y = 0;
+    //the width and height of the entity (for collisions)
     int width = 0;
     int height = 0;
 
@@ -38,8 +36,6 @@ namespace entity {
   void to_json(nlohmann::json& j, const entity_cfg_t& c) {
     j = nlohmann::json{
              {"entity_type", c.entity_type},
-             {"pos_x", c.pos_x},
-             {"pos_y", c.pos_y},
              {"width", c.width},
              {"height", c.height},
              {"anim_paths", c.anim_paths}
@@ -53,8 +49,6 @@ namespace entity {
    */
   void from_json(const nlohmann::json& j, entity_cfg_t& c) {
     j.at("entity_type").get_to(c.entity_type);
-    j.at("pos_x").get_to(c.pos_x);
-    j.at("pos_y").get_to(c.pos_y);
     j.at("width").get_to(c.width);
     j.at("height").get_to(c.height);
     j.at("anim_paths").get_to(c.anim_paths);
@@ -65,10 +59,12 @@ namespace entity {
    * Throws rsrc_exception_t
    * @param  path the path to the cfg file
    * @param  renderer the renderer for loading textures
+   * @param  debug    whether debug mode enabled
    * @return      the entity
    */
   std::shared_ptr<entity_t> load_entity(const std::string& path,
-                                        SDL_Renderer& renderer) {
+                                        SDL_Renderer& renderer,
+                                        bool debug) {
     //load the config file
     std::ifstream in_stream(path);
     nlohmann::json config;
@@ -79,13 +75,13 @@ namespace entity {
 
       //determine the player type
       if (cfg.entity_type == PLAYER) {
-        //load the player
-        return std::make_shared<entity::player_t>(cfg.pos_x,
-                                                  cfg.pos_y,
+        //load the player (starts at 32 32 by default)
+        return std::make_shared<entity::player_t>(70,50,
                                                   cfg.width,
                                                   cfg.height,
                                                   cfg.anim_paths,
-                                                  renderer);
+                                                  renderer,
+                                                  debug);
       }
 
       //unknown entity type
@@ -94,7 +90,7 @@ namespace entity {
     } catch (exceptions::rsrc_exception_t& e) {
       //rethrow a resource exception
       throw e;
-      
+
     } catch (...) {
       throw exceptions::rsrc_exception_t("failed to load as json: " + path);
     }

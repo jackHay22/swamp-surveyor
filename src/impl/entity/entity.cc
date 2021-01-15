@@ -6,9 +6,14 @@
 
 #include "entity.h"
 #include "../exceptions.h"
+#include <iostream>
 
 namespace impl {
 namespace entity {
+
+  //the gravity applied to an entity per tick
+  #define GRAVITY_PER_TICK 1
+  #define WALK_PER_TICK 1
 
   /**
    * Constructor
@@ -22,8 +27,9 @@ namespace entity {
   entity_t::entity_t(int x, int y,
                      int w, int h,
                      const std::vector<std::string>& anim_cfg_paths,
-                     SDL_Renderer& renderer)
-    : x(x), y(y), w(w), h(h), last_x(), last_y(), anims() {
+                     SDL_Renderer& renderer,
+                     bool debug)
+    : x(x), y(y), w(w), h(h), last_x(x), last_y(y), anims(), debug(debug) {
 
       if (anim_cfg_paths.size() < 4) {
         throw exceptions::rsrc_exception_t("not enough entity animation paths provided");
@@ -50,10 +56,34 @@ namespace entity {
   }
 
   /**
+   * Get the center of the entity
+   * @param x the x position set by the call
+   * @param y the y position set by the call
+   */
+  void entity_t::get_center(int& x, int& y) const {
+    x = this->x;
+    y = this->y;
+  }
+
+  /**
    * Update this entity at the tick
    */
   void entity_t::update() {
-    //TODO update position
+    //store the previous position
+    this->last_x = this->x;
+    this->last_y = this->y;
+
+    //update the y posiiton of the entity
+    this->y += GRAVITY_PER_TICK;
+
+    //check for walk
+    if (state == MOVE_LEFT) {
+      this->x -= WALK_PER_TICK;
+    }
+
+    if (state == MOVE_RIGHT) {
+      this->x += WALK_PER_TICK;
+    }
 
     //update the current animation
     anims.at(state)->update();
@@ -74,5 +104,16 @@ namespace entity {
   void entity_t::render(SDL_Renderer& renderer) const {
     //render the current animation
     anims.at(state)->render(renderer, x - (w / 2), y - (h / 2));
+
+    if (debug) {
+      //get the current bounds
+      SDL_Rect bounds = this->get_bounds();
+
+      //set the draw color
+      SDL_SetRenderDrawColor(&renderer,0,255,0,127);
+
+      //render the bounds
+      SDL_RenderDrawRect(&renderer,&bounds);
+    }
   }
 }}

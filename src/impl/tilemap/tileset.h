@@ -29,6 +29,9 @@ namespace tilemap {
     //loaded tiles
     SDL_Texture* texture = NULL;
 
+    //whether debug mode enabled
+    bool debug;
+
     /**
      * Load the tileset
      * Throws rsrc_exception_t
@@ -47,7 +50,8 @@ namespace tilemap {
      */
     tileset_t(const std::string& rsrc_path,
               int tile_dim,
-              SDL_Renderer& renderer);
+              SDL_Renderer& renderer,
+              bool debug);
     tileset_t(const tileset_t&) = delete;
     tileset_t& operator=(const tileset_t&) = delete;
 

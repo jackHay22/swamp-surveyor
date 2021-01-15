@@ -26,14 +26,28 @@ namespace tilemap {
     //whether this tile is solid
     bool solid;
 
-    //this tile's position, dimensions in the map
-    SDL_Rect bounds;
+    //whether this tile is liquid
+    bool liquid;
+
+    //whether debug mode enabled
+    bool debug;
+
+    //this tile's position
+    int x;
+    int y;
+    int dim;
 
   public:
     //constructor
-    tile_t(int x, int y, int dim, int type);
+    tile_t(int x, int y, int dim, int type, bool debug);
     tile_t(const tile_t&) = delete;
     tile_t& operator=(const tile_t&) = delete;
+
+    /**
+     * Get the type of this tile
+     * @return the type of this tile
+     */
+    int get_type() const { return type; }
 
     /**
      * Check if a bounding box collides with this tile
@@ -49,10 +63,22 @@ namespace tilemap {
     bool is_solid() const { return this->solid; }
 
     /**
+     * Check whether this tile is liquid
+     * @return whether this tile is liquid
+     */
+    bool is_liquid() const { return this->liquid; }
+
+    /**
      * Set this tile solid
      * @param solid the setting for the tile
      */
     void set_solid(bool solid) { this->solid = solid; }
+
+    /**
+     * Set this tile liquid
+     * @param liquid the setting for the tile
+     */
+    void set_liquid(bool liquid) { this->liquid = liquid; }
 
     /**
      * Render this tile
