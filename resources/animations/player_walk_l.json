@@ -1,5 +1,5 @@
 {
-  "rsrc_path" : "resources/surveyor_walk_l.png",
+  "rsrc_path" : "resources/animations/surveyor_walk_l.png",
   "frame_width" : 12,
   "frame_height" : 24,
   "anim_frames" : 8,

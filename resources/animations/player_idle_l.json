@@ -1,5 +1,5 @@
 {
-  "rsrc_path" : "resources/surveyor_idle_l.png",
+  "rsrc_path" : "resources/animations/surveyor_idle_l.png",
   "frame_width" : 8,
   "frame_height" : 24,
   "anim_frames" : 12,

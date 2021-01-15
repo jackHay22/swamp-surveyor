@@ -1,0 +1,11 @@
+{
+  "entity_type" : "player",
+  "width" : 10,
+  "height" : 24,
+  "anim_paths" : [
+    "resources/animations/player_idle_l.json",
+    "resources/animations/player_idle_r.json",
+    "resources/animations/player_walk_l.json",
+    "resources/animations/player_walk_r.json"
+  ]
+}
