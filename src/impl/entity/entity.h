@@ -13,6 +13,7 @@
 #include <memory>
 #include <string>
 #include "anim_set.h"
+#include "../tilemap/tilemap.h"
 
 namespace impl {
 namespace entity {
@@ -33,6 +34,12 @@ namespace entity {
     int last_x;
     int last_y;
 
+    //the counter during a climb cycle
+    int climb_counter;
+
+    //the dimension of tiles
+    int tile_dim;
+
     //texture animations
     std::vector<std::unique_ptr<anim_set_t>> anims;
 
@@ -45,7 +52,9 @@ namespace entity {
       IDLE_LEFT,
       IDLE_RIGHT,
       MOVE_LEFT,
-      MOVE_RIGHT
+      MOVE_RIGHT,
+      CLIMB_LEFT,
+      CLIMB_RIGHT
     } state = IDLE_RIGHT;
 
   public:
@@ -57,11 +66,13 @@ namespace entity {
      * @param h                  entity bounds height
      * @param anim_cfg_paths     the paths to the configuration files for each animation
      * @param renderer           the renderer for loading textures
+     * @param tile_dim           the dimensions of tiles
      */
     entity_t(int x, int y,
              int w, int h,
              const std::vector<std::string>& anim_cfg_paths,
              SDL_Renderer& renderer,
+             int tile_dim,
              bool debug);
     entity_t(const entity_t&) = delete;
     entity_t& operator=(const entity_t&) = delete;
@@ -97,9 +108,10 @@ namespace entity {
     void update_y();
 
     /**
-     * Restore the previous position of the entity (x dir)
+     * Called when entity collides in the x direction
+     * @param layer used to determine if the entity can step up
      */
-    void step_back_x();
+    void step_back_x(const tilemap::tilemap_t& map);
 
     /**
      * Restore the position of the entity (y dir)

@@ -109,7 +109,7 @@ namespace state {
 
     //load entities
     for (const std::string& epath : cfg.entity_cfg_paths) {
-      entities.push_back(entity::load_entity(epath,renderer,debug));
+      entities.push_back(entity::load_entity(epath,renderer,tile_dim,debug));
     }
 
     //load insects

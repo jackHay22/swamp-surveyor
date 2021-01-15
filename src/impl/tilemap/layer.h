@@ -33,6 +33,9 @@ namespace tilemap {
     //the tileset that this map uses
     std::shared_ptr<tileset_t> tileset;
 
+    //the tile dimension
+    int dim;
+
     //if debug mode enabled
     bool debug;
 
@@ -54,6 +57,14 @@ namespace tilemap {
             bool debug);
     layer_t(const layer_t&) = delete;
     layer_t& operator=(const layer_t&) = delete;
+
+    /**
+     * Check if the tile at a position is solid
+     * @param  x the x coordinate
+     * @param  y the y coordinate
+     * @return   whether the tile at this position is solid
+     */
+    bool is_solid(int x, int y) const;
 
     /**
      * Get the number of tile rows loaded in the map

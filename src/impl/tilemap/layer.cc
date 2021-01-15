@@ -25,7 +25,7 @@ namespace tilemap {
                    int dim,
                    std::shared_ptr<tilemap::tileset_t> tileset,
                    bool debug)
-    : tileset(tileset), debug(debug) {
+    : tileset(tileset), dim(dim), debug(debug) {
 
     try {
       //read from the file
@@ -61,6 +61,26 @@ namespace tilemap {
     } catch (...) {
       //failed to load from file
       throw exceptions::rsrc_exception_t(rsrc_path);
+    }
+  }
+
+  /**
+   * Check if the tile at a position is solid
+   * @param  x the x coordinate
+   * @param  y the y coordinate
+   * @return   whether the tile at this position is solid
+   */
+  bool layer_t::is_solid(int x, int y) const {
+    int idx_x = x / dim;
+    int idx_y = y / dim;
+
+    //check bounds and get the type of the tile
+    if ((idx_y < this->contents.size()) &&
+        (idx_x < this->contents.at(idx_y).size())) {
+      return this->contents.at(idx_y).at(idx_x)->is_solid();
+
+    } else {
+      return -1;
     }
   }
 

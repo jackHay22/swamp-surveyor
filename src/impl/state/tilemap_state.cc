@@ -69,7 +69,7 @@ namespace state {
 
       //check for a collision
       if (tilemap->is_collided(entities.at(i)->get_bounds())) {
-        entities.at(i)->step_back_x();
+        entities.at(i)->step_back_x(*tilemap);
       }
 
       //update entity

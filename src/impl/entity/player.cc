@@ -18,13 +18,15 @@ namespace entity {
    * @param h                  entity bounds height
    * @param texture_paths      paths for each of the 4 basic animations
    * @param renderer           the renderer for loading textures
+   * @param tile_dim           the dimension of tiles
    */
   player_t::player_t(int x, int y,
                      int w, int h,
                      const std::vector<std::string>& anim_cfg_paths,
                      SDL_Renderer& renderer,
+                     int tile_dim,
                      bool debug)
-    : entity_t(x,y,w,h,anim_cfg_paths,renderer,debug)
+    : entity_t(x,y,w,h,anim_cfg_paths,renderer,tile_dim,debug)
     {}
 
   /**
@@ -37,9 +39,17 @@ namespace entity {
       //check key pressed
       switch (e.key.keysym.sym) {
         //case SDLK_w: state = ; break;
-        case SDLK_a: state = MOVE_LEFT; break;
+        case SDLK_a:
+          if (state != CLIMB_LEFT) {
+            state = MOVE_LEFT;
+          }
+          break;
         //case SDLK_s: state = ; break;
-        case SDLK_d: state = MOVE_RIGHT; break;
+        case SDLK_d:
+          if (state != CLIMB_RIGHT) {
+            state = MOVE_RIGHT;
+          }
+          break;
       }
     } else if (e.type == SDL_KEYUP) {
       //check key released

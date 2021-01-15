@@ -32,11 +32,13 @@ namespace entity {
      * @param h                  entity bounds height
      * @param texture_paths      paths for each of the 4 basic animations
      * @param renderer           the renderer for loading textures
+     * @param tile_dim           the dimension of tiles
      */
     player_t(int x, int y,
              int w, int h,
              const std::vector<std::string>& anim_cfg_paths,
              SDL_Renderer& renderer,
+             int tile_dim,
              bool debug);
     player_t(const player_t&) = delete;
     player_t& operator=(const player_t&) = delete;

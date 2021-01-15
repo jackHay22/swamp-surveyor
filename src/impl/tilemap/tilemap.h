@@ -54,6 +54,14 @@ namespace tilemap {
     tilemap_t& operator=(const tilemap_t&) = delete;
 
     /**
+     * Check if the tile at a position is solid
+     * @param  x the x coordinate
+     * @param  y the y coordinate
+     * @return   whether the tile at this position is solid
+     */
+    bool is_solid(int x, int y) const;
+
+    /**
      * Check if a bounding box collides with some solid tile
      * @param  other the bounding box
      * @return       whether the bounding box collides

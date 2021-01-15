@@ -13,6 +13,7 @@ namespace entity {
 
   //the gravity applied to an entity per tick
   #define GRAVITY_PER_TICK 1
+  #define CLIMB_FRAMES 6
 
   /**
    * Constructor
@@ -22,13 +23,21 @@ namespace entity {
    * @param h                  entity bounds height
    * @param anim_cfg_paths     the paths to the configuration files for each animation
    * @param renderer           the renderer for loading textures
+   * @param tile_dim           the dimensions of tiles
    */
   entity_t::entity_t(int x, int y,
                      int w, int h,
                      const std::vector<std::string>& anim_cfg_paths,
                      SDL_Renderer& renderer,
+                     int tile_dim,
                      bool debug)
-    : x(x), y(y), w(w), h(h), last_x(x), last_y(y), anims(), debug(debug) {
+    : x(x), y(y),
+      w(w), h(h),
+      last_x(x),
+      last_y(y),
+      tile_dim(tile_dim),
+      climb_counter(CLIMB_FRAMES),
+      anims(), debug(debug) {
 
       if (anim_cfg_paths.size() < 4) {
         throw exceptions::rsrc_exception_t("not enough entity animation paths provided");
@@ -81,10 +90,31 @@ namespace entity {
     //check for walk
     if (state == MOVE_LEFT) {
       this->x -= 1;
-    }
 
-    if (state == MOVE_RIGHT) {
+    } else if (state == MOVE_RIGHT) {
       this->x += 1;
+
+    } else if (state == CLIMB_LEFT) {
+      if (climb_counter == 0) {
+        //move the player up the surface
+        this->x -= tile_dim;
+        this->y -= (tile_dim + 1);
+        state = MOVE_LEFT;
+
+      } else {
+        climb_counter--;
+      }
+
+    } else if (state == CLIMB_RIGHT) {
+      if (climb_counter == 0) {
+        //move the player up the surface
+        this->x += tile_dim;
+        this->y -= (tile_dim + 1);
+        state = MOVE_RIGHT;
+
+      } else {
+        climb_counter--;
+      }
     }
   }
 
@@ -100,10 +130,43 @@ namespace entity {
   }
 
   /**
-   * Restore the previous position of the entity
+   * Called when entity collides in the x direction
+   * @param layer used to determine if the entity can step up
    */
-  void entity_t::step_back_x() {
-    this->x = this->last_x;
+  void entity_t::step_back_x(const tilemap::tilemap_t& map) {
+    SDL_Rect current_bounds = this->get_bounds();
+
+    //make sure the entity is not already climbing
+    if ((state != CLIMB_RIGHT) && (state != CLIMB_LEFT)) {
+      //check for a 1-high collision
+      if (state == MOVE_RIGHT) {
+        //check upper and lower adjacent tiles
+        if (map.is_solid(current_bounds.x + current_bounds.w + 2,
+                         current_bounds.y + current_bounds.h - 2) &&
+            !map.is_solid(current_bounds.x + current_bounds.w + 2,
+                          current_bounds.y + 2)) {
+          //climb mode
+          state = CLIMB_RIGHT;
+          climb_counter = CLIMB_FRAMES;
+          return;
+        }
+
+      } else if (state == MOVE_LEFT) {
+        //check upper and lower adjacent tiles
+        if (map.is_solid(current_bounds.x - 2,
+                         current_bounds.y + current_bounds.h - 2) &&
+            !map.is_solid(current_bounds.x - 2,
+                          current_bounds.y + 2)) {
+          //climb mode
+          state = CLIMB_LEFT;
+          climb_counter = CLIMB_FRAMES;
+          return;
+        }
+      }
+
+      //stop
+      this->x = this->last_x;
+    }
   }
 
   /**
