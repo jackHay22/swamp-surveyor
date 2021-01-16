@@ -15,6 +15,8 @@
 #include "../entity/insects.h"
 #include "../entity/entity_builder.h"
 #include "../exceptions.h"
+#include "../environment/renderable.h"
+#include "../environment/environment_builder.h"
 
 namespace impl {
 namespace state {
@@ -35,6 +37,8 @@ namespace state {
     std::vector<int> entity_layer_water = {};
     //entity files
     std::vector<std::string> entity_cfg_paths = {};
+    //the path to the environment configuration for this level
+    std::string env_elems_path = "";
     //whether the background layer is stationary
     bool bg_stationary = false;
     //the insect swarm cfg file
@@ -56,6 +60,7 @@ namespace state {
     j.at("entity_layer_water").get_to(c.entity_layer_water);
     j.at("entity_cfg_paths").get_to(c.entity_cfg_paths);
     j.at("insect_cfg_path").get_to(c.insect_cfg_path);
+    j.at("env_elems_path").get_to(c.env_elems_path);
     j.at("player_idx").get_to(c.player_idx);
     j.at("bg_stationary").get_to(c.bg_stationary);
   }
@@ -119,12 +124,20 @@ namespace state {
 
     //load insects
     std::shared_ptr<entity::insects_t> insects =
-      std::make_shared<entity::insects_t>(cfg.insect_cfg_path,renderer);
+      std::make_shared<entity::insects_t>(cfg.insect_cfg_path);
+
+    //load renderable environmental elements
+    std::vector<std::shared_ptr<environment::renderable_t>> env_renderable;
+    environment::load_env_elems(env_renderable,
+                                cfg.env_elems_path,
+                                renderer,
+                                debug);
 
     //make the state and add it to the manager
     state_manager->add_state(std::make_unique<state::tilemap_state_t>(tilemap,
                                                                       entities,
                                                                       insects,
+                                                                      env_renderable,
                                                                       cfg.player_idx,
                                                                       *state_manager,
                                                                       camera));

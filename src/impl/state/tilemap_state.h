@@ -17,6 +17,7 @@
 #include "../entity/entity.h"
 #include "../entity/player.h"
 #include "../entity/insects.h"
+#include "../environment/renderable.h"
 
 namespace impl {
 namespace state {
@@ -38,12 +39,16 @@ namespace state {
     //insects in the map
     std::shared_ptr<entity::insects_t> insects;
 
+    //renderable environment components
+    std::vector<std::shared_ptr<environment::renderable_t>> env_renderable;
+
   public:
     /**
      * Constructor
      * @param tilemap    the tilemap this state uses
      * @param entities   the entities in this state
      * @param insects    the insects in the map
+     * @param env_renderable environmental elements that can be rendered
      * @param player_idx the index of the player in the entity list
      * @param manager    the state manager
      * @param camera     the level camera
@@ -51,6 +56,7 @@ namespace state {
     tilemap_state_t(std::shared_ptr<tilemap::tilemap_t> tilemap,
                     std::vector<std::shared_ptr<entity::entity_t>>& entities,
                     std::shared_ptr<entity::insects_t> insects,
+                    std::vector<std::shared_ptr<environment::renderable_t>>& env_renderable,
                     int player_idx, state_manager_t& manager,
                     SDL_Rect& camera);
     tilemap_state_t(const tilemap_state_t&) = delete;

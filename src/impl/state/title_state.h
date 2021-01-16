@@ -39,7 +39,7 @@ namespace state {
     SDL_Texture* texture = NULL;
 
     //the caret texture
-    SDL_Texture* caret = NULL;
+    SDL_Texture* caret_texture = NULL;
 
     //menu option textures
     SDL_Texture* start_texture = NULL;
@@ -50,6 +50,16 @@ namespace state {
     enum {
       START, OPTIONS, QUIT
     } selected_option = START;
+
+    /**
+     * Change the selection up
+     */
+    void select_up();
+
+    /**
+     * Change the selection down
+     */
+    void select_down();
 
     /**
      * Load text into a texture

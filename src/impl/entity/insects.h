@@ -45,10 +45,8 @@ namespace entity {
     /**
      * Initialize map wide insect swarm
      * @param cfg_path the path to the insect configuration file
-     * @param renderer the renderer for creating texture
      */
-    insects_t(const std::string& cfg_path,
-              SDL_Renderer& renderer);
+    insects_t(const std::string& cfg_path);
     insects_t(const insects_t&) = delete;
     insects_t& operator=(const insects_t&) = delete;
 

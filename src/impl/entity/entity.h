@@ -30,6 +30,11 @@ namespace entity {
     int w;
     int h;
 
+    //the amount of health the player has
+    int health;
+    //the ticks remaining to show damage
+    int damaged_ticks;
+
     //positions restored on collision
     int last_x;
     int last_y;
@@ -83,6 +88,12 @@ namespace entity {
     entity_t& operator=(const entity_t&) = delete;
 
     virtual ~entity_t() {}
+
+    /**
+     * Do damage to this entity by some magnitude
+     * @param magnitude the amount off damage to do
+     */
+    void do_damage(int magnitude);
 
     /**
      * Get the bounding box for this entity
