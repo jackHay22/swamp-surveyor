@@ -5,6 +5,7 @@
  */
 
 #include "state_manager.h"
+#include <iostream>
 
 namespace impl {
 namespace state {
@@ -13,6 +14,28 @@ namespace state {
    * Constructor
    */
   state_manager_t::state_manager_t() : states() {}
+
+  /**
+   * Set the state to pause or unpause to previous
+   * @param pause whether to pause (true) or unpause (false)
+   */
+  void state_manager_t::set_pause(bool pause) {
+    if (pause) {
+      last_state = current_state;
+      current_state = PAUSE;
+    } else if (current_state == PAUSE) {
+      current_state = last_state;
+    }
+  }
+
+  /**
+   * Get the next level state
+   */
+  void state_manager_t::next_level_state() {
+    if (current_state == TITLE) {
+      current_state = LEVEL1;
+    }
+  }
 
   /**
    * Handle some keypress event
@@ -65,11 +88,9 @@ namespace state {
    */
   void state_manager_t::render(SDL_Renderer& renderer) {
     //attempt to lock the state
-    std::unique_lock<std::shared_mutex> state_lock(lock,std::defer_lock);
+    std::unique_lock<std::shared_mutex> state_lock(lock);
 
-    //if lock acquired, render
-    if (state_lock.try_lock()) {
-      states.at(current_state)->render(renderer);
-    }
+    //render the state
+    states.at(current_state)->render(renderer);
   }
 }}

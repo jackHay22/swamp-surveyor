@@ -6,6 +6,7 @@
 
 #include "utils.h"
 #include "exceptions.h"
+#include <SDL2/SDL_ttf.h>
 
 namespace impl {
 namespace utils {
@@ -49,5 +50,47 @@ namespace utils {
     //free surface
     SDL_FreeSurface(surface);
     return texture;
+  }
+
+  /**
+   * Load a font to a texture
+   * Throws resource exception on failure
+   * @param  text      the text
+   * @param  font_path the path to the font to load
+   * @param  renderer  the renderer
+   * @param  size      the size of the font
+   * @return           the loaded texture
+   */
+  SDL_Texture* load_font(const std::string& text,
+                         const std::string& font_path,
+                         SDL_Renderer& renderer,
+                         int size) {
+
+    //load the font by path
+    TTF_Font *font = TTF_OpenFont(font_path.c_str(), size);
+    if (!font) {
+      //failed to load the font
+      throw exceptions::rsrc_exception_t(font_path,
+                                         "could not load font (" +
+                                         std::string(TTF_GetError()) + ")");
+    }
+
+    //default color
+    SDL_Color color = {255,255,255};
+
+    //load the text surface
+    SDL_Surface* text_surface = TTF_RenderText_Solid(font,text.c_str(),color);
+    if (!text_surface) {
+      throw exceptions::rsrc_exception_t(font_path,
+                                         "could not create text surface from font");
+    }
+
+    //create a texture from this surface
+    SDL_Texture *text_texture = SDL_CreateTextureFromSurface(&renderer,text_surface);
+
+    //free the original surface
+    SDL_FreeSurface(text_surface);
+
+    return text_texture;
   }
 }}

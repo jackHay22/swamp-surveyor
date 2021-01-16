@@ -18,6 +18,7 @@ namespace tilemap {
    * @param dim                the dimension of a tile
    * @param entity_layer_solid the indices of solid tiles
    * @param entity_layer_water the indices of liquid tiles
+   * @param bg_stationary      whether the background layer is stationary
    */
   tilemap_t::tilemap_t(const std::vector<std::string>& rsrc_paths,
                        std::shared_ptr<tilemap::tileset_t> tileset,
@@ -25,6 +26,7 @@ namespace tilemap {
                        int dim,
                        const std::vector<int>& entity_layer_solid,
                        const std::vector<int>& entity_layer_water,
+                       bool bg_stationary,
                        bool debug)
     : bg_layers(), fg_layers(),
       entity_layer_solid(entity_layer_solid),
@@ -43,6 +45,7 @@ namespace tilemap {
           std::make_unique<tilemap::layer_t>(rsrc_paths.at(entity_layer_idx),
                                              dim,
                                              tileset,
+                                             false,
                                              debug);
 
         //set solid/liquid tiles for this layer
@@ -50,16 +53,18 @@ namespace tilemap {
                                               entity_layer_water);
 
       } else if (i < entity_layer_idx) {
-        //load as a background layer
+        //load as a background layer (first layer marked as stationary if configured)
         this->bg_layers.push_back(std::make_unique<tilemap::layer_t>(rsrc_paths.at(i),
                                                                      dim,
                                                                      tileset,
+                                                                     bg_stationary && (i == 0),
                                                                      debug));
       } else {
         //load as a foreground layer
         this->fg_layers.push_back(std::make_unique<tilemap::layer_t>(rsrc_paths.at(i),
                                                                      dim,
                                                                      tileset,
+                                                                     false,
                                                                      debug));
       }
     }

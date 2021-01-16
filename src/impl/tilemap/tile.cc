@@ -48,17 +48,25 @@ namespace tilemap {
      * @param renderer the sdl renderer
      * @param camera the camera
      * @param tileset the tileset to sample
+     * @param stationary whether this tile is stationary in the camera or not
      */
     void tile_t::render(SDL_Renderer& renderer,
                         const SDL_Rect& camera,
-                        const std::shared_ptr<tileset_t> tileset) const {
+                        const std::shared_ptr<tileset_t> tileset,
+                        bool stationary) const {
       //check the collision
-      if (this->is_collided(camera)) {
+      if (this->is_collided(camera) || stationary) {
+        int rel_x = (x * dim);
+        int rel_y = (y * dim);
+
+        //non stationary objects displayed relative to camera
+        if (!stationary) {
+          rel_x -= camera.x;
+          rel_y -= camera.y;
+        }
+
         //render this tile
-        tileset->render(renderer,
-                        (x * dim) - camera.x,
-                        (y * dim) - camera.y,
-                        this->type);
+        tileset->render(renderer,rel_x,rel_y,this->type);
 
         if (debug) {
           SDL_Rect image_bounds = {(x * dim) - camera.x,

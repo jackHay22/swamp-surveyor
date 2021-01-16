@@ -20,12 +20,14 @@ namespace tilemap {
    * @param rsrc_path the path to the map contents
    * @param dim       the tile dimension
    * @param tileset   the tileset that this map is associated with
+   * @param stationary whether this layer is stationary
    */
   layer_t::layer_t(const std::string& rsrc_path,
                    int dim,
                    std::shared_ptr<tilemap::tileset_t> tileset,
+                   bool stationary,
                    bool debug)
-    : tileset(tileset), dim(dim), debug(debug) {
+    : tileset(tileset), dim(dim), stationary(stationary), debug(debug)  {
 
     try {
       //read from the file
@@ -211,7 +213,7 @@ namespace tilemap {
     //render each tile
     this->for_each_const([&renderer,&camera,this](tile_t& t){
       //render the tile
-      t.render(renderer,camera,this->tileset);
+      t.render(renderer,camera,this->tileset, this->stationary);
     });
   }
 }}

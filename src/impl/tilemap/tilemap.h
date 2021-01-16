@@ -43,12 +43,23 @@ namespace tilemap {
     bool debug;
 
   public:
+    /**
+     * Constructor
+     * @param rsrc_paths         the path to each layer
+     * @param tileset            the tileset to use with this map
+     * @param entity_layer_idx   the index of the entity layer
+     * @param dim                the dimension of a tile
+     * @param entity_layer_solid the indices of solid tiles
+     * @param entity_layer_water the indices of liquid tiles
+     * @param bg_stationary      whether the background layer is stationary
+     */
     tilemap_t(const std::vector<std::string>& rsrc_paths,
               std::shared_ptr<tilemap::tileset_t> tileset,
-              int entity_layer,
+              int entity_layer_idx,
               int dim,
               const std::vector<int>& entity_layer_solid,
               const std::vector<int>& entity_layer_water,
+              bool bg_stationary,
               bool debug);
     tilemap_t(const tilemap_t&) = delete;
     tilemap_t& operator=(const tilemap_t&) = delete;

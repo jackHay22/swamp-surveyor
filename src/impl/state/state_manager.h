@@ -17,6 +17,8 @@
 namespace impl {
 namespace state {
 
+  class state_t;
+
   /**
    * Manages thhe current game state
    */
@@ -31,15 +33,27 @@ namespace state {
     bool running = true;
 
     //the current state of the game
+    //and the previous state for storage when paused
     enum {
-      TITLE, LEVEL, PAUSE
-    } current_state = TITLE;
+      TITLE, LEVEL1, PAUSE
+    } current_state = TITLE, last_state = TITLE;
 
   public:
     //constructor
     state_manager_t();
     state_manager_t(const state_manager_t&) = delete;
     state_manager_t& operator=(const state_manager_t&) = delete;
+
+    /**
+     * Set the state to pause or unpause to previous
+     * @param pause whether to pause (true) or unpause (false)
+     */
+    void set_pause(bool pause);
+
+    /**
+     * Get the next level state
+     */
+    void next_level_state();
 
     /**
      * Handle some keypress event

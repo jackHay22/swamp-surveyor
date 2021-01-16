@@ -10,6 +10,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
 #include "state.h"
+#include "state_manager.h"
 #include <memory>
 #include <vector>
 #include "../tilemap/tilemap.h"
@@ -38,11 +39,20 @@ namespace state {
     std::shared_ptr<entity::insects_t> insects;
 
   public:
-    //constructor
+    /**
+     * Constructor
+     * @param tilemap    the tilemap this state uses
+     * @param entities   the entities in this state
+     * @param insects    the insects in the map
+     * @param player_idx the index of the player in the entity list
+     * @param manager    the state manager
+     * @param camera     the level camera
+     */
     tilemap_state_t(std::shared_ptr<tilemap::tilemap_t> tilemap,
                     std::vector<std::shared_ptr<entity::entity_t>>& entities,
                     std::shared_ptr<entity::insects_t> insects,
-                    int player_idx, SDL_Rect& camera);
+                    int player_idx, state_manager_t& manager,
+                    SDL_Rect& camera);
     tilemap_state_t(const tilemap_state_t&) = delete;
     tilemap_state_t& operator=(const tilemap_state_t&) = delete;
 

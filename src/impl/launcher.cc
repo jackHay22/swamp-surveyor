@@ -113,11 +113,12 @@ namespace launcher {
     //load each level
     for (const std::string& lpath : cfg.level_cfgs) {
       //add tilemap state
-      state_manager->add_state(state::load_tm_state(lpath,
-                                                    *renderer,
-                                                    camera,
-                                                    cfg.tile_dim,
-                                                    cfg.debug));
+      state::load_tm_state(state_manager,
+                           lpath,
+                           *renderer,
+                           camera,
+                           cfg.tile_dim,
+                           cfg.debug);
     }
 
     //return value after cleaning resources

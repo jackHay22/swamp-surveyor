@@ -39,6 +39,9 @@ namespace tilemap {
     //if debug mode enabled
     bool debug;
 
+    //whether this layer is stationary (serving as a backdrop)
+    bool stationary;
+
     /**
      * Do some function on each tile
      */
@@ -50,10 +53,17 @@ namespace tilemap {
     void for_each_const(std::function<void(tile_t&)> fn) const;
 
   public:
-    //constructor (throws exception if can't load)
+    /**
+     * Constructor
+     * @param rsrc_path the path to the map contents
+     * @param dim       the tile dimension
+     * @param tileset   the tileset that this map is associated with
+     * @param stationary whether this layer is stationary
+     */
     layer_t(const std::string& rsrc_path,
             int dim,
             std::shared_ptr<tilemap::tileset_t> tileset,
+            bool stationary,
             bool debug);
     layer_t(const layer_t&) = delete;
     layer_t& operator=(const layer_t&) = delete;

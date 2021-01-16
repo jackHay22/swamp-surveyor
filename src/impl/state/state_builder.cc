@@ -35,6 +35,8 @@ namespace state {
     std::vector<int> entity_layer_water = {};
     //entity files
     std::vector<std::string> entity_cfg_paths = {};
+    //whether the background layer is stationary
+    bool bg_stationary = false;
     //the insect swarm cfg file
     std::string insect_cfg_path = "";
     //index of player in entity cfg list
@@ -55,23 +57,25 @@ namespace state {
     j.at("entity_cfg_paths").get_to(c.entity_cfg_paths);
     j.at("insect_cfg_path").get_to(c.insect_cfg_path);
     j.at("player_idx").get_to(c.player_idx);
+    j.at("bg_stationary").get_to(c.bg_stationary);
   }
 
   /**
    * Load a state from a configuration
    * Throws a resource exception if load fails
+   * @param  state_manager  the manager to load new states into
    * @param  path     the path to the level configuration
    * @param  renderer the renderer for the level
    * @param  camera   the starting level camera
    * @param  tile_dim the dimensions of tiles
    * @param  debug    whether debug mode enabled
-   * @return          the loaded level
    */
-  std::unique_ptr<state_t> load_tm_state(const std::string& path,
-                                         SDL_Renderer& renderer,
-                                         SDL_Rect& camera,
-                                         int tile_dim,
-                                         bool debug) {
+  void load_tm_state(std::shared_ptr<state::state_manager_t> state_manager,
+                     const std::string& path,
+                     SDL_Renderer& renderer,
+                     SDL_Rect& camera,
+                     int tile_dim,
+                     bool debug) {
 
     //load the file
     state_cfg_t cfg;
@@ -102,6 +106,7 @@ namespace state {
                                            tile_dim,
                                            cfg.entity_layer_solid,
                                            cfg.entity_layer_water,
+                                           cfg.bg_stationary,
                                            debug);
 
     //entities list
@@ -116,12 +121,13 @@ namespace state {
     std::shared_ptr<entity::insects_t> insects =
       std::make_shared<entity::insects_t>(cfg.insect_cfg_path,renderer);
 
-    //make the state
-    return std::make_unique<state::tilemap_state_t>(tilemap,
-                                                    entities,
-                                                    insects,
-                                                    cfg.player_idx,
-                                                    camera);
+    //make the state and add it to the manager
+    state_manager->add_state(std::make_unique<state::tilemap_state_t>(tilemap,
+                                                                      entities,
+                                                                      insects,
+                                                                      cfg.player_idx,
+                                                                      *state_manager,
+                                                                      camera));
 
   }
 }}

@@ -26,6 +26,20 @@ namespace utils {
   SDL_Texture* load_texture(const std::string& path,
                             SDL_Renderer& renderer,
                             int& w, int& h);
+
+  /**
+   * Load a font to a texture
+   * Throws resource exception on failure
+   * @param  text      the text
+   * @param  font_path the path to the font to load
+   * @param  renderer  the renderer
+   * @param  size      the size of the font
+   * @return           the loaded texture
+   */
+  SDL_Texture* load_font(const std::string& text,
+                         const std::string& font_path,
+                         SDL_Renderer& renderer,
+                         int size);
 }}
 
 #endif /*_IO_JACKHAY_SWAMP_UTILS_H*/

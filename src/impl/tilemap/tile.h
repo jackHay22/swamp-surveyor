@@ -87,10 +87,12 @@ namespace tilemap {
      * @param renderer the sdl renderer
      * @param camera the camera
      * @param tileset the tileset to sample
+     * @param stationary whether this tile is stationary in the camera or not
      */
     void render(SDL_Renderer& renderer,
                 const SDL_Rect& camera,
-                const std::shared_ptr<tileset_t> tileset) const;
+                const std::shared_ptr<tileset_t> tileset,
+                bool stationary) const;
   };
 }}
 

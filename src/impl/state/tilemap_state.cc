@@ -16,12 +16,15 @@ namespace state {
    * @param entities   the entities in this state
    * @param insects    the insects in the map
    * @param player_idx the index of the player in the entity list
+   * @param manager    the state manager
+   * @param camera     the level camera
    */
   tilemap_state_t::tilemap_state_t(std::shared_ptr<tilemap::tilemap_t> tilemap,
                                    std::vector<std::shared_ptr<entity::entity_t>>& entities,
                                    std::shared_ptr<entity::insects_t> insects,
-                                   int player_idx, SDL_Rect& camera)
-    : state_t(camera),
+                                   int player_idx, state_manager_t& manager,
+                                   SDL_Rect& camera)
+    : state_t(manager, camera),
       tilemap(tilemap),
       entities(entities),
       insects(insects) {

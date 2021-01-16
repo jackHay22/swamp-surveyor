@@ -9,21 +9,28 @@
 
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
+#include "state_manager.h"
 
 namespace impl {
 namespace state {
+
+  class state_manager_t;
 
   /**
    * A Virtual state
    */
   struct state_t {
   protected:
+    //the state state manager (used for state changes)
+    state_manager_t& manager;
     //the current camera
     SDL_Rect camera;
 
   public:
     //constructor
-    state_t(SDL_Rect camera) : camera(camera) {}
+    state_t(state_manager_t& manager,
+            SDL_Rect camera)
+      : manager(manager), camera(camera) {}
     state_t(const state_t&) = delete;
     state_t& operator=(const state_t&) = delete;
     virtual ~state_t() {}

@@ -13,5 +13,6 @@
     "resources/animations/player.json"
   ],
   "player_idx" : 0,
+  "bg_stationary" : false,
   "insect_cfg_path" : "resources/insects.json"
 }
