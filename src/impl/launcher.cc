@@ -10,6 +10,7 @@
 #include "exceptions.h"
 #include "state/state_manager.h"
 #include "state/tilemap_state.h"
+#include "state/title_state.h"
 #include "state/state_builder.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -30,6 +31,9 @@ namespace launcher {
     j.at("tile_dim").get_to(c.tile_dim);
     j.at("debug").get_to(c.debug);
     j.at("debug_font").get_to(c.debug_font);
+    j.at("title_image").get_to(c.title_image);
+    j.at("caret_image").get_to(c.caret_image);
+    j.at("menu_font").get_to(c.menu_font);
     j.at("level_cfgs").get_to(c.level_cfgs);
   }
 
@@ -109,6 +113,18 @@ namespace launcher {
     //the game state manager
     std::shared_ptr<state::state_manager_t> state_manager =
       std::make_shared<state::state_manager_t>();
+
+    //title state not shown in debug mode
+    if (!cfg.debug) {
+      //add the title state
+      state_manager->add_state(std::make_unique<state::title_state_t>(cfg.window_width_p,
+                                                                      cfg.window_height_p,
+                                                                      cfg.title_image,
+                                                                      cfg.caret_image,
+                                                                      cfg.menu_font,
+                                                                      *renderer,
+                                                                      *state_manager));
+    }
 
     //load each level
     for (const std::string& lpath : cfg.level_cfgs) {

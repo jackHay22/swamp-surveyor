@@ -24,8 +24,23 @@ namespace state {
     int width;
     int height;
 
+    //text width and height
+    int text_w_start;
+    int text_w_options;
+    int text_w_quit;
+    int text_h_start;
+    int text_h_options;
+    int text_h_quit;
+
+    int caret_w;
+    int caret_h;
+
     //background image texture
     SDL_Texture* texture = NULL;
+
+    //the caret texture
+    SDL_Texture* caret = NULL;
+
     //menu option textures
     SDL_Texture* start_texture = NULL;
     SDL_Texture* options_texture = NULL;
@@ -53,6 +68,7 @@ namespace state {
      * @param width    the width of the screen
      * @param height   the height of the screen
      * @param bg_path  the path to the background image
+     * @param caret_path the path to the caret texture for current selection
      * @param font_path the path to the menu font
      * @param renderer the renderer for loading the texture
      * @param manager  the state manager
@@ -60,6 +76,7 @@ namespace state {
     title_state_t(int width,
                   int height,
                   const std::string& bg_path,
+                  const std::string& caret_path,
                   const std::string& font_path,
                   SDL_Renderer& renderer,
                   state_manager_t& manager);

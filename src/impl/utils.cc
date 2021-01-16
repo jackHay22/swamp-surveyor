@@ -59,12 +59,14 @@ namespace utils {
    * @param  font_path the path to the font to load
    * @param  renderer  the renderer
    * @param  size      the size of the font
+   * @param  w         the width of the loaded texture set by the call
+   * @param  h         the height of the loaded texture set by the call
    * @return           the loaded texture
    */
   SDL_Texture* load_font(const std::string& text,
                          const std::string& font_path,
                          SDL_Renderer& renderer,
-                         int size) {
+                         int size, int& w, int& h) {
 
     //load the font by path
     TTF_Font *font = TTF_OpenFont(font_path.c_str(), size);
@@ -87,6 +89,10 @@ namespace utils {
 
     //create a texture from this surface
     SDL_Texture *text_texture = SDL_CreateTextureFromSurface(&renderer,text_surface);
+
+    //set the width and height
+    w = text_surface->w;
+    h = text_surface->h;
 
     //free the original surface
     SDL_FreeSurface(text_surface);

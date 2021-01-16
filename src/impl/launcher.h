@@ -25,6 +25,12 @@ namespace launcher {
     //default debug mode
     bool debug = false;
     std::string debug_font = "/usr/share/fonts/noto/NotoSans-Light.ttf";
+    //the title screen image
+    std::string title_image = "resources/title_splash.png";
+    //the caret image for menu selections
+    std::string caret_image = "resources/caret.png";
+    //the font for menu options
+    std::string menu_font = "/usr/share/fonts/noto/NotoSans-Light.ttf";
     //the configurations for each level
     std::vector<std::string> level_cfgs = {};
   } launch_cfg_t;

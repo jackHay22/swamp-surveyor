@@ -34,12 +34,14 @@ namespace utils {
    * @param  font_path the path to the font to load
    * @param  renderer  the renderer
    * @param  size      the size of the font
+   * @param  w         the width of the loaded texture set by the call
+   * @param  h         the height of the loaded texture set by the call
    * @return           the loaded texture
    */
   SDL_Texture* load_font(const std::string& text,
                          const std::string& font_path,
                          SDL_Renderer& renderer,
-                         int size);
+                         int size, int& w, int& h);
 }}
 
 #endif /*_IO_JACKHAY_SWAMP_UTILS_H*/

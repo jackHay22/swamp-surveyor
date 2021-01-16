@@ -5,6 +5,9 @@
   "tile_dim" : 8,
   "debug" : false,
   "debug_font" : "/usr/share/fonts/noto/NotoSans-Light.ttf",
+  "title_image" : "resources/title_splash.png",
+  "caret_image" : "resources/caret.png",
+  "menu_font" : "/usr/share/fonts/noto/NotoSans-Light.ttf",
   "level_cfgs" : [
     "resources/level_1.json"
   ]

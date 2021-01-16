@@ -14,7 +14,7 @@ namespace state {
   #define START_TEXT "Start"
   #define OPTIONS_TEXT "Options"
   #define QUIT_TEXT "Quit"
-  #define FONT_SIZE 12
+  #define FONT_SIZE 14
 
   /**
    * Constructor
@@ -41,9 +41,24 @@ namespace state {
     this->texture = utils::load_texture(bg_path,renderer,w,h);
 
     //load the font textures
-    start_texture = utils::load_font(START_TEXT,font_path,renderer,FONT_SIZE);
-    options_texture = utils::load_font(OPTIONS_TEXT,font_path,renderer,FONT_SIZE);
-    quit_texture = utils::load_font(QUIT_TEXT,font_path,renderer,FONT_SIZE);
+    start_texture = utils::load_font(START_TEXT,
+                                     font_path,
+                                     renderer,
+                                     FONT_SIZE,
+                                     text_w_start,
+                                     text_h_start);
+    options_texture = utils::load_font(OPTIONS_TEXT,
+                                       font_path,
+                                       renderer,
+                                       FONT_SIZE,
+                                       text_w_options,
+                                       text_h_options);
+    quit_texture = utils::load_font(QUIT_TEXT,
+                                    font_path,
+                                    renderer,
+                                    FONT_SIZE,
+                                    text_w_quit,
+                                    text_h_quit);
   }
 
   //destructor
@@ -68,7 +83,16 @@ namespace state {
    * @param e the event
    */
   void title_state_t::handle_event(const SDL_Event& e) {
-
+    if (e.type == SDL_KEYDOWN) {
+      //switch on the key type
+      switch (e.key.keysym.sym) {
+        //case SDLK_w: state = ; break;
+        case SDLK_RETURN:
+          //TODO current option
+          manager.next_level_state();
+          break;
+      }
+    }
   }
 
   /**
@@ -92,8 +116,49 @@ namespace state {
                    &image_bounds,
                    &image_bounds);
 
-    int x_offset = this->width / 3;
+    int x_offset = this->width / 6;
+    int y_offset = this->height / 4;
 
     //render text options
+    SDL_Rect sample_bounds = {0,0,text_w_start,text_h_start};
+    SDL_Rect text_bounds = {x_offset,
+                            y_offset,
+                            text_w_start,text_h_start};
+
+    //render the start texture
+    SDL_RenderCopy(&renderer,
+                   this->start_texture,
+                   &sample_bounds,
+                   &text_bounds);
+
+    //add vertical spacing
+    y_offset += text_h_start;
+
+    sample_bounds = {0,0,text_w_options,text_h_options};
+    text_bounds = {x_offset,
+                   y_offset,
+                   text_w_options,text_h_options};
+
+    //render the options texture
+    SDL_RenderCopy(&renderer,
+                  this->options_texture,
+                  &sample_bounds,
+                  &text_bounds);
+
+    //add vertical spacing
+    y_offset += text_h_start;
+
+    sample_bounds = {0,0,text_w_quit,text_h_quit};
+    text_bounds = {x_offset,
+                   y_offset,
+                   text_w_quit,text_h_quit};
+
+    //render the quit texture
+    SDL_RenderCopy(&renderer,
+                   this->quit_texture,
+                   &sample_bounds,
+                   &text_bounds);
+
+    //render caret
   }
 }}
