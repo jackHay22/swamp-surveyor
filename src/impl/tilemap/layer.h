@@ -67,6 +67,14 @@ namespace tilemap {
     bool is_solid(int x, int y) const;
 
     /**
+     * Check if the tile at a position is liquid
+     * @param  x the x coordinate
+     * @param  y the y coordinate
+     * @return   whether the tile at this position is liquid
+     */
+    bool is_liquid(int x, int y) const;
+
+    /**
      * Get the number of tile rows loaded in the map
      * @return the number of rows in this layer
      */

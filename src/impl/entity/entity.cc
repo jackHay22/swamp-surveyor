@@ -12,8 +12,9 @@ namespace impl {
 namespace entity {
 
   //the gravity applied to an entity per tick
-  #define GRAVITY_PER_TICK 1
+  #define GRAVITY_PER_TICK 2
   #define CLIMB_FRAMES 6
+  #define WATER_FRAMES 2
 
   /**
    * Constructor
@@ -37,6 +38,7 @@ namespace entity {
       last_y(y),
       tile_dim(tile_dim),
       climb_counter(CLIMB_FRAMES),
+      water_counter(WATER_FRAMES),
       anims(), debug(debug) {
 
       if (anim_cfg_paths.size() < 4) {
@@ -83,22 +85,73 @@ namespace entity {
   /**
    * Update this entity at the tick
    */
-  void entity_t::update_x() {
+  void entity_t::update_x(const tilemap::tilemap_t& map) {
     //store the previous position
     this->last_x = this->x;
 
+    //get the current player bounds
+    SDL_Rect current_bounds = this->get_bounds();
+
+    //check for solid ground
+    if (!map.is_solid(current_bounds.x - 1,
+                      current_bounds.y + current_bounds.h + 1) &&
+        !map.is_solid(current_bounds.x + current_bounds.w + 1,
+                      current_bounds.y + current_bounds.h + 1) &&
+        !map.is_solid(current_bounds.x + (current_bounds.w / 2),
+                      current_bounds.y + current_bounds.h + 1)) {
+      //player not touching solid ground
+      // if ((state == IDLE_LEFT) ||
+      //     (state == MOVE_LEFT) ||
+      //     (state == CLIMB_LEFT)) {
+      //   state = DROP_LEFT;
+      //
+      // } else if ((state == IDLE_RIGHT) ||
+      //            (state == MOVE_RIGHT) ||
+      //            (state == CLIMB_RIGHT)) {
+      //   state = DROP_RIGHT;
+      // }
+      return;
+    }
+
+    //check if the player is in liquid
+    bool in_liquid = map.is_liquid(current_bounds.x + (current_bounds.w / 2),
+                                   current_bounds.y + current_bounds.h - 4);
+
+    //if in liquid set the animation slow
+    anims.at(state)->set_slow(in_liquid);
+
     //check for walk
     if (state == MOVE_LEFT) {
-      this->x -= 1;
+      //check if the player is in liquid
+      if (in_liquid) {
+        if (water_counter <= 0) {
+          this->x -= 1;
+          water_counter = WATER_FRAMES;
+        } else {
+          water_counter--;
+        }
+      } else {
+        this->x -= 1;
+      }
 
     } else if (state == MOVE_RIGHT) {
-      this->x += 1;
+      if (in_liquid) {
+        if (water_counter <= 0) {
+          this->x += 1;
+          water_counter = WATER_FRAMES;
+        } else {
+          water_counter--;
+        }
+      } else {
+        this->x += 1;
+      }
+
 
     } else if (state == CLIMB_LEFT) {
       if (climb_counter == 0) {
         //move the player up the surface
         this->x -= tile_dim;
-        this->y -= (tile_dim + 1);
+        this->y -= tile_dim;
         state = MOVE_LEFT;
 
       } else {
@@ -109,7 +162,7 @@ namespace entity {
       if (climb_counter == 0) {
         //move the player up the surface
         this->x += tile_dim;
-        this->y -= (tile_dim + 1);
+        this->y -= tile_dim;
         state = MOVE_RIGHT;
 
       } else {
@@ -134,7 +187,11 @@ namespace entity {
    * @param layer used to determine if the entity can step up
    */
   void entity_t::step_back_x(const tilemap::tilemap_t& map) {
+    //get the current player position
     SDL_Rect current_bounds = this->get_bounds();
+
+    //stop the player (boundary can't be climbed)
+    this->x = this->last_x;
 
     //make sure the entity is not already climbing
     if ((state != CLIMB_RIGHT) && (state != CLIMB_LEFT)) {
@@ -163,9 +220,6 @@ namespace entity {
           return;
         }
       }
-
-      //stop
-      this->x = this->last_x;
     }
   }
 

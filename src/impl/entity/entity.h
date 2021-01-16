@@ -37,6 +37,9 @@ namespace entity {
     //the counter during a climb cycle
     int climb_counter;
 
+    //the counter for skipping ticks in water
+    int water_counter;
+
     //the dimension of tiles
     int tile_dim;
 
@@ -54,7 +57,9 @@ namespace entity {
       MOVE_LEFT,
       MOVE_RIGHT,
       CLIMB_LEFT,
-      CLIMB_RIGHT
+      CLIMB_RIGHT,
+      DROP_LEFT,
+      DROP_RIGHT
     } state = IDLE_RIGHT;
 
   public:
@@ -99,8 +104,9 @@ namespace entity {
 
     /**
      * Update this entity at the tick in the x direction
+     * @param map the tilemap
      */
-    void update_x();
+    void update_x(const tilemap::tilemap_t& map);
 
     /**
      * Update this entity at the tick in the y direction

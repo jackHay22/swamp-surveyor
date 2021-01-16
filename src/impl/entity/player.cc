@@ -26,8 +26,7 @@ namespace entity {
                      SDL_Renderer& renderer,
                      int tile_dim,
                      bool debug)
-    : entity_t(x,y,w,h,anim_cfg_paths,renderer,tile_dim,debug)
-    {}
+    : entity_t(x,y,w,h,anim_cfg_paths,renderer,tile_dim,debug) {}
 
   /**
    * Handle some key event

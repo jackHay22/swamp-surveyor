@@ -91,6 +91,21 @@ namespace entity {
   }
 
   /**
+   * Set the animation slower
+   * @param is_slow the value
+   */
+  void anim_set_t::set_slow(bool is_slow) {
+    //adjust slowness
+    if (is_slow && !this->is_slow) {
+      this->duration++;
+    } else if (!is_slow && this->is_slow) {
+      this->duration--;
+    }
+
+    this->is_slow = is_slow;
+  }
+
+  /**
   * Update the animation
   */
   void anim_set_t::update() {

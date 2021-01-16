@@ -65,7 +65,7 @@ namespace state {
       }
 
       //update the entity in the x direction
-      entities.at(i)->update_x();
+      entities.at(i)->update_x(*tilemap);
 
       //check for a collision
       if (tilemap->is_collided(entities.at(i)->get_bounds())) {

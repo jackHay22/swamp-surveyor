@@ -80,7 +80,27 @@ namespace tilemap {
       return this->contents.at(idx_y).at(idx_x)->is_solid();
 
     } else {
-      return -1;
+      return false;
+    }
+  }
+
+  /**
+   * Check if the tile at a position is liquid
+   * @param  x the x coordinate
+   * @param  y the y coordinate
+   * @return   whether the tile at this position is liquid
+   */
+  bool layer_t::is_liquid(int x, int y) const {
+    int idx_x = x / dim;
+    int idx_y = y / dim;
+
+    //check bounds and get the type of the tile
+    if ((idx_y < this->contents.size()) &&
+        (idx_x < this->contents.at(idx_y).size())) {
+      return this->contents.at(idx_y).at(idx_x)->is_liquid();
+
+    } else {
+      return false;
     }
   }
 

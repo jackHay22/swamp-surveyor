@@ -79,6 +79,16 @@ namespace tilemap {
     return entity_layer->is_solid(x,y);
   }
 
+  /**
+   * Check if the tile at a position is liquid
+   * @param  x the x coordinate
+   * @param  y the y coordinate
+   * @return   whether the tile at this position is liquid
+   */
+  bool tilemap_t::is_liquid(int x, int y) const {
+    return entity_layer->is_liquid(x,y);
+  }
+
 
   /**
    * Check if a bounding box collides with some solid tile

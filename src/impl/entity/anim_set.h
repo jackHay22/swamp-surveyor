@@ -30,6 +30,8 @@ namespace entity {
     //ticks since last update
     int ticks = 0;
 
+    bool is_slow = false;
+
     //the texture
     SDL_Texture* texture = NULL;
 
@@ -46,6 +48,12 @@ namespace entity {
                SDL_Renderer& renderer);
     anim_set_t(const anim_set_t&) = delete;
     anim_set_t& operator=(const anim_set_t&) = delete;
+
+    /**
+     * Set the animation slower
+     * @param is_slow the value
+     */
+    void set_slow(bool is_slow);
 
     /**
      * Free texture
