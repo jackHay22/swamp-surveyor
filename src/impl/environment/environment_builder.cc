@@ -9,6 +9,7 @@
 #include <json/nlohmann_json.h>
 #include <fstream>
 #include "chemical_foam.h"
+#include "dead_tree.h"
 
 namespace impl {
 namespace environment {
@@ -16,6 +17,7 @@ namespace environment {
   typedef nlohmann::json json;
 
   #define CHEMICAL_FOAM_TYPE "chemical_foam"
+  #define DEAD_TREE_TYPE "dead_tree"
 
   /**
    * Configuration options
@@ -26,6 +28,7 @@ namespace environment {
     int w;
     int h;
     float density;
+    std::string texture;
     std::string type;
   };
 
@@ -40,6 +43,7 @@ namespace environment {
     j.at("w").get_to(c.w);
     j.at("h").get_to(c.h);
     j.at("density").get_to(c.density);
+    j.at("texture").get_to(c.texture);
     j.at("type").get_to(c.type);
   }
 
@@ -74,6 +78,16 @@ namespace environment {
                                                                          cfg.h,
                                                                          cfg.density,
                                                                          debug));
+        } else if (cfg.type == DEAD_TREE_TYPE) {
+          //add a dead tree to the environment
+          elems.push_back(std::make_shared<environment::dead_tree_t>(cfg.x,
+                                                                     cfg.y,
+                                                                     cfg.w,
+                                                                     cfg.h,
+                                                                     cfg.texture,
+                                                                     renderer,
+                                                                     false,
+                                                                     debug));
         }
       }
 

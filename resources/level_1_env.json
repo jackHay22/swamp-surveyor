@@ -5,6 +5,7 @@
     "w" : 40,
     "h" : 8,
     "density" : 0.65,
+    "texture" : "",
     "type" : "chemical_foam"
   },
   {
@@ -13,6 +14,16 @@
     "w" : 100,
     "h" : 8,
     "density" : 0.65,
+    "texture" : "",
     "type" : "chemical_foam"
+  },
+  {
+    "x" : 75,
+    "y" : 58,
+    "w" : 4,
+    "h" : 48,
+    "density" : 0.0,
+    "texture" : "resources/temp_tree.png",
+    "type" : "dead_tree"
   }
 ]

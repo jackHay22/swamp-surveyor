@@ -21,14 +21,37 @@ namespace environment {
     //the bounds of this renderable element
     SDL_Rect bounds;
 
+    //whether the player can interact with this element
+    bool interactive;
+
+    //whether this env element is a solid object
+    bool solid;
+
   public:
     //constructor takes bounds
-    renderable_t(const SDL_Rect& bounds)
-      : bounds(bounds) {}
+    renderable_t(const SDL_Rect& bounds, bool interactive, bool solid)
+      : bounds(bounds), interactive(interactive), solid(solid) {}
     renderable_t(const renderable_t&) = delete;
     renderable_t& operator=(const renderable_t&) = delete;
 
     virtual ~renderable_t() {}
+
+    /**
+     * Whether the element is *currently* interactive
+     * @return whether this element can be interacted with by the player
+     */
+    virtual bool is_interactive() const { return interactive; }
+
+    /**
+     * Interact with this element
+     */
+    virtual void interact() {}
+
+    /**
+     * Return whether this is a solid object
+     * @return whether this element is solid
+     */
+    virtual bool is_solid() const { return solid; }
 
     /**
      * Get the damage value of this renderable element

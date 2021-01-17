@@ -18,10 +18,6 @@
 namespace impl {
 namespace environment {
 
-  namespace entity {
-    class player_t;
-  }
-
   /**
    * A chemical foam that will hurt the player
    */

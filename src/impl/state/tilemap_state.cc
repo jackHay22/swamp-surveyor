@@ -46,6 +46,22 @@ namespace state {
   }
 
   /**
+   * Check if an entity has collided with a solid environmental object
+   * @param  bounds the bounds of the entity
+   * @return        whether the entity collided with the env object
+   */
+  bool tilemap_state_t::is_collided_solid_env(const SDL_Rect& bounds) const {
+    //check each environmental element for a collision
+    for (size_t i=0; i<env_renderable.size(); i++) {
+      if (env_renderable.at(i)->is_solid() &&
+          env_renderable.at(i)->is_collided(bounds)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Handle some key event
    * @param e the event
    */
@@ -65,16 +81,18 @@ namespace state {
       //update each entity in the y direction
       entities.at(i)->update_y();
 
-      //check for a collision
-      if (tilemap->is_collided(entities.at(i)->get_bounds())) {
+      //check for a collision with tilemap or env elements
+      if (tilemap->is_collided(entities.at(i)->get_bounds()) ||
+          this->is_collided_solid_env(entities.at(i)->get_bounds())) {
         entities.at(i)->step_back_y();
       }
 
       //update the entity in the x direction
       entities.at(i)->update_x(*tilemap);
 
-      //check for a collision
-      if (tilemap->is_collided(entities.at(i)->get_bounds())) {
+      //check for a collision with tilemap or env elements
+      if (tilemap->is_collided(entities.at(i)->get_bounds()) ||
+          this->is_collided_solid_env(entities.at(i)->get_bounds())) {
         entities.at(i)->step_back_x(*tilemap);
       }
 
@@ -89,8 +107,12 @@ namespace state {
     for (size_t i=0; i<env_renderable.size(); i++) {
       //check for player/environment interaction
       if (env_renderable.at(i)->is_collided(player->get_bounds())) {
-        //do damage
-        player->do_damage(env_renderable.at(i)->get_damage());
+        if (env_renderable.at(i)->is_interactive()) {
+          env_renderable.at(i)->interact();
+        } else {
+          //do damage
+          player->do_damage(env_renderable.at(i)->get_damage());
+        }
       }
 
       //update the environment element
