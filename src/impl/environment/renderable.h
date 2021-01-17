@@ -9,7 +9,6 @@
 
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
-#include "../entity/player.h"
 
 namespace impl {
 namespace environment {
@@ -32,18 +31,31 @@ namespace environment {
     virtual ~renderable_t() {}
 
     /**
+     * Get the damage value of this renderable element
+     * @return the damage this environment element does
+     */
+    virtual int get_damage() const { return 0; }
+
+    /**
+     * Get the bounds of this environmental object
+     * @return a const ref to the object bounds
+     */
+    const SDL_Rect& get_bounds() const { return bounds; }
+
+    /**
      * Check if this element is in view of the camera
      * @param  recr the collision box
      * @return
      */
-    bool collides(const SDL_Rect& rect) const;
+    virtual bool is_collided(const SDL_Rect& rect) const;
 
     /**
-     * If the player has collided with the bounding box, do
-     * any environment interaction
-     * @param player the player
+     * Check if some coordinate collides with this element
+     * @param  x the x coordinate
+     * @param  y the y coordinate
+     * @return   whether this position collides with the bounds
      */
-    virtual void player_interact(entity::player_t& player) {}
+    virtual bool is_collided(int x, int y) const;
 
     /**
      * Update the renderable component

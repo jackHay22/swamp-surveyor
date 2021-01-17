@@ -105,6 +105,16 @@ namespace tilemap {
   }
 
   /**
+   * Check if a position collides with some solid tile
+   * @param  x position x
+   * @param  y position y
+   * @return   whether this position collides with a solid tile
+   */
+  bool tilemap_t::is_collided(int x, int y) const {
+    return entity_layer->is_collided(x,y);
+  }
+
+  /**
    * Get the width of the map in pixels
    * @return the width of the map in pixels
    */

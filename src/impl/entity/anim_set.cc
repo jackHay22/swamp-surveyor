@@ -134,7 +134,10 @@ namespace entity {
     sample_bounds.h = this->frame_height;
 
     //the x y position to render at
-    SDL_Rect image_bounds = {x,y,this->frame_width,this->frame_height};
+    SDL_Rect image_bounds = {x - (frame_width / 2),
+                             y - (frame_height / 2),
+                             this->frame_width,
+                             this->frame_height};
 
     //render the current animation frame
     SDL_RenderCopy(&renderer,

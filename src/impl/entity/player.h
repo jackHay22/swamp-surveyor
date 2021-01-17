@@ -13,15 +13,37 @@
 #include <memory>
 #include <string>
 #include "entity.h"
+#include "actions/action.h"
+#include "../tilemap/tilemap.h"
+#include "../environment/renderable.h"
+#include "anim_set.h"
 
 namespace impl {
 namespace entity {
+
+  namespace actions {
+    class action_t;
+  }
 
   /**
    * Player
    */
   struct player_t : public entity_t {
   private:
+    //whether the player is performing an action
+    bool performing_action;
+
+    //actions that correspond to the current action type
+    std::vector<std::unique_ptr<actions::action_t>> actions;
+
+    //additional player specific animations not covered by the
+    //basic entity animations
+    std::vector<std::unique_ptr<anim_set_t>> anims;
+
+    //actions that the player can perform
+    enum {
+      DISPERSE_FOAM
+    } action = DISPERSE_FOAM;
 
   public:
     /**
@@ -49,10 +71,13 @@ namespace entity {
      */
     void handle_event(const SDL_Event& e);
 
-    /**
-     * Update the entity
-     */
-    void update();
+     /**
+      * Update the entity (after directional updates)
+      * @param map the tilemap
+      * @param env_elements environmental elements that can be interacted
+      */
+     void update(const tilemap::tilemap_t& map,
+                 std::vector<std::shared_ptr<environment::renderable_t>>& env_elements);
 
     /**
      * Render the entity

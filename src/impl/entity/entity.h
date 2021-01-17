@@ -14,6 +14,7 @@
 #include <string>
 #include "anim_set.h"
 #include "../tilemap/tilemap.h"
+#include "../environment/renderable.h"
 
 namespace impl {
 namespace entity {
@@ -48,24 +49,24 @@ namespace entity {
     //the dimension of tiles
     int tile_dim;
 
-    //texture animations
+    //texture animations (8 -- actions are covered by subclasses)
     std::vector<std::unique_ptr<anim_set_t>> anims;
+
+  protected:
+    //whether the entity is facing left (vs right)
+    bool facing_left;
 
     //whether debug mode enabled
     bool debug;
 
-  protected:
     //the current state of the entity, can be set by subclasses
     enum {
-      IDLE_LEFT,
-      IDLE_RIGHT,
-      MOVE_LEFT,
-      MOVE_RIGHT,
-      CLIMB_LEFT,
-      CLIMB_RIGHT,
-      DROP_LEFT,
-      DROP_RIGHT
-    } state = IDLE_RIGHT;
+      IDLE,
+      MOVE,
+      CLIMB,
+      DROP,
+      ACTION,
+    } state = IDLE;
 
   public:
     /**
@@ -110,8 +111,11 @@ namespace entity {
 
     /**
      * Update the entity (after directional updates)
+     * @param map the tilemap
+     * @param env_elements environmental elements that can be interacted
      */
-    void update();
+    virtual void update(const tilemap::tilemap_t& map,
+                        std::vector<std::shared_ptr<environment::renderable_t>>& env_elements);
 
     /**
      * Update this entity at the tick in the x direction
@@ -140,7 +144,7 @@ namespace entity {
      * @param renderer the renderer to use
      * @param camera   the camera
      */
-    void render(SDL_Renderer& renderer, const SDL_Rect& camera) const;
+    virtual void render(SDL_Renderer& renderer, const SDL_Rect& camera) const;
   };
 }}
 

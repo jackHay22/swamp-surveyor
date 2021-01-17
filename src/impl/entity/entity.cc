@@ -41,11 +41,12 @@ namespace entity {
       last_x(x),
       last_y(y),
       tile_dim(tile_dim),
+      facing_left(true),
       climb_counter(CLIMB_FRAMES),
       water_counter(WATER_FRAMES),
       anims(), debug(debug) {
 
-    if (anim_cfg_paths.size() < 4) {
+    if (anim_cfg_paths.size() < 8) {
       throw exceptions::rsrc_exception_t("not enough entity animation paths provided");
     }
 
@@ -61,8 +62,10 @@ namespace entity {
    * @param magnitude the amount off damage to do
    */
   void entity_t::do_damage(int magnitude) {
-    this->health -= magnitude;
-    this->damaged_ticks = DAMAGE_TICKS;
+    if (magnitude > 0) {
+      this->health -= magnitude;
+      this->damaged_ticks = DAMAGE_TICKS;
+    }
   }
 
   /**
@@ -89,10 +92,13 @@ namespace entity {
 
   /**
    * Update the entity (after directional updates)
+   * @param map the tilemap
+   * @param env_elements environmental elements that can be interacted
    */
-  void entity_t::update() {
+  void entity_t::update(const tilemap::tilemap_t& /*map*/,
+                        std::vector<std::shared_ptr<environment::renderable_t>>& /*env_elements*/) {
     //update the current animation
-    anims.at(state)->update();
+    anims.at(state * 2 + !facing_left)->update();
 
     //check if damaged
     if (damaged_ticks > 0) {
@@ -101,7 +107,7 @@ namespace entity {
   }
 
   /**
-   * Update this entity at the tick
+   * Update this entit y at the tick
    */
   void entity_t::update_x(const tilemap::tilemap_t& map) {
     //store the previous position
@@ -139,49 +145,25 @@ namespace entity {
     anims.at(state)->set_slow(in_liquid);
 
     //check for walk
-    if (state == MOVE_LEFT) {
+    if (state == MOVE) {
       //check if the player is in liquid
       if (in_liquid) {
         if (water_counter <= 0) {
-          this->x -= 1;
+          this->x += 1 - (2 * facing_left);
           water_counter = WATER_FRAMES;
         } else {
           water_counter--;
         }
       } else {
-        this->x -= 1;
+        this->x += 1 + (-2 * facing_left);
       }
 
-    } else if (state == MOVE_RIGHT) {
-      if (in_liquid) {
-        if (water_counter <= 0) {
-          this->x += 1;
-          water_counter = WATER_FRAMES;
-        } else {
-          water_counter--;
-        }
-      } else {
-        this->x += 1;
-      }
-
-
-    } else if (state == CLIMB_LEFT) {
+    } else if (state == CLIMB) {
       if (climb_counter == 0) {
         //move the player up the surface
-        this->x -= tile_dim;
+        this->x += tile_dim - (2 * tile_dim * facing_left);
         this->y -= tile_dim;
-        state = MOVE_LEFT;
-
-      } else {
-        climb_counter--;
-      }
-
-    } else if (state == CLIMB_RIGHT) {
-      if (climb_counter == 0) {
-        //move the player up the surface
-        this->x += tile_dim;
-        this->y -= tile_dim;
-        state = MOVE_RIGHT;
+        state = MOVE;
 
       } else {
         climb_counter--;
@@ -212,28 +194,28 @@ namespace entity {
     this->x = this->last_x;
 
     //make sure the entity is not already climbing
-    if ((state != CLIMB_RIGHT) && (state != CLIMB_LEFT)) {
+    if (state != CLIMB) {
       //check for a 1-high collision
-      if (state == MOVE_RIGHT) {
+      if ((state == MOVE) && !facing_left) {
         //check upper and lower adjacent tiles
         if (map.is_solid(current_bounds.x + current_bounds.w + 2,
                          current_bounds.y + current_bounds.h - 2) &&
             !map.is_solid(current_bounds.x + current_bounds.w + 2,
                           current_bounds.y + 2)) {
           //climb mode
-          state = CLIMB_RIGHT;
+          state = CLIMB;
           climb_counter = CLIMB_FRAMES;
           return;
         }
 
-      } else if (state == MOVE_LEFT) {
+      } else if (state == MOVE) {
         //check upper and lower adjacent tiles
         if (map.is_solid(current_bounds.x - 2,
                          current_bounds.y + current_bounds.h - 2) &&
             !map.is_solid(current_bounds.x - 2,
                           current_bounds.y + 2)) {
           //climb mode
-          state = CLIMB_LEFT;
+          state = CLIMB;
           climb_counter = CLIMB_FRAMES;
           return;
         }
@@ -255,9 +237,9 @@ namespace entity {
    */
   void entity_t::render(SDL_Renderer& renderer, const SDL_Rect& camera) const {
     //render the current animation
-    anims.at(state)->render(renderer,
-                            (x - (w / 2)) - camera.x,
-                            (y - (h / 2)) - camera.y);
+    anims.at(state * 2 + !facing_left)->render(renderer,
+                                               x - camera.x,
+                                               y - camera.y);
 
     //render the damage indicator
     if (damaged_ticks > 0) {

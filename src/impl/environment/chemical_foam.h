@@ -18,6 +18,10 @@
 namespace impl {
 namespace environment {
 
+  namespace entity {
+    class player_t;
+  }
+
   /**
    * A chemical foam that will hurt the player
    */
@@ -28,6 +32,9 @@ namespace environment {
 
     //foam volume (TODO: make texture?)
     std::vector<std::pair<int,int>> foam;
+
+    //whether the foam has been dispersed
+    bool dispersed;
 
     //whether debug mode enabled
     bool debug;
@@ -55,11 +62,24 @@ namespace environment {
     chemical_foam_t& operator=(const chemical_foam_t&) = delete;
 
     /**
-     * If the player has collided with the bounding box, do
-     * any environment interaction
-     * @param player the player
+     * Disperse some of the foam
      */
-    void player_interact(entity::player_t& player);
+    void disperse_foam();
+
+    /**
+     * Check if this element is in view of the camera
+     * @param  recr the collision box
+     * @return
+     */
+    bool is_collided(const SDL_Rect& rect) const;
+
+    /**
+     * Check if some coordinate collides with this foam
+     * @param  x the x coordinate
+     * @param  y the y coordinate
+     * @return   whether this position collides with the foam bounds
+     */
+    bool is_collided(int x, int y) const;
 
     /**
      * Update the renderable component

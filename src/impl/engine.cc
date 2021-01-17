@@ -53,6 +53,19 @@ namespace engine {
   }
 
   /**
+   * Take the max value of two numbers
+   * @param  a the first number
+   * @param  b the second number
+   * @return   the greater of a and b
+   */
+  inline int max(int a, int b) {
+    if (a > b) {
+      return a;
+    }
+    return b;
+  }
+
+  /**
    * Pthread handler for update cycle
    * @param cfg_v the manager
    */
@@ -63,11 +76,19 @@ namespace engine {
 
     //update state while the system is running
     while (manager->is_running()) {
+      std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+
       //update the game state
       manager->update();
 
+      //elapsed time
+      std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+      //calculate the elapsed milliseconds
+      int elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
       //sleep until the next tick
-      std::this_thread::sleep_for(std::chrono::milliseconds(TICK_SLEEP));
+      std::this_thread::sleep_for(std::chrono::milliseconds(max(TICK_SLEEP - elapsed_ms, 0)));
     }
 
     pthread_exit(NULL);
@@ -130,7 +151,7 @@ namespace engine {
     //run
     while (manager->is_running()) {
       //get the cycle start time
-      std::clock_t start = std::clock();
+      std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
       //check events
       while (SDL_PollEvent(&e) != 0 ) {
@@ -161,10 +182,15 @@ namespace engine {
       if (debug) {
         //update fps every 10 frames
         if (frames <= 0) {
-          //calc the ms elapsed
-          int ms = (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000);
-          if (ms > 0) {
-            fps = int (MS_PER_SECOND / ms);
+          //elapsed time
+          std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+          //calculate the elapsed milliseconds
+          int elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+          //calculate fps
+          if (elapsed_ms > 0) {
+            fps = int (MS_PER_SECOND / elapsed_ms);
           }
           frames = FRAMES_PER_FPS;
         } else {

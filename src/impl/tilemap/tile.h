@@ -57,6 +57,14 @@ namespace tilemap {
     bool is_collided(const SDL_Rect& other) const;
 
     /**
+     * Check if a position collides with this tile
+     * @param  x position x
+     * @param  y position y
+     * @return   whether this position collides with this tile
+     */
+    bool is_collided(int x, int y) const;
+
+    /**
      * Check whether this tile is solid
      * @return whether this tile is solid
      */
