@@ -15,6 +15,8 @@ namespace entity {
   #define GRAVITY_PER_TICK 2
   #define CLIMB_FRAMES 6
   #define WATER_FRAMES 2
+  #define STARTING_HEALTH 100
+  #define DAMAGE_TICKS 4
 
   /**
    * Constructor
@@ -34,6 +36,8 @@ namespace entity {
                      bool debug)
     : x(x), y(y),
       w(w), h(h),
+      health(STARTING_HEALTH),
+      damaged_ticks(0),
       last_x(x),
       last_y(y),
       tile_dim(tile_dim),
@@ -41,16 +45,25 @@ namespace entity {
       water_counter(WATER_FRAMES),
       anims(), debug(debug) {
 
-      if (anim_cfg_paths.size() < 4) {
-        throw exceptions::rsrc_exception_t("not enough entity animation paths provided");
-      }
-
-      //load animation frames (must be in order)
-      for (const std::string& p : anim_cfg_paths) {
-        //create the animation set and add to list
-        anims.push_back(std::make_unique<anim_set_t>(p,renderer));
-      }
+    if (anim_cfg_paths.size() < 4) {
+      throw exceptions::rsrc_exception_t("not enough entity animation paths provided");
     }
+
+    //load animation frames (must be in order)
+    for (const std::string& p : anim_cfg_paths) {
+      //create the animation set and add to list
+      anims.push_back(std::make_unique<anim_set_t>(p,renderer));
+    }
+  }
+
+  /**
+   * Do damage to this entity by some magnitude
+   * @param magnitude the amount off damage to do
+   */
+  void entity_t::do_damage(int magnitude) {
+    this->health -= magnitude;
+    this->damaged_ticks = DAMAGE_TICKS;
+  }
 
   /**
    * Get the bounding box for this entity
@@ -80,6 +93,11 @@ namespace entity {
   void entity_t::update() {
     //update the current animation
     anims.at(state)->update();
+
+    //check if damaged
+    if (damaged_ticks > 0) {
+      damaged_ticks--;
+    }
   }
 
   /**
@@ -240,6 +258,14 @@ namespace entity {
     anims.at(state)->render(renderer,
                             (x - (w / 2)) - camera.x,
                             (y - (h / 2)) - camera.y);
+
+    //render the damage indicator
+    if (damaged_ticks > 0) {
+      SDL_Rect bounds = {0,0,camera.w,camera.h};
+      //render damage (TEMP)
+      SDL_SetRenderDrawColor(&renderer,255,0,0,255);
+      SDL_RenderDrawRect(&renderer,&bounds);
+    }
 
     if (debug) {
       //get the current bounds (corrected by camera view)

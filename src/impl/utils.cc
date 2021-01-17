@@ -78,7 +78,7 @@ namespace utils {
     }
 
     //default color
-    SDL_Color color = {255,255,255};
+    SDL_Color color = {0,0,0};
 
     //load the text surface
     SDL_Surface* text_surface = TTF_RenderText_Solid(font,text.c_str(),color);

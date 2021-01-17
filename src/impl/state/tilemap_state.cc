@@ -15,6 +15,7 @@ namespace state {
    * @param tilemap    the tilemap this state uses
    * @param entities   the entities in this state
    * @param insects    the insects in the map
+   * @param env_renderable environmental elements that can be rendered
    * @param player_idx the index of the player in the entity list
    * @param manager    the state manager
    * @param camera     the level camera
@@ -22,12 +23,14 @@ namespace state {
   tilemap_state_t::tilemap_state_t(std::shared_ptr<tilemap::tilemap_t> tilemap,
                                    std::vector<std::shared_ptr<entity::entity_t>>& entities,
                                    std::shared_ptr<entity::insects_t> insects,
+                                   std::vector<std::shared_ptr<environment::renderable_t>>& env_renderable,
                                    int player_idx, state_manager_t& manager,
                                    SDL_Rect& camera)
     : state_t(manager, camera),
       tilemap(tilemap),
       entities(entities),
-      insects(insects) {
+      insects(insects),
+      env_renderable(env_renderable) {
     //sanity check
     if (player_idx >= entities.size()) {
       throw exceptions::rsrc_exception_t("not enough entities found in list");
@@ -82,6 +85,18 @@ namespace state {
     //update the insects
     insects->update();
 
+    //update each renderable environment element
+    for (size_t i=0; i<env_renderable.size(); i++) {
+      //check for player/environment interaction
+      if (env_renderable.at(i)->collides(player->get_bounds())) {
+        //trigger the interaction with the player
+        env_renderable.at(i)->player_interact(*player);
+      }
+
+      //update the environment element
+      env_renderable.at(i)->update();
+    }
+
     //center the camera on the player
     int center_x, center_y;
     player->get_center(center_x,center_y);
@@ -125,6 +140,11 @@ namespace state {
 
     //render insect swarm
     insects->render(renderer,this->camera);
+
+    //render environmental elements
+    for (size_t i=0; i<env_renderable.size(); i++) {
+      env_renderable.at(i)->render(renderer,this->camera);
+    }
 
     //render foreground layer
     tilemap->render_fg(renderer, this->camera);

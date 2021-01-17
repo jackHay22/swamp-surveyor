@@ -14,7 +14,7 @@ namespace state {
   #define START_TEXT "Start"
   #define OPTIONS_TEXT "Options"
   #define QUIT_TEXT "Quit"
-  #define FONT_SIZE 14
+  #define FONT_SIZE 12
 
   /**
    * Constructor
@@ -22,6 +22,7 @@ namespace state {
    * @param width    the width of the screen
    * @param height   the height of the screen
    * @param bg_path  the path to the background image
+   * @param caret_path the path to the caret texture for current selection
    * @param font_path the path to the menu font
    * @param renderer the renderer for loading the texture
    * @param manager  the state manager
@@ -29,6 +30,7 @@ namespace state {
   title_state_t::title_state_t(int width,
                                int height,
                                const std::string& bg_path,
+                               const std::string& caret_path,
                                const std::string& font_path,
                                SDL_Renderer& renderer,
                                state_manager_t& manager)
@@ -39,6 +41,9 @@ namespace state {
     int w,h = 0;
     //load the background texture
     this->texture = utils::load_texture(bg_path,renderer,w,h);
+
+    //load the caret selection texture
+    this->caret_texture = utils::load_texture(caret_path,renderer,caret_w,caret_h);
 
     //load the font textures
     start_texture = utils::load_font(START_TEXT,
@@ -63,7 +68,7 @@ namespace state {
 
   //destructor
   title_state_t::~title_state_t() {
-    //destroy the bg texture
+    //destroy textures
     if (texture != NULL) {
       SDL_DestroyTexture(texture);
     }
@@ -76,6 +81,35 @@ namespace state {
     if (quit_texture != NULL) {
       SDL_DestroyTexture(quit_texture);
     }
+    if (caret_texture != NULL) {
+      SDL_DestroyTexture(caret_texture);
+    }
+  }
+
+  /**
+   * Change the selection up
+   */
+  void title_state_t::select_up() {
+    if (selected_option == START) {
+      selected_option = QUIT;
+    } else if (selected_option == OPTIONS) {
+      selected_option = START;
+    } else {
+      selected_option = OPTIONS;
+    }
+  }
+
+  /**
+   * Change the selection down
+   */
+  void title_state_t::select_down() {
+    if (selected_option == START) {
+      selected_option = OPTIONS;
+    } else if (selected_option == OPTIONS) {
+      selected_option = QUIT;
+    } else {
+      selected_option = START;
+    }
   }
 
   /**
@@ -86,10 +120,27 @@ namespace state {
     if (e.type == SDL_KEYDOWN) {
       //switch on the key type
       switch (e.key.keysym.sym) {
-        //case SDLK_w: state = ; break;
+        case SDLK_s:
+          select_down();
+          break;
+        case SDLK_DOWN:
+          select_down();
+          break;
+        case SDLK_w:
+          select_up();
+          break;
+        case SDLK_UP:
+          select_up();
+          break;
         case SDLK_RETURN:
-          //TODO current option
-          manager.next_level_state();
+          if (selected_option == START) {
+            //start the first level
+            manager.next_level_state();
+          } else if (selected_option == QUIT) {
+            //stop system
+            manager.set_running(false);
+          }
+          //TODO options menu
           break;
       }
     }
@@ -159,6 +210,26 @@ namespace state {
                    &sample_bounds,
                    &text_bounds);
 
-    //render caret
+    //compute caret coordinates based on selection
+    int caret_offset_x = x_offset - caret_w;
+    int caret_offset_y = y_offset;
+
+    if (selected_option == START) {
+      caret_offset_y -= (2 * text_h_start);
+    } else if (selected_option == OPTIONS) {
+      caret_offset_y -= text_h_start;
+    }
+
+    //create texture sample and destination bounds
+    sample_bounds = {0,0,caret_w,caret_h};
+    text_bounds = {caret_offset_x - (caret_w / 2),
+                   caret_offset_y + (caret_h / 2),
+                   caret_w,caret_h};
+
+    //render the caret
+    SDL_RenderCopy(&renderer,
+                   this->caret_texture,
+                   &sample_bounds,
+                   &text_bounds);
   }
 }}
