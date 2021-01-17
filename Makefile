@@ -1,4 +1,4 @@
-SOURCES = $(wildcard src/*.cc) $(wildcard src/*/*.cc) $(wildcard src/*/*/*.cc)
+SOURCES = $(wildcard src/*.cc) $(wildcard src/*/*.cc) $(wildcard src/*/*/*.cc) $(wildcard src/*/*/*/*.cc)
 OBJECTS = $(SOURCES:.c=.o)
 CFLAGSO = -std=c++17 -O2 -Wall -Wextra -pedantic
 CFLAGS = -std=c++17 -g

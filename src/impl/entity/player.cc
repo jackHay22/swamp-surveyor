@@ -6,6 +6,7 @@
 
 #include "player.h"
 #include <iostream>
+#include "actions/foam_spray.h"
 
 namespace impl {
 namespace entity {
@@ -26,7 +27,21 @@ namespace entity {
                      SDL_Renderer& renderer,
                      int tile_dim,
                      bool debug)
-    : entity_t(x,y,w,h,anim_cfg_paths,renderer,tile_dim,debug) {}
+    : entity_t(x,y,w,h,anim_cfg_paths,renderer,tile_dim,debug),
+      performing_action(false),
+      actions() {
+    //add the foam spray action
+    actions.push_back(std::make_unique<actions::foam_spray_t>());
+
+    //load the additional animation paths
+    if (anim_cfg_paths.size() > 8) {
+      for (size_t i=8; i<anim_cfg_paths.size(); i++) {
+        //load additional animations
+        anims.push_back(std::make_unique<anim_set_t>(anim_cfg_paths.at(i),
+                                                     renderer));
+      }
+    }
+  }
 
   /**
    * Handle some key event
@@ -39,34 +54,75 @@ namespace entity {
       switch (e.key.keysym.sym) {
         //case SDLK_w: state = ; break;
         case SDLK_a:
-          if (state != CLIMB_LEFT) {
-            state = MOVE_LEFT;
+          if (state != CLIMB) {
+            state = MOVE;
+            facing_left = true;
           }
           break;
         //case SDLK_s: state = ; break;
         case SDLK_d:
-          if (state != CLIMB_RIGHT) {
-            state = MOVE_RIGHT;
+          if (state != CLIMB) {
+            state = MOVE;
+            facing_left = false;
           }
+          break;
+        case SDLK_e:
+          state = ACTION;
+          performing_action = true;
+          action = DISPERSE_FOAM;
           break;
       }
     } else if (e.type == SDL_KEYUP) {
       //check key released
       switch (e.key.keysym.sym) {
         //case SDLK_w: state = ; break;
-        case SDLK_a: state = IDLE_LEFT; break;
+        case SDLK_a: state = IDLE; break;
         //case SDLK_s: state = ; break;
-        case SDLK_d: state = IDLE_RIGHT; break;
+        case SDLK_d: state = IDLE; break;
+        case SDLK_e:
+          if (state == ACTION) {
+            state = IDLE;
+            performing_action = false;
+
+          }
+          break;
       }
     }
   }
 
 
   /**
-   * Update the entity
+   * Update the entity (after directional updates)
+   * @param map the tilemap
+   * @param env_elements environmental elements that can be interacted
    */
-  void player_t::update() {
-    entity_t::update();
+  void player_t::update(const tilemap::tilemap_t& map,
+              std::vector<std::shared_ptr<environment::renderable_t>>& env_elements) {
+    //call entity update
+    entity_t::update(map,env_elements);
+
+    //check whether the player is performing an action
+    //and toggle the current action
+    performing_action = state == ACTION;
+    actions.at(action)->toggle_action(performing_action);
+
+    //update all actions
+    SDL_Rect b = get_bounds();
+
+    //set the origin and direction of the action
+    int emit_x = b.x + b.w;
+    int emit_y = b.y + (b.h / 2);
+    int dir = 1;
+    if (facing_left) {
+      emit_x -= b.w;
+      dir = -1;
+    }
+
+    //update all actions
+    for (size_t i=0; i<actions.size(); i++) {
+      //perform the action
+      actions.at(i)->update(map,env_elements,emit_x,emit_y,dir);
+    }
   }
 
   /**
@@ -75,6 +131,23 @@ namespace entity {
    * @param camera the camera
    */
   void player_t::render(SDL_Renderer& renderer, const SDL_Rect& camera) const {
-    entity_t::render(renderer,camera);
+    //render all actions
+    for (size_t i=0; i<actions.size(); i++) {
+      //render the action
+      actions.at(i)->render(renderer,camera);
+    }
+
+    //if the player is performing an action use a supplementary animation
+    if (performing_action) {
+      SDL_Rect b = get_bounds();
+      //actions correspond to pairs of animations
+      anims.at((2 * action) + !facing_left)->render(renderer,
+                                                    (b.x + (b.w / 2)) - camera.x,
+                                                    (b.y + (b.h / 2)) - camera.y);
+
+    } else {
+      //entity renders state
+      entity_t::render(renderer,camera);
+    }
   }
 }}

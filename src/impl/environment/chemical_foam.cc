@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <algorithm>
 #include <random>
+#include "../entity/player.h"
 
 namespace impl {
 namespace environment {
@@ -19,6 +20,7 @@ namespace environment {
   #define FOAM_G 255
   #define FOAM_B 255
   #define BUBBLE_TICKS_PER_RISE 6
+  #define DISPERSE_FOAM_RATE 20 // equates to a 1/100 chance each
 
   /**
    * Chemical foam constructor
@@ -34,7 +36,7 @@ namespace environment {
                                    float density,
                                    bool debug)
     : renderable_t({x,y,w,h}),
-      bubbles(), foam(), debug(debug) {
+      bubbles(), foam(), dispersed(false), debug(debug) {
 
     //init random seed
     srand(time(NULL));
@@ -78,44 +80,78 @@ namespace environment {
    * Create a random bubble
    */
   void chemical_foam_t::mk_random_bubble() {
+    //make a new random bubble and add to vector
     bubbles.push_back(std::make_tuple((rand() % bounds.w) + bounds.x,
                                       bounds.y + bounds.h - 1,
                                       rand() % BUBBLE_TICKS_PER_RISE));
   }
 
   /**
-   * If the player has collided with the bounding box, do
-   * any environment interaction
-   * @param player the player
+   * Disperse some of the foam
    */
-  void chemical_foam_t::player_interact(entity::player_t& player) {
-    player.do_damage(FOAM_PLAYER_DAMAGE);
+  void chemical_foam_t::disperse_foam() {
+    //erase some of the foam
+    for (size_t i=0; i<foam.size(); i++) {
+      if (rand() % DISPERSE_FOAM_RATE == 0) {
+        foam.erase(foam.begin() + i);
+      }
+    }
+
+    //erase some of the bubbles
+    for (size_t i=0; i<bubbles.size(); i++) {
+      if (rand() % (DISPERSE_FOAM_RATE * 2) == 0) {
+        bubbles.erase(bubbles.begin() + i);
+      }
+    }
+    
+    //check whether all of the foam is emptied
+    this->dispersed = foam.empty();
+  }
+
+  /**
+   * Check if this element is in view of the camera
+   * @param  recr the collision box
+   * @return
+   */
+  bool chemical_foam_t::is_collided(const SDL_Rect& rect) const {
+    //cannot collide if dispersed
+    return !dispersed && renderable_t::is_collided(rect);
+  }
+
+  /**
+   * Check if some coordinate collides with this foam
+   * @param  x the x coordinate
+   * @param  y the y coordinate
+   * @return   whether this position collides with the foam bounds
+   */
+  bool chemical_foam_t::is_collided(int x, int y) const {
+    //check wheth
+    return !dispersed && renderable_t::is_collided(x,y);
   }
 
   /**
    * Update the renderable component
    */
   void chemical_foam_t::update() {
-    //small changes to foam
-    //TODO
+    if (!dispersed) {
+      //update existing bubbles
+      for (size_t i=0; i<bubbles.size(); i++) {
+        //decrement the movement tick
+        std::get<2>(bubbles.at(i))--;
 
-    //update existing bubbles
-    for (size_t i=0; i<bubbles.size(); i++) {
-      //decrement the movement tick
-      std::get<2>(bubbles.at(i))--;
+        //if the cycle has elapsed, move
+        if (std::get<2>(bubbles.at(i)) <= 0) {
+          std::get<2>(bubbles.at(i)) = BUBBLE_TICKS_PER_RISE;
+          std::get<1>(bubbles.at(i))--;
 
-      //if the cycle has elapsed, move
-      if (std::get<2>(bubbles.at(i)) <= 0) {
-        std::get<2>(bubbles.at(i)) = BUBBLE_TICKS_PER_RISE;
-        std::get<1>(bubbles.at(i))--;
-
-        //check if the bubble is too high
-        if ((std::get<1>(bubbles.at(i)) > bounds.h) &&
-            (rand() % 3 == 0)) {
-          //remove
-          bubbles.erase(bubbles.begin() + i);
-          //replace
-          mk_random_bubble();
+          //check if the bubble is too high
+          if ((std::get<1>(bubbles.at(i)) > bounds.h) &&
+              (rand() % 3 == 0)) {
+            //remove
+            bubbles.erase(bubbles.begin() + i);
+            //replace
+            mk_random_bubble();
+          }
         }
       }
     }
@@ -129,7 +165,7 @@ namespace environment {
   void chemical_foam_t::render(SDL_Renderer& renderer,
                                const SDL_Rect& camera) const {
     //check if this element is in view
-    if (this->collides(camera)) {
+    if (this->is_collided(camera) && !this->dispersed) {
       //temp foam color
       SDL_SetRenderDrawColor(&renderer,FOAM_R,FOAM_G,FOAM_B,225);
       //render foam

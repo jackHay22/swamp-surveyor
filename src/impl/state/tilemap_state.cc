@@ -79,7 +79,7 @@ namespace state {
       }
 
       //update entity
-      entities.at(i)->update();
+      entities.at(i)->update(*tilemap,env_renderable);
     }
 
     //update the insects
@@ -88,9 +88,9 @@ namespace state {
     //update each renderable environment element
     for (size_t i=0; i<env_renderable.size(); i++) {
       //check for player/environment interaction
-      if (env_renderable.at(i)->collides(player->get_bounds())) {
-        //trigger the interaction with the player
-        env_renderable.at(i)->player_interact(*player);
+      if (env_renderable.at(i)->is_collided(player->get_bounds())) {
+        //do damage
+        player->do_damage(env_renderable.at(i)->get_damage());
       }
 
       //update the environment element

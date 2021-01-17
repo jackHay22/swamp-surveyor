@@ -194,6 +194,26 @@ namespace tilemap {
   }
 
   /**
+   * Check if a position collides with some solid tile
+   * @param  x position x
+   * @param  y position y
+   * @return   whether this position collides with a solid tile
+   */
+  bool layer_t::is_collided(int x, int y) const {
+    bool collided = false;
+
+    //check each tile
+    this->for_each_const([&collided,x,y](tile_t& tile){
+      //look for the first solid collided tile
+      if (!collided && tile.is_collided(x,y)) {
+        collided = tile.is_solid();
+      }
+    });
+
+    return collided;
+  }
+
+  /**
    * Update any animated layers
    */
   void layer_t::update() {

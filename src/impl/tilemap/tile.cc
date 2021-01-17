@@ -42,6 +42,22 @@ namespace tilemap {
     }
 
     /**
+     * Check if a position collides with this tile
+     * @param  x position x
+     * @param  y position y
+     * @return   whether this position collides with this tile
+     */
+    bool tile_t::is_collided(int x, int y) const {
+      int actual_x = this->x * dim;
+      int actual_y = this->y * dim;
+      //check if the position collides with the tile
+      return (x >= actual_x) &&
+             (x < (actual_x + dim)) &&
+             (y >= actual_y) &&
+             (y < (actual_y + dim));
+    }
+
+    /**
      * Render this tile
      * - Checks if the camera box collides with the tile position
      * - Renders the tile texture
