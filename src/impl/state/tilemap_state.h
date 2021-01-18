@@ -42,6 +42,13 @@ namespace state {
     //renderable environment components
     std::vector<std::shared_ptr<environment::renderable_t>> env_renderable;
 
+    /**
+     * Check if an entity has collided with a solid environmental object
+     * @param  bounds the bounds of the entity
+     * @return        whether the entity collided with the env object
+     */
+    bool is_collided_solid_env(const SDL_Rect& bounds) const;
+
   public:
     /**
      * Constructor

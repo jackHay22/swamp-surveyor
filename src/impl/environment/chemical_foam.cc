@@ -35,7 +35,7 @@ namespace environment {
                                    int w, int h,
                                    float density,
                                    bool debug)
-    : renderable_t({x,y,w,h}),
+    : renderable_t({x,y,w,h}, false, false),
       bubbles(), foam(), dispersed(false), debug(debug) {
 
     //init random seed
@@ -103,7 +103,12 @@ namespace environment {
         bubbles.erase(bubbles.begin() + i);
       }
     }
-    
+
+    //if foam active it needs to be visible
+    if (foam.size() <= 10) {
+      foam.clear();
+    }
+
     //check whether all of the foam is emptied
     this->dispersed = foam.empty();
   }
