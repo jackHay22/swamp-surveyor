@@ -28,7 +28,8 @@ namespace environment {
     int w;
     int h;
     float density;
-    std::string texture;
+    std::string animation_path;
+    int animation_frames;
     std::string type;
   };
 
@@ -43,7 +44,8 @@ namespace environment {
     j.at("w").get_to(c.w);
     j.at("h").get_to(c.h);
     j.at("density").get_to(c.density);
-    j.at("texture").get_to(c.texture);
+    j.at("animation_path").get_to(c.animation_path);
+    j.at("animation_frames").get_to(c.animation_frames);
     j.at("type").get_to(c.type);
   }
 
@@ -84,9 +86,9 @@ namespace environment {
                                                                      cfg.y,
                                                                      cfg.w,
                                                                      cfg.h,
-                                                                     cfg.texture,
+                                                                     cfg.animation_path,
                                                                      renderer,
-                                                                     false,
+                                                                     cfg.animation_frames,
                                                                      debug));
         }
       }

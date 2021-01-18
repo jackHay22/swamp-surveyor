@@ -44,8 +44,10 @@ namespace environment {
 
     /**
      * Interact with this element
+     * @param x the player position x
+     * @param y the player position y
      */
-    virtual void interact() {}
+    virtual void interact(int x, int y) {}
 
     /**
      * Return whether this is a solid object
