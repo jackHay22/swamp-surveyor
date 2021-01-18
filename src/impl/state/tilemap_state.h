@@ -43,6 +43,13 @@ namespace state {
     std::vector<std::shared_ptr<environment::renderable_t>> env_renderable;
 
     /**
+     * Check if a given bounding box is on solid ground
+     * @param  bounds the bounding box
+     * @return        whether the box is against a solid component
+     */
+    bool on_solid_ground(const SDL_Rect& bounds) const;
+
+    /**
      * Check if an entity has collided with a solid environmental object
      * @param  bounds the bounds of the entity
      * @return        whether the entity collided with the env object

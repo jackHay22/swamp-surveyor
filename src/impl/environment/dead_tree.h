@@ -10,8 +10,10 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
 #include "renderable.h"
+#include "single_seq_anim.h"
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace impl {
 namespace environment {
@@ -22,19 +24,14 @@ namespace environment {
   struct dead_tree_t : public renderable_t {
     //whether the tree has fallen
     bool felled;
-    //when falling, the rotation frames so far
-    int rot_frames;
     //the bounds of the tree once it has fallen
     SDL_Rect felled_bounds;
 
+    //the single sequence animation
+    std::unique_ptr<single_seq_anim_t> anim;
+
     //whether the tree is falling left (t), right (f)
     bool left;
-
-    //the texture
-    SDL_Texture* texture = NULL;
-    //the dimensions of the texture
-    int texture_w;
-    int texture_h;
 
     //whether debug mode enabled
     bool debug;
@@ -48,27 +45,24 @@ namespace environment {
      * @param h     height
      * @param texture_path the path to the tree texture
      * @param renderer the renderer for loading the texture
-     * @param left  the direction the tree will fall
+     * @param total_frames the number of animation frames
      * @param debug whether debug mode enabled
      */
     dead_tree_t(int x,int y,
                 int w, int h,
                 const std::string& texture_path,
                 SDL_Renderer& renderer,
-                bool left,
+                int total_frames,
                 bool debug);
     dead_tree_t(const dead_tree_t&) = delete;
     dead_tree_t& operator=(const dead_tree_t&) = delete;
 
     /**
-     * Free texture
-     */
-    ~dead_tree_t();
-
-    /**
      * Fell the dead tree
+     * @param x the player position x
+     * @param y the player position y
      */
-    void interact();
+    void interact(int x, int y);
 
     /**
      * Whether this tree can still be felled
@@ -80,7 +74,7 @@ namespace environment {
      * Whether the tree is solid (only when in the fallen state)
      * @return whether the tree has completely fallen
      */
-    bool is_solid() const { return felled && (rot_frames > 0); }
+    bool is_solid() const { return felled; }
 
     /**
      * Check if this element is in view of the camera

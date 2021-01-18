@@ -107,7 +107,7 @@ namespace entity {
   }
 
   /**
-   * Update this entit y at the tick
+   * Update this entity at the tick
    */
   void entity_t::update_x(const tilemap::tilemap_t& map) {
     //store the previous position
@@ -115,27 +115,6 @@ namespace entity {
 
     //get the current player bounds
     SDL_Rect current_bounds = this->get_bounds();
-
-    //check for solid ground
-    if (!map.is_solid(current_bounds.x - 1,
-                      current_bounds.y + current_bounds.h + 1) &&
-        !map.is_solid(current_bounds.x + current_bounds.w + 1,
-                      current_bounds.y + current_bounds.h + 1) &&
-        !map.is_solid(current_bounds.x + (current_bounds.w / 2),
-                      current_bounds.y + current_bounds.h + 1)) {
-      //player not touching solid ground
-      // if ((state == IDLE_LEFT) ||
-      //     (state == MOVE_LEFT) ||
-      //     (state == CLIMB_LEFT)) {
-      //   state = DROP_LEFT;
-      //
-      // } else if ((state == IDLE_RIGHT) ||
-      //            (state == MOVE_RIGHT) ||
-      //            (state == CLIMB_RIGHT)) {
-      //   state = DROP_RIGHT;
-      // }
-      return;
-    }
 
     //check if the player is in liquid
     bool in_liquid = map.is_liquid(current_bounds.x + (current_bounds.w / 2),

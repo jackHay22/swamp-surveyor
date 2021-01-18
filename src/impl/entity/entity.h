@@ -119,7 +119,6 @@ namespace entity {
 
     /**
      * Update this entity at the tick in the x direction
-     * @param map the tilemap
      */
     void update_x(const tilemap::tilemap_t& map);
 
