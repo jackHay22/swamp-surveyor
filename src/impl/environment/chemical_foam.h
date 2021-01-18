@@ -58,6 +58,12 @@ namespace environment {
     chemical_foam_t& operator=(const chemical_foam_t&) = delete;
 
     /**
+     * Get the damage that foam causes
+     * @return how much damage this foam causes
+     */
+    int get_damage() const;
+
+    /**
      * Disperse some of the foam
      */
     void disperse_foam();

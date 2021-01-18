@@ -87,6 +87,14 @@ namespace environment {
   }
 
   /**
+   * Get the damage that foam causes
+   * @return how much damage this foam causes
+   */
+  int chemical_foam_t::get_damage() const {
+    return FOAM_PLAYER_DAMAGE;
+  }
+
+  /**
    * Disperse some of the foam
    */
   void chemical_foam_t::disperse_foam() {
@@ -188,7 +196,6 @@ namespace environment {
       }
 
       if (debug) {
-
         //get the current bounds (corrected by camera view)
         SDL_Rect debug_bounds = {bounds.x - camera.x,
                                  bounds.y - camera.y,

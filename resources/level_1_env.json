@@ -38,5 +38,15 @@
     "animation_path" : "resources/animations/tree_fall_1.png",
     "animation_frames" : 10,
     "type" : "dead_tree"
+  },
+  {
+    "x" : 158,
+    "y" : 76,
+    "w" : 4,
+    "h" : 24,
+    "density" : 0.0,
+    "animation_path" : "",
+    "animation_frames" : 0,
+    "type" : "chemical_seep"
   }
 ]

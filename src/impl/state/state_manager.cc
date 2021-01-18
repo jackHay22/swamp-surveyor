@@ -42,6 +42,7 @@ namespace state {
    * @param e the keypress event
    */
   void state_manager_t::handle_event(const SDL_Event& e) {
+    std::unique_lock<std::shared_mutex> state_lock(lock);
     states.at(current_state)->handle_event(e);
   }
 

@@ -91,6 +91,12 @@ namespace entity {
     virtual ~entity_t() {}
 
     /**
+     * Get the entity health remaining
+     * @return the entity health
+     */
+    int get_health() const { return health; }
+
+    /**
      * Do damage to this entity by some magnitude
      * @param magnitude the amount off damage to do
      */

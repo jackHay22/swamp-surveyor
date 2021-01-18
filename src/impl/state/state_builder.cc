@@ -17,6 +17,8 @@
 #include "../exceptions.h"
 #include "../environment/renderable.h"
 #include "../environment/environment_builder.h"
+#include "../items/item_builder.h"
+#include "../items/item.h"
 
 namespace impl {
 namespace state {
@@ -45,6 +47,8 @@ namespace state {
     std::string insect_cfg_path = "";
     //index of player in entity cfg list
     int player_idx = 0;
+    //the path to the items configuration file
+    std::string items_path;
   };
 
   /**
@@ -63,6 +67,7 @@ namespace state {
     j.at("env_elems_path").get_to(c.env_elems_path);
     j.at("player_idx").get_to(c.player_idx);
     j.at("bg_stationary").get_to(c.bg_stationary);
+    j.at("items_path").get_to(c.items_path);
   }
 
   /**
@@ -133,11 +138,18 @@ namespace state {
                                 renderer,
                                 debug);
 
+    //load items
+    std::vector<std::shared_ptr<items::item_t>> level_items;
+    items::load_items(level_items,
+                      cfg.items_path,
+                      renderer, debug);
+
     //make the state and add it to the manager
     state_manager->add_state(std::make_unique<state::tilemap_state_t>(tilemap,
                                                                       entities,
                                                                       insects,
                                                                       env_renderable,
+                                                                      level_items,
                                                                       cfg.player_idx,
                                                                       *state_manager,
                                                                       camera));
