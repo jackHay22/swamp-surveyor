@@ -6,6 +6,7 @@
 
 #include "tilemap_state.h"
 #include "../exceptions.h"
+#include <iostream>
 
 namespace impl {
 namespace state {
@@ -16,6 +17,7 @@ namespace state {
    * @param entities   the entities in this state
    * @param insects    the insects in the map
    * @param env_renderable environmental elements that can be rendered
+   * @param level_items the items in this level
    * @param player_idx the index of the player in the entity list
    * @param manager    the state manager
    * @param camera     the level camera
@@ -24,13 +26,17 @@ namespace state {
                                    std::vector<std::shared_ptr<entity::entity_t>>& entities,
                                    std::shared_ptr<entity::insects_t> insects,
                                    std::vector<std::shared_ptr<environment::renderable_t>>& env_renderable,
+                                   std::vector<std::shared_ptr<items::item_t>>& level_items,
                                    int player_idx, state_manager_t& manager,
                                    SDL_Rect& camera)
     : state_t(manager, camera),
       tilemap(tilemap),
       entities(entities),
       insects(insects),
-      env_renderable(env_renderable) {
+      env_renderable(env_renderable),
+      level_items(level_items),
+      show_bars(false),
+      player_health_bar(5,120,50,1000,255,0,0) {
     //sanity check
     if (player_idx >= entities.size()) {
       throw exceptions::rsrc_exception_t("not enough entities found in list");
@@ -114,19 +120,22 @@ namespace state {
         case SDLK_p:
           action = environment::PUSH;
           break;
+        case SDLK_i:
+          show_bars = !show_bars;
+          break;
       }
     }
 
     SDL_Rect player_bounds = player->get_bounds();
+    int px = player_bounds.x + (player_bounds.w / 2);
+    int py = player_bounds.y + (player_bounds.h / 2);
 
     //perform any interactions
     for (size_t i=0; i<env_renderable.size(); i++) {
       if (env_renderable.at(i)->is_collided(player_bounds) &&
           env_renderable.at(i)->is_interactive()) {
         //interact with the environmental element
-        env_renderable.at(i)->interact(action,
-                                       player_bounds.x,
-                                       player_bounds.y);
+        env_renderable.at(i)->interact(action,px,py);
       }
     }
   }
@@ -165,10 +174,24 @@ namespace state {
       entities.at(i)->update(*tilemap,env_renderable);
     }
 
+    //get the updated player bounds
+    SDL_Rect player_bounds = player->get_bounds();
+    int px = player_bounds.x + (player_bounds.w / 2);
+    int py = player_bounds.y + (player_bounds.h / 2);
+
+    //update the items
+    for (size_t i=0; i<level_items.size(); i++) {
+      //check if the player can pick up the item
+      if (level_items.at(i)->is_collided(player_bounds)) {
+        //pick up this item to the center of the player
+        level_items.at(i)->pick_up(px,py);
+      }
+
+      level_items.at(i)->update(*tilemap);
+    }
+
     //update the insects
     insects->update();
-
-    SDL_Rect player_bounds = player->get_bounds();
 
     //update each renderable environment element
     for (size_t i=0; i<env_renderable.size(); i++) {
@@ -180,6 +203,9 @@ namespace state {
       //update the environment element
       env_renderable.at(i)->update();
     }
+
+    //set the player health bar level
+    player_health_bar.set_val(player->get_health());
 
     //center the camera on the player
     int center_x, center_y;
@@ -230,7 +256,17 @@ namespace state {
       env_renderable.at(i)->render(renderer,this->camera);
     }
 
+    //render items
+    for (size_t i=0; i<level_items.size(); i++) {
+      level_items.at(i)->render(renderer,this->camera);
+    }
+
     //render foreground layer
     tilemap->render_fg(renderer, this->camera);
+
+    //render indicator bars on screen
+    if (show_bars) {
+      player_health_bar.render(renderer);
+    }
   }
 }}

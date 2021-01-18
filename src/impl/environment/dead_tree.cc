@@ -53,7 +53,7 @@ namespace environment {
   void dead_tree_t::interact(player_action a, int x, int y) {
     if (a == PUSH) {
       //determine the side the player is on
-      left = x > bounds.x;
+      left = x > (bounds.x + (bounds.w / 2));
 
       //flip the animation if left
       anim->set_flipped(left);
@@ -131,7 +131,6 @@ namespace environment {
    * @param camera   the camera
    */
   void dead_tree_t::render(SDL_Renderer& renderer, const SDL_Rect& camera) const {
-
     //render the animation
     anim->render(renderer,
                  (bounds.x - (bounds.w / 2)) - camera.x,

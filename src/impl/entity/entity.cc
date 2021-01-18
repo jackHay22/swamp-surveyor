@@ -15,7 +15,7 @@ namespace entity {
   #define GRAVITY_PER_TICK 2
   #define CLIMB_FRAMES 6
   #define WATER_FRAMES 2
-  #define STARTING_HEALTH 100
+  #define STARTING_HEALTH 1000
   #define DAMAGE_TICKS 4
 
   /**
@@ -41,7 +41,7 @@ namespace entity {
       last_x(x),
       last_y(y),
       tile_dim(tile_dim),
-      facing_left(true),
+      facing_left(false),
       climb_counter(CLIMB_FRAMES),
       water_counter(WATER_FRAMES),
       anims(), debug(debug) {

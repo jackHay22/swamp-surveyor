@@ -15,5 +15,6 @@
   "player_idx" : 0,
   "bg_stationary" : false,
   "insect_cfg_path" : "resources/insects.json",
-  "env_elems_path" : "resources/level_1_env.json"
+  "env_elems_path" : "resources/level_1_env.json",
+  "items_path" : "resources/level_1_items.json"
 }

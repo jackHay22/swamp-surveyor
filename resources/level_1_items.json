@@ -1,0 +1,8 @@
+[
+  {
+    "x" : 220,
+    "y" : 40,
+    "texture_path" : "resources/items/label.png",
+    "type" : "chemical_label"
+  }
+]
