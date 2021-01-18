@@ -65,7 +65,7 @@ namespace entity {
       //determine the player type
       if (cfg.entity_type == PLAYER) {
         //load the player (starts at 32 32 by default)
-        return std::make_shared<entity::player_t>(70,50,
+        return std::make_shared<entity::player_t>(136,82,
                                                   cfg.width,
                                                   cfg.height,
                                                   cfg.anim_paths,

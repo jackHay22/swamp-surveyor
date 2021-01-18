@@ -174,13 +174,16 @@ namespace entity {
 
     //make sure the entity is not already climbing
     if (state != CLIMB) {
+      //the lowest collision check height
+      int base_height = current_bounds.y + current_bounds.h - 2;
+
       //check for a 1-high collision
       if ((state == MOVE) && !facing_left) {
         //check upper and lower adjacent tiles
         if (map.is_solid(current_bounds.x + current_bounds.w + 2,
-                         current_bounds.y + current_bounds.h - 2) &&
+                         base_height) &&
             !map.is_solid(current_bounds.x + current_bounds.w + 2,
-                          current_bounds.y + 2)) {
+                          base_height - tile_dim)) {
           //climb mode
           state = CLIMB;
           climb_counter = CLIMB_FRAMES;
@@ -190,9 +193,9 @@ namespace entity {
       } else if (state == MOVE) {
         //check upper and lower adjacent tiles
         if (map.is_solid(current_bounds.x - 2,
-                         current_bounds.y + current_bounds.h - 2) &&
+                         base_height) &&
             !map.is_solid(current_bounds.x - 2,
-                          current_bounds.y + 2)) {
+                          base_height - tile_dim)) {
           //climb mode
           state = CLIMB;
           climb_counter = CLIMB_FRAMES;
