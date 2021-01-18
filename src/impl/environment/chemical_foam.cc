@@ -196,7 +196,6 @@ namespace environment {
       }
 
       if (debug) {
-
         //get the current bounds (corrected by camera view)
         SDL_Rect debug_bounds = {bounds.x - camera.x,
                                  bounds.y - camera.y,
