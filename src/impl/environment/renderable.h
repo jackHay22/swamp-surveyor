@@ -13,6 +13,11 @@
 namespace impl {
 namespace environment {
 
+  enum player_action {
+    PUSH,
+    NONE
+  };
+
   /**
    * Some renderable component in the environment
    */
@@ -44,10 +49,11 @@ namespace environment {
 
     /**
      * Interact with this element
+     * @param a the interaction
      * @param x the player position x
      * @param y the player position y
      */
-    virtual void interact(int x, int y) {}
+    virtual void interact(player_action a, int x, int y) {}
 
     /**
      * Return whether this is a solid object

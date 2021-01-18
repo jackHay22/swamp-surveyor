@@ -28,5 +28,15 @@
     "animation_path" : "resources/animations/tree_fall_1.png",
     "animation_frames" : 10,
     "type" : "dead_tree"
+  },
+  {
+    "x" : 260,
+    "y" : 68,
+    "w" : 4,
+    "h" : 48,
+    "density" : 0.0,
+    "animation_path" : "resources/animations/tree_fall_1.png",
+    "animation_frames" : 10,
+    "type" : "dead_tree"
   }
 ]

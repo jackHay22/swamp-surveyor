@@ -50,19 +50,24 @@ namespace environment {
    * @param x the player position x
    * @param y the player position y
    */
-  void dead_tree_t::interact(int x, int y) {
-    //determine the side the player is on
-    left = x > bounds.x + (bounds.w / 2);
+  void dead_tree_t::interact(player_action a, int x, int y) {
+    if (a == PUSH) {
+      //determine the side the player is on
+      left = x > bounds.x;
 
-    if (left) {
-      //adjust the bounds of where the tree will land
-      felled_bounds = {bounds.x - bounds.h,
-                       bounds.y + bounds.h - bounds.w,
-                       bounds.h,
-                       bounds.w};
+      //flip the animation if left
+      anim->set_flipped(left);
+
+      if (left) {
+        //adjust the bounds of where the tree will land
+        felled_bounds = {bounds.x - bounds.h,
+                         bounds.y + bounds.h - bounds.w,
+                         bounds.h,
+                         bounds.w};
+      }
+
+      felled = true;
     }
-
-    felled = true;
   }
 
   /**

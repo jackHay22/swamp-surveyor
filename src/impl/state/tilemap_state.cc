@@ -53,18 +53,24 @@ namespace state {
    */
   bool tilemap_state_t::on_solid_ground(const SDL_Rect& bounds) const {
     //check the tilemap
-    if (tilemap->is_solid(bounds.x - 1, bounds.y + bounds.h + 1) ||
-        tilemap->is_solid(bounds.x + bounds.w + 1, bounds.y + bounds.h + 1) ||
-        tilemap->is_solid(bounds.x + (bounds.w / 2), bounds.y + bounds.h + 1)) {
+    if (tilemap->is_solid(bounds.x - 1,
+                          bounds.y + bounds.h + 1) ||
+        tilemap->is_solid(bounds.x + bounds.w + 1,
+                          bounds.y + bounds.h + 1) ||
+        tilemap->is_solid(bounds.x + (bounds.w / 2),
+                          bounds.y + bounds.h + 1)) {
       return true;
     }
 
     //check if the entity intersects with a renderable env component
     for (size_t i=0; i<env_renderable.size(); i++) {
       if (env_renderable.at(i)->is_solid()) {
-        if (env_renderable.at(i)->is_collided(bounds.x - 1, bounds.y + bounds.h + 1) ||
-            env_renderable.at(i)->is_collided(bounds.x + bounds.w + 1, bounds.y + bounds.h + 1) ||
-            env_renderable.at(i)->is_collided(bounds.x + (bounds.w / 2), bounds.y + bounds.h + 1)) {
+        if (env_renderable.at(i)->is_collided(bounds.x - 1,
+                                              bounds.y + bounds.h + 1) ||
+            env_renderable.at(i)->is_collided(bounds.x + bounds.w + 1,
+                                              bounds.y + bounds.h + 1) ||
+            env_renderable.at(i)->is_collided(bounds.x + (bounds.w / 2),
+                                              bounds.y + bounds.h + 1)) {
           return true;
         }
       }
@@ -95,7 +101,34 @@ namespace state {
    * @param e the event
    */
   void tilemap_state_t::handle_event(const SDL_Event& e) {
+    //check for interaction keys
     player->handle_event(e);
+
+    //the action
+    environment::player_action action = environment::NONE;
+
+    //check if key is pressed or released
+    if (e.type == SDL_KEYDOWN) {
+      //check key pressed
+      switch (e.key.keysym.sym) {
+        case SDLK_p:
+          action = environment::PUSH;
+          break;
+      }
+    }
+
+    SDL_Rect player_bounds = player->get_bounds();
+
+    //perform any interactions
+    for (size_t i=0; i<env_renderable.size(); i++) {
+      if (env_renderable.at(i)->is_collided(player_bounds) &&
+          env_renderable.at(i)->is_interactive()) {
+        //interact with the environmental element
+        env_renderable.at(i)->interact(action,
+                                       player_bounds.x,
+                                       player_bounds.y);
+      }
+    }
   }
 
   /**
@@ -141,14 +174,7 @@ namespace state {
     for (size_t i=0; i<env_renderable.size(); i++) {
       //check for player/environment interaction
       if (env_renderable.at(i)->is_collided(player_bounds)) {
-        if (env_renderable.at(i)->is_interactive()) {
-          //interact with the environmental element
-          env_renderable.at(i)->interact(player_bounds.x,
-                                         player_bounds.y);
-        } else {
-          //do damage
-          player->do_damage(env_renderable.at(i)->get_damage());
-        }
+        player->do_damage(env_renderable.at(i)->get_damage());
       }
 
       //update the environment element

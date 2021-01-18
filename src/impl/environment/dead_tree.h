@@ -59,10 +59,11 @@ namespace environment {
 
     /**
      * Fell the dead tree
+     * @param a the interaction type
      * @param x the player position x
      * @param y the player position y
      */
-    void interact(int x, int y);
+    void interact(player_action a, int x, int y);
 
     /**
      * Whether this tree can still be felled
