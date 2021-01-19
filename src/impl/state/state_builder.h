@@ -9,7 +9,6 @@
 
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
-#include <memory>
 #include <string>
 #include "state.h"
 #include "state_manager.h"
@@ -27,7 +26,7 @@ namespace state {
    * @param  tile_dim the dimensions of tiles
    * @param  debug    whether debug mode enabled
    */
-  void load_tm_state(std::shared_ptr<state::state_manager_t> state_manager,
+  void load_tm_state(state::state_manager_t& state_manager,
                      const std::string& path,
                      SDL_Renderer& renderer,
                      SDL_Rect& camera,

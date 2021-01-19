@@ -11,7 +11,6 @@
 #include "state/state_manager.h"
 #include "state/tilemap_state.h"
 #include "state/title_state.h"
-#include "state/state_builder.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
@@ -112,30 +111,29 @@ namespace launcher {
 
     //the game state manager
     std::shared_ptr<state::state_manager_t> state_manager =
-      std::make_shared<state::state_manager_t>();
+      std::make_shared<state::state_manager_t>(*renderer,
+                                               camera,
+                                               cfg.tile_dim,
+                                               cfg.debug);
+
+    //add the title state
+    state_manager->add_state(std::make_unique<state::title_state_t>(cfg.window_width_p,
+                                                                    cfg.window_height_p,
+                                                                    cfg.title_image,
+                                                                    cfg.caret_image,
+                                                                    cfg.menu_font,
+                                                                    *renderer,
+                                                                    *state_manager));
+
+    //set the configuration paths in the state manager for future load
+    state_manager->load_defer(cfg.level_cfgs);
 
     //title state not shown in debug mode
-    if (!cfg.debug) {
-      //add the title state
-      state_manager->add_state(std::make_unique<state::title_state_t>(cfg.window_width_p,
-                                                                      cfg.window_height_p,
-                                                                      cfg.title_image,
-                                                                      cfg.caret_image,
-                                                                      cfg.menu_font,
-                                                                      *renderer,
-                                                                      *state_manager));
+    if (cfg.debug) {
+      //load first level right away
+      state_manager->next_level_state();
     }
 
-    //load each level
-    for (const std::string& lpath : cfg.level_cfgs) {
-      //add tilemap state
-      state::load_tm_state(state_manager,
-                           lpath,
-                           *renderer,
-                           camera,
-                           cfg.tile_dim,
-                           cfg.debug);
-    }
 
     //return value after cleaning resources
     bool success = true;

@@ -9,6 +9,7 @@
 #include "../logger.h"
 #include <json/nlohmann_json.h>
 #include <fstream>
+#include <memory>
 #include "../tilemap/tilemap.h"
 #include "../tilemap/tileset.h"
 #include "../entity/entity.h"
@@ -80,7 +81,7 @@ namespace state {
    * @param  tile_dim the dimensions of tiles
    * @param  debug    whether debug mode enabled
    */
-  void load_tm_state(std::shared_ptr<state::state_manager_t> state_manager,
+  void load_tm_state(state::state_manager_t& state_manager,
                      const std::string& path,
                      SDL_Renderer& renderer,
                      SDL_Rect& camera,
@@ -145,14 +146,14 @@ namespace state {
                       renderer, debug);
 
     //make the state and add it to the manager
-    state_manager->add_state(std::make_unique<state::tilemap_state_t>(tilemap,
-                                                                      entities,
-                                                                      insects,
-                                                                      env_renderable,
-                                                                      level_items,
-                                                                      cfg.player_idx,
-                                                                      *state_manager,
-                                                                      camera));
+    state_manager.add_state(std::make_unique<state::tilemap_state_t>(tilemap,
+                                                                     entities,
+                                                                     insects,
+                                                                     env_renderable,
+                                                                     level_items,
+                                                                     cfg.player_idx,
+                                                                     state_manager,
+                                                                     camera));
 
   }
 }}

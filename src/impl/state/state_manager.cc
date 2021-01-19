@@ -5,15 +5,31 @@
  */
 
 #include "state_manager.h"
-#include <iostream>
+#include "state_builder.h"
+#include "../logger.h"
 
 namespace impl {
 namespace state {
 
   /**
    * Constructor
+   * @param renderer the renderer for loading images
+   * @param camera   the default camera
+   * @param tile_dim the tile dimension
+   * @param debug    whether debug mode enabled
    */
-  state_manager_t::state_manager_t() : states() {}
+  state_manager_t::state_manager_t(SDL_Renderer& renderer,
+                                   SDL_Rect& camera,
+                                   int tile_dim,
+                                   bool debug)
+    : states(),
+      deferred_cfgs(),
+      last_loaded(-1),
+      running(true),
+      renderer(renderer),
+      camera(camera),
+      tile_dim(tile_dim),
+      debug(debug) {}
 
   /**
    * Set the state to pause or unpause to previous
@@ -35,6 +51,23 @@ namespace state {
     if (current_state == TITLE) {
       current_state = LEVEL1;
     }
+    if (states.size() <= current_state) {
+      //lazily load the next state
+      last_loaded++;
+
+      if (debug) {
+        logger::log_info("state manager loading " +
+                         deferred_cfgs.at(last_loaded));
+      }
+
+      //load a new state (state_builder.h)
+      load_tm_state(*this,
+                    deferred_cfgs.at(last_loaded),
+                    renderer,
+                    camera,
+                    tile_dim,
+                    debug);
+    }
   }
 
   /**
@@ -55,6 +88,17 @@ namespace state {
   }
 
   /**
+   * Set the state paths in the manager but don't
+   * load until the level is required
+   * @param cfgs     the paths to the level configurations
+   */
+  void state_manager_t::load_defer(const std::vector<std::string>& cfgs) {
+    //set the deferred states
+    deferred_cfgs = cfgs;
+  }
+
+
+  /**
    * Check whether the game is running
    * @return whether the game is running
    */
@@ -68,7 +112,6 @@ namespace state {
    * @param running the state to set
    */
   void state_manager_t::set_running(bool running) {
-    std::unique_lock<std::shared_mutex> state_lock(lock);
     this->running = running;
   }
 

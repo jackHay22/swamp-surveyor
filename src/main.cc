@@ -46,10 +46,11 @@ int setup(bool debug, const std::string& cfg_path) {
     impl::logger::log_err("failed to load cfg: " + e.trace());
     return EXIT_FAILURE;
 
-  } catch (...) {
-    impl::logger::log_err("an error occurred [cfg: " + cfg_path + "]");
-    return EXIT_FAILURE;
   }
+  // catch (...) {
+  //   impl::logger::log_err("an error occurred [cfg: " + cfg_path + "]");
+  //   return EXIT_FAILURE;
+  // }
 
   return EXIT_SUCCESS;
 }

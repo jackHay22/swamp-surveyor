@@ -27,10 +27,27 @@ namespace state {
     //the game states
     std::vector<std::unique_ptr<state_t>> states;
 
+    //configuration paths for lazy loading
+    std::vector<std::string> deferred_cfgs;
+    //the last deferred state that was loaded
+    int last_loaded;
+
     //the lock for render/update on shared state
     std::shared_mutex lock;
 
-    bool running = true;
+    bool running;
+
+    //the sdl renderer
+    SDL_Renderer& renderer;
+
+    //default camera
+    SDL_Rect camera;
+
+    //the tile dimension
+    int tile_dim;
+
+    //debug mode
+    bool debug;
 
     //the current state of the game
     //and the previous state for storage when paused
@@ -39,8 +56,17 @@ namespace state {
     } current_state = TITLE, last_state = TITLE;
 
   public:
-    //constructor
-    state_manager_t();
+    /**
+     * Constructor
+     * @param renderer the renderer for loading images
+     * @param camera   the default camera
+     * @param tile_dim the tile dimension
+     * @param debug    whether debug mode enabled
+     */
+    state_manager_t(SDL_Renderer& renderer,
+                    SDL_Rect& camera,
+                    int tile_dim,
+                    bool debug);
     state_manager_t(const state_manager_t&) = delete;
     state_manager_t& operator=(const state_manager_t&) = delete;
 
@@ -66,6 +92,13 @@ namespace state {
      * @param s the state
      */
     void add_state(std::unique_ptr<state_t> s);
+
+    /**
+     * Set the state paths in the manager but don't
+     * load until the level is required
+     * @param cfgs     the paths to the level configurations
+     */
+    void load_defer(const std::vector<std::string>& cfgs);
 
     /**
      * Check whether the game is running
