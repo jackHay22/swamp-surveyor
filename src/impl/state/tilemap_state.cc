@@ -185,9 +185,17 @@ namespace state {
       if (level_items.at(i)->is_collided(player_bounds)) {
         //pick up this item to the center of the player
         level_items.at(i)->pick_up(px,py);
+        //add this item to the player's inventory
+        player->add_item(level_items.at(i));
       }
 
       level_items.at(i)->update(*tilemap);
+
+      //if the item can be removed from the environment, do so
+      //at this point the item is likely held by the player
+      if (level_items.at(i)->removable()) {
+        level_items.erase(level_items.begin() + i);
+      }
     }
 
     //update the insects

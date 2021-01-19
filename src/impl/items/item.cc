@@ -34,6 +34,9 @@ namespace items {
       picked_up(false),
       target_x(x),
       target_y(y),
+      displayable(false),
+      display_x(-8),
+      display_y(-8),
       debug(debug) {
 
     //load the texture
@@ -53,6 +56,16 @@ namespace items {
   }
 
   /**
+   * Set the location for displaying this item
+   * @param display_x the display coordinate x
+   * @param display_y the display coordinate y
+   */
+  void item_t::set_display_position(int display_x, int display_y) {
+    this->display_x = display_x;
+    this->display_y = display_y;
+  }
+
+  /**
    * Player picks up this item, animate movement
    * @param x the player position x
    * @param y the player position y
@@ -68,11 +81,29 @@ namespace items {
   }
 
   /**
+   * Drop this inventory item
+   * @param x the position x
+   * @param y the position y
+   */
+  void item_t::drop(int x, int y) {
+    if (picked_up) {
+      picked_up = false;
+      displayable = false;
+      this->x = x;
+      this->y = y;
+    }
+  }
+
+  /**
    * Check if a bounding box collides with this item
    * @param  bounds the bounds to check
    * @return        whether the bounds collide
    */
   bool item_t::is_collided(const SDL_Rect& bounds) const {
+    if (picked_up) {
+      return false;
+    }
+
     SDL_Rect item_bounds = this->get_bounds();
     //set the pick up radius
     item_bounds.x -= PICK_UP_RADIUS;
@@ -139,6 +170,8 @@ namespace items {
       }
 
       position_ticks++;
+    } else {
+      displayable = true;
     }
     //otherwise, fully picked up
   }
@@ -174,7 +207,20 @@ namespace items {
         //render the bounds
         SDL_RenderDrawRect(&renderer,&pickup_bounds);
       }
+    } else if (displayable) {
+      //create a clip for the current frame
+      SDL_Rect sample_bounds = {0,0,texture_w,texture_h};
 
+      //the x y position to render at
+      SDL_Rect image_bounds = {display_x - (texture_w / 2),
+                               display_y - (texture_h / 2),
+                               texture_w,texture_h};
+
+      //render the texture
+      SDL_RenderCopy(&renderer,
+                     texture,
+                     &sample_bounds,
+                     &image_bounds);
     }
   }
 }}
