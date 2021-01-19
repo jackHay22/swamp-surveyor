@@ -83,8 +83,10 @@ namespace entity {
      * @param renderer the renderer to use
      * @param x        the x position
      * @param y        the y position
+     * @param facing_left whether the animation is straight or flipped
      */
-    void render(SDL_Renderer& renderer, int x, int y) const;
+    void render(SDL_Renderer& renderer,
+                int x, int y, bool facing_left) const;
   };
 }}
 

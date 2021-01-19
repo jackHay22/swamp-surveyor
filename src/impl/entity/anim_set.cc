@@ -127,8 +127,11 @@ namespace entity {
   * @param renderer the renderer to use
   * @param x        the x position
   * @param y        the y position
+  * @param facing_left whether the animation is facing left
   */
-  void anim_set_t::render(SDL_Renderer& renderer, int x, int y) const {
+  void anim_set_t::render(SDL_Renderer& renderer,
+                          int x, int y,
+                          bool facing_left) const {
     //create a clip for the current frame
     SDL_Rect sample_bounds;
     //determine the coords of the tile within the set
@@ -143,10 +146,20 @@ namespace entity {
                              this->frame_width,
                              this->frame_height};
 
-    //render the current animation frame
-    SDL_RenderCopy(&renderer,
-                   this->texture,
-                   &sample_bounds,
-                   &image_bounds);
+    if (facing_left) {
+      //flip and render the current frame
+      SDL_RenderCopyEx(&renderer,
+                       this->texture,
+                       &sample_bounds,
+                       &image_bounds,
+                       0, NULL,
+                       SDL_FLIP_HORIZONTAL);
+    } else {
+      //render the current animation frame
+      SDL_RenderCopy(&renderer,
+                     this->texture,
+                     &sample_bounds,
+                     &image_bounds);
+    }
   }
 }}

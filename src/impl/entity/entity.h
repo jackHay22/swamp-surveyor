@@ -19,6 +19,9 @@
 namespace impl {
 namespace entity {
 
+  //the number of states the entity class controls
+  #define ENTITY_STATES 4
+
   /**
    * Positional entity with 4 animations
    */

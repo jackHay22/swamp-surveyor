@@ -46,14 +46,14 @@ namespace entity {
       water_counter(WATER_FRAMES),
       anims(), debug(debug) {
 
-    if (anim_cfg_paths.size() < 8) {
+    if (anim_cfg_paths.size() < ENTITY_STATES) {
       throw exceptions::rsrc_exception_t("not enough entity animation paths provided");
     }
 
     //load animation frames (must be in order)
-    for (const std::string& p : anim_cfg_paths) {
+    for (int i=0; i<ENTITY_STATES; i++) {
       //create the animation set and add to list
-      anims.push_back(std::make_unique<anim_set_t>(p,renderer));
+      anims.push_back(std::make_unique<anim_set_t>(anim_cfg_paths.at(i),renderer));
     }
   }
 
@@ -106,8 +106,11 @@ namespace entity {
    */
   void entity_t::update(const tilemap::tilemap_t& /*map*/,
                         std::vector<std::shared_ptr<environment::renderable_t>>& /*env_elements*/) {
-    //update the current animation
-    anims.at(state * 2 + !facing_left)->update();
+
+    if (state != ACTION) {
+      //update the current animation
+      anims.at(state)->update();
+    }
 
     //check if damaged
     if (damaged_ticks > 0) {
@@ -129,8 +132,10 @@ namespace entity {
     bool in_liquid = map.is_liquid(current_bounds.x + (current_bounds.w / 2),
                                    current_bounds.y + current_bounds.h - 4);
 
-    //if in liquid set the animation slow
-    anims.at(state)->set_slow(in_liquid);
+    if (state != ACTION) {
+      //if in liquid set the animation slow
+      anims.at(state)->set_slow(in_liquid);
+    }
 
     //check for walk
     if (state == MOVE) {
@@ -198,8 +203,8 @@ namespace entity {
           climb_counter = CLIMB_FRAMES;
 
           //reset the climb animation
-          anims.at(state * 2 + !facing_left)->reset();
-          anims.at(state * 2 + !facing_left)->set_once(true);
+          anims.at(state)->reset();
+          anims.at(state)->set_once(true);
           return;
         }
 
@@ -214,8 +219,8 @@ namespace entity {
           climb_counter = CLIMB_FRAMES;
 
           //reset the climb animation
-          anims.at(state * 2 + !facing_left)->reset();
-          anims.at(state * 2 + !facing_left)->set_once(true);
+          anims.at(state)->reset();
+          anims.at(state)->set_once(true);
           return;
         }
       }
@@ -235,10 +240,13 @@ namespace entity {
    * @param camera   the camera
    */
   void entity_t::render(SDL_Renderer& renderer, const SDL_Rect& camera) const {
-    //render the current animation
-    anims.at(state * 2 + !facing_left)->render(renderer,
-                                               x - camera.x,
-                                               y - camera.y);
+    if (state != ACTION) {
+      //render the current animation
+      anims.at(state)->render(renderer,
+                              x - camera.x,
+                              y - camera.y,
+                              facing_left);
+    }
 
     //render the damage indicator
     if (damaged_ticks > 0) {

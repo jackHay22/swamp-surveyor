@@ -40,8 +40,8 @@ namespace entity {
     actions.push_back(std::make_unique<actions::push_t>());
 
     //load the additional animation paths
-    if (anim_cfg_paths.size() > 8) {
-      for (size_t i=8; i<anim_cfg_paths.size(); i++) {
+    if (anim_cfg_paths.size() > ENTITY_STATES) {
+      for (size_t i=ENTITY_STATES; i<anim_cfg_paths.size(); i++) {
         //load additional animations
         anims.push_back(std::make_unique<anim_set_t>(anim_cfg_paths.at(i),
                                                      renderer));
@@ -93,7 +93,7 @@ namespace entity {
             action = PUSH;
 
             //reset the push animation
-            anims.at((2 * action) + !facing_left)->reset();
+            anims.at(action)->reset();
             move_tick_counter = MAX_PUSH_TICKS;
           }
           break;
@@ -143,7 +143,7 @@ namespace entity {
     actions.at(action)->toggle_action(performing_action);
 
     //update the animation that corresponds to the action
-    anims.at((2 * action) + !facing_left)->update();
+    anims.at(action)->update();
 
     //update all actions
     SDL_Rect b = get_bounds();
@@ -170,6 +170,9 @@ namespace entity {
    * @param camera the camera
    */
   void player_t::render(SDL_Renderer& renderer, const SDL_Rect& camera) const {
+    //entity render
+    entity_t::render(renderer,camera);
+
     //render all actions
     for (size_t i=0; i<actions.size(); i++) {
       //render the action
@@ -180,13 +183,11 @@ namespace entity {
     if (performing_action) {
       SDL_Rect b = get_bounds();
       //actions correspond to pairs of animations
-      anims.at((2 * action) + !facing_left)->render(renderer,
-                                                    (b.x + (b.w / 2)) - camera.x,
-                                                    (b.y + (b.h / 2)) - camera.y);
+      anims.at(action)->render(renderer,
+                              (b.x + (b.w / 2)) - camera.x,
+                              (b.y + (b.h / 2)) - camera.y,
+                              facing_left);
 
-    } else {
-      //entity renders state
-      entity_t::render(renderer,camera);
     }
   }
 }}
