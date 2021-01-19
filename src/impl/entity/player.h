@@ -16,6 +16,7 @@
 #include "actions/action.h"
 #include "../tilemap/tilemap.h"
 #include "../environment/renderable.h"
+#include "../items/item.h"
 #include "anim_set.h"
 
 namespace impl {
@@ -39,6 +40,9 @@ namespace entity {
     //additional player specific animations not covered by the
     //basic entity animations
     std::vector<std::unique_ptr<anim_set_t>> anims;
+
+    //the items the player has picked up
+    std::vector<std::shared_ptr<items::item_t>> held_items;
 
     //the animation frame counter if there is a limit for the given move
     //when this is elapsed, state changes back to idle
@@ -69,6 +73,12 @@ namespace entity {
              bool debug);
     player_t(const player_t&) = delete;
     player_t& operator=(const player_t&) = delete;
+
+    /**
+     * Add a new item to inventory
+     * @param item the item to add
+     */
+    void add_item(std::shared_ptr<items::item_t> item);
 
     /**
      * Handle some key event

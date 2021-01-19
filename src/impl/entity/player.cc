@@ -12,7 +12,7 @@
 namespace impl {
 namespace entity {
 
-  #define MAX_PUSH_TICKS 8
+  #define MAX_PUSH_TICKS 6
 
   /**
    * Constructor
@@ -33,6 +33,7 @@ namespace entity {
     : entity_t(x,y,w,h,anim_cfg_paths,renderer,tile_dim,debug),
       performing_action(false),
       actions(),
+      held_items(),
       move_tick_counter(0) {
     //add actions that correspond to animations
     actions.push_back(std::make_unique<actions::foam_spray_t>());
@@ -46,6 +47,14 @@ namespace entity {
                                                      renderer));
       }
     }
+  }
+
+  /**
+   * Add a new item to inventory
+   * @param item the item to add
+   */
+  void player_t::add_item(std::shared_ptr<items::item_t> item) {
+    held_items.push_back(item);
   }
 
   /**

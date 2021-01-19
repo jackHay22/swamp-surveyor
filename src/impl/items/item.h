@@ -41,6 +41,12 @@ namespace items {
     int target_x;
     int target_y;
 
+    //whether this item can now be shown in inventory
+    bool displayable;
+    //once displayed the coordinates (not transformed by camera)
+    int display_x;
+    int display_y;
+
     //the texture
     SDL_Texture* texture = NULL;
 
@@ -69,11 +75,31 @@ namespace items {
     ~item_t();
 
     /**
+     * Whether this item can be removed from the environment
+     * @return whether this item has finished any final animations
+     */
+    bool removable() const { return displayable; }
+
+    /**
+     * Set the location for displaying this item
+     * @param display_x the display coordinate x
+     * @param display_y the display coordinate y
+     */
+    void set_display_position(int display_x, int display_y);
+
+    /**
      * Player picks up this item, animate movement
      * @param x the player position x
      * @param y the player position y
      */
     void pick_up(int x, int y);
+
+    /**
+     * Drop this inventory item
+     * @param x the position x
+     * @param y the position y
+     */
+    void drop(int x, int y);
 
     /**
      * Check if a bounding box collides with this item
