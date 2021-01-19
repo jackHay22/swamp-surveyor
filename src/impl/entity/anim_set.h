@@ -31,6 +31,8 @@ namespace entity {
     int ticks = 0;
 
     bool is_slow = false;
+    //only animate a single cycle
+    bool once = false;
 
     //the texture
     SDL_Texture* texture = NULL;
@@ -48,6 +50,12 @@ namespace entity {
                SDL_Renderer& renderer);
     anim_set_t(const anim_set_t&) = delete;
     anim_set_t& operator=(const anim_set_t&) = delete;
+
+    /**
+     * Toggle the once setting
+     * @param once if true, aniamtion only shown once and then paused
+     */
+    void set_once(bool once) { this->once = once; }
 
     /**
      * Reset the animation to the first frame

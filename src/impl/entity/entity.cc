@@ -13,7 +13,7 @@ namespace entity {
 
   //the gravity applied to an entity per tick
   #define GRAVITY_PER_TICK 2
-  #define CLIMB_FRAMES 6
+  #define CLIMB_FRAMES 20
   #define WATER_FRAMES 2
   #define STARTING_HEALTH 1000
   #define DAMAGE_TICKS 4
@@ -81,13 +81,22 @@ namespace entity {
   }
 
   /**
-   * Get the center of the entity
+   * Get the center of the entity (used for camera positioning)
    * @param x the x position set by the call
    * @param y the y position set by the call
    */
   void entity_t::get_center(int& x, int& y) const {
-    x = this->x;
-    y = this->y;
+    //if the state is climbing, ease the camera even though
+    //the player's bounds are static
+    if (state == CLIMB) {
+      //the progress through the climb cycle
+      int prog = tile_dim - (tile_dim * ((float) climb_counter / (float) CLIMB_FRAMES));
+      x = this->x + prog - (2 * prog * facing_left);
+      y = this->y - prog;
+    } else {
+      x = this->x;
+      y = this->y;
+    }
   }
 
   /**
@@ -187,6 +196,10 @@ namespace entity {
           //climb mode
           state = CLIMB;
           climb_counter = CLIMB_FRAMES;
+
+          //reset the climb animation
+          anims.at(state * 2 + !facing_left)->reset();
+          anims.at(state * 2 + !facing_left)->set_once(true);
           return;
         }
 
@@ -199,6 +212,10 @@ namespace entity {
           //climb mode
           state = CLIMB;
           climb_counter = CLIMB_FRAMES;
+
+          //reset the climb animation
+          anims.at(state * 2 + !facing_left)->reset();
+          anims.at(state * 2 + !facing_left)->set_once(true);
           return;
         }
       }

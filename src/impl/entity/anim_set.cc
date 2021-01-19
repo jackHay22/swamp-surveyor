@@ -113,8 +113,12 @@ namespace entity {
 
     if (ticks >= duration) {
       ticks = 0;
-      current_frame++;
-      current_frame %= anim_frames;
+
+      //check to see if frame should be updated
+      if (!(once && (current_frame == (anim_frames - 1)))) {
+        current_frame++;
+        current_frame %= anim_frames;
+      }
     }
   }
 
