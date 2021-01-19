@@ -12,6 +12,8 @@
     "resources/animations/player_walk_l.json",
     "resources/animations/player_walk_r.json",
     "resources/animations/player_spray_l.json",
-    "resources/animations/player_spray_r.json"
+    "resources/animations/player_spray_r.json",
+    "resources/animations/player_push_l.json",
+    "resources/animations/player_push_r.json"
   ]
 }

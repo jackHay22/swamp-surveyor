@@ -50,6 +50,11 @@ namespace entity {
     anim_set_t& operator=(const anim_set_t&) = delete;
 
     /**
+     * Reset the animation to the first frame
+     */
+    void reset() { current_frame = 0; }
+
+    /**
      * Set the animation slower
      * @param is_slow the value
      */

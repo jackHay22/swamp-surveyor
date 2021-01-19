@@ -40,9 +40,14 @@ namespace entity {
     //basic entity animations
     std::vector<std::unique_ptr<anim_set_t>> anims;
 
+    //the animation frame counter if there is a limit for the given move
+    //when this is elapsed, state changes back to idle
+    int move_tick_counter;
+
     //actions that the player can perform
     enum {
-      DISPERSE_FOAM
+      DISPERSE_FOAM,
+      PUSH
     } action = DISPERSE_FOAM;
 
   public:

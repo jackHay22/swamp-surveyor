@@ -7,9 +7,12 @@
 #include "player.h"
 #include <iostream>
 #include "actions/foam_spray.h"
+#include "actions/push.h"
 
 namespace impl {
 namespace entity {
+
+  #define MAX_PUSH_TICKS 8
 
   /**
    * Constructor
@@ -29,9 +32,11 @@ namespace entity {
                      bool debug)
     : entity_t(x,y,w,h,anim_cfg_paths,renderer,tile_dim,debug),
       performing_action(false),
-      actions() {
-    //add the foam spray action
+      actions(),
+      move_tick_counter(0) {
+    //add actions that correspond to animations
     actions.push_back(std::make_unique<actions::foam_spray_t>());
+    actions.push_back(std::make_unique<actions::push_t>());
 
     //load the additional animation paths
     if (anim_cfg_paths.size() > 8) {
@@ -71,6 +76,18 @@ namespace entity {
           performing_action = true;
           action = DISPERSE_FOAM;
           break;
+        case SDLK_p:
+          //no overlap
+          if ((performing_action == false) || (action != PUSH)) {
+            state = ACTION;
+            performing_action = true;
+            action = PUSH;
+
+            //reset the push animation
+            anims.at((2 * action) + !facing_left)->reset();
+            move_tick_counter = MAX_PUSH_TICKS;
+          }
+          break;
       }
     } else if (e.type == SDL_KEYUP) {
       //check key released
@@ -101,10 +118,23 @@ namespace entity {
     //call entity update
     entity_t::update(map,env_elements);
 
+    //if there is a limit on the action
+    if ((state == ACTION) && (move_tick_counter > 0)) {
+      move_tick_counter--;
+
+      if (move_tick_counter == 0) {
+        //set state to idle
+        state = IDLE;
+      }
+    }
+
     //check whether the player is performing an action
     //and toggle the current action
     performing_action = state == ACTION;
     actions.at(action)->toggle_action(performing_action);
+
+    //update the animation that corresponds to the action
+    anims.at((2 * action) + !facing_left)->update();
 
     //update all actions
     SDL_Rect b = get_bounds();
