@@ -18,23 +18,26 @@ namespace state {
    * @param insects    the insects in the map
    * @param env_renderable environmental elements that can be rendered
    * @param level_items the items in this level
+   * @param trans_blocks transparent blocks in the level
    * @param player_idx the index of the player in the entity list
    * @param manager    the state manager
    * @param camera     the level camera
    */
   tilemap_state_t::tilemap_state_t(std::shared_ptr<tilemap::tilemap_t> tilemap,
-                                   std::vector<std::shared_ptr<entity::entity_t>>& entities,
-                                   std::shared_ptr<entity::insects_t> insects,
-                                   std::vector<std::shared_ptr<environment::renderable_t>>& env_renderable,
-                                   std::vector<std::shared_ptr<items::item_t>>& level_items,
-                                   int player_idx, state_manager_t& manager,
-                                   SDL_Rect& camera)
+                                  std::vector<std::shared_ptr<entity::entity_t>>& entities,
+                                  std::shared_ptr<entity::insects_t> insects,
+                                  std::vector<std::shared_ptr<environment::renderable_t>>& env_renderable,
+                                  std::vector<std::shared_ptr<items::item_t>>& level_items,
+                                  std::vector<std::shared_ptr<tilemap::transparent_block_t>>& trans_blocks,
+                                  int player_idx, state_manager_t& manager,
+                                  SDL_Rect& camera)
     : state_t(manager, camera),
       tilemap(tilemap),
       entities(entities),
       insects(insects),
       env_renderable(env_renderable),
       level_items(level_items),
+      trans_blocks(trans_blocks),
       show_bars(false),
       player_health_bar(5,120,50,1000,255,0,0) {
     //sanity check
@@ -179,6 +182,11 @@ namespace state {
     int px = player_bounds.x + (player_bounds.w / 2);
     int py = player_bounds.y + (player_bounds.h / 2);
 
+    //update transparent blocks
+    for (size_t i=0; i<trans_blocks.size(); i++) {
+      trans_blocks.at(i)->update(player_bounds);
+    }
+
     //update the items
     for (size_t i=0; i<level_items.size(); i++) {
       //check if the player can pick up the item
@@ -271,6 +279,11 @@ namespace state {
 
     //render foreground layer
     tilemap->render_fg(renderer, this->camera);
+
+    //render transparent blocks
+    for (size_t i=0; i<trans_blocks.size(); i++) {
+      trans_blocks.at(i)->render(renderer,this->camera);
+    }
 
     //render indicator bars on screen
     if (show_bars) {

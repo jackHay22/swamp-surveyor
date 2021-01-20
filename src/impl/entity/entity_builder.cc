@@ -23,7 +23,10 @@ namespace entity {
     //the width and height of the entity (for collisions)
     int width = 0;
     int height = 0;
-
+    //player position x
+    int x = 0;
+    //player position y
+    int y = 0;
     //the animation configurations for this entity
     std::vector<std::string> anim_paths;
   };
@@ -37,6 +40,8 @@ namespace entity {
     j.at("entity_type").get_to(c.entity_type);
     j.at("width").get_to(c.width);
     j.at("height").get_to(c.height);
+    j.at("x").get_to(c.x);
+    j.at("y").get_to(c.y);
     j.at("anim_paths").get_to(c.anim_paths);
   }
 
@@ -64,8 +69,8 @@ namespace entity {
 
       //determine the player type
       if (cfg.entity_type == PLAYER) {
-        //load the player (starts at 32 32 by default)
-        return std::make_shared<entity::player_t>(136,82,
+        //load the player
+        return std::make_shared<entity::player_t>(cfg.x,cfg.y, //136,82 for level 1
                                                   cfg.width,
                                                   cfg.height,
                                                   cfg.anim_paths,

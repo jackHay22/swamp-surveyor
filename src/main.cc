@@ -47,10 +47,6 @@ int setup(bool debug, const std::string& cfg_path) {
     return EXIT_FAILURE;
 
   }
-  // catch (...) {
-  //   impl::logger::log_err("an error occurred [cfg: " + cfg_path + "]");
-  //   return EXIT_FAILURE;
-  // }
 
   return EXIT_SUCCESS;
 }

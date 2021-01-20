@@ -14,6 +14,7 @@
 #include <memory>
 #include <vector>
 #include "../tilemap/tilemap.h"
+#include "../tilemap/transparent_block.h"
 #include "../entity/entity.h"
 #include "../entity/player.h"
 #include "../entity/insects.h"
@@ -47,6 +48,9 @@ namespace state {
     //items in the level
     std::vector<std::shared_ptr<items::item_t>> level_items;
 
+    //transparent blocks in the level
+    std::vector<std::shared_ptr<tilemap::transparent_block_t>> trans_blocks;
+
     //whether indicator bars are visible
     bool show_bars;
     //the indicator bar showing player health
@@ -74,6 +78,7 @@ namespace state {
      * @param insects    the insects in the map
      * @param env_renderable environmental elements that can be rendered
      * @param level_items the items in this level
+     * @param trans_blocks transparent blocks in the level
      * @param player_idx the index of the player in the entity list
      * @param manager    the state manager
      * @param camera     the level camera
@@ -83,6 +88,7 @@ namespace state {
                     std::shared_ptr<entity::insects_t> insects,
                     std::vector<std::shared_ptr<environment::renderable_t>>& env_renderable,
                     std::vector<std::shared_ptr<items::item_t>>& level_items,
+                    std::vector<std::shared_ptr<tilemap::transparent_block_t>>& trans_blocks,
                     int player_idx, state_manager_t& manager,
                     SDL_Rect& camera);
     tilemap_state_t(const tilemap_state_t&) = delete;

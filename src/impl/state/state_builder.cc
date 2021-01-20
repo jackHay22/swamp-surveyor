@@ -12,6 +12,7 @@
 #include <memory>
 #include "../tilemap/tilemap.h"
 #include "../tilemap/tileset.h"
+#include "../tilemap/transparent_block.h"
 #include "../entity/entity.h"
 #include "../entity/insects.h"
 #include "../entity/entity_builder.h"
@@ -50,6 +51,8 @@ namespace state {
     int player_idx = 0;
     //the path to the items configuration file
     std::string items_path;
+    //transparent blocks path
+    std::string transparent_blocks_path = "";
   };
 
   /**
@@ -69,6 +72,7 @@ namespace state {
     j.at("player_idx").get_to(c.player_idx);
     j.at("bg_stationary").get_to(c.bg_stationary);
     j.at("items_path").get_to(c.items_path);
+    j.at("transparent_blocks_path").get_to(c.transparent_blocks_path);
   }
 
   /**
@@ -145,12 +149,19 @@ namespace state {
                       cfg.items_path,
                       renderer, debug);
 
+    //load transparent blocks
+    std::vector<std::shared_ptr<tilemap::transparent_block_t>> tblocks;
+    tilemap::mk_transparent_blocks(tblocks,
+                                   cfg.transparent_blocks_path,
+                                   renderer, debug);
+
     //make the state and add it to the manager
     state_manager.add_state(std::make_unique<state::tilemap_state_t>(tilemap,
                                                                      entities,
                                                                      insects,
                                                                      env_renderable,
                                                                      level_items,
+                                                                     tblocks,
                                                                      cfg.player_idx,
                                                                      state_manager,
                                                                      camera));
