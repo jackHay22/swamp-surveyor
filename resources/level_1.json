@@ -7,7 +7,9 @@
     "resources/maps/swamp_1_foreground.txt"
   ],
   "entity_layer_idx" : 2,
-  "entity_layer_solid" : [1,2,3,9,10,14,15,16,21,20,23,25,29,1464,1463,1465,1468,1469],
+  "entity_layer_solid" :
+    [1,2,3,9,10,14,15,16,21,20,23, 1452,
+     1825,1827,1828,1832,1836,1837],
   "entity_layer_water" : [17,18,19,26,27,28],
   "entity_cfg_paths" : [
     "resources/animations/player.json"
