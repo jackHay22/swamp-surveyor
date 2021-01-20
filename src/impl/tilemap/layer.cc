@@ -34,6 +34,8 @@ namespace tilemap {
       std::ifstream layer_file(rsrc_path);
       int y = 0;
 
+      std::shared_ptr<tile_t> blank = std::make_shared<tile_t>(-1,-1,dim,-1,debug);
+
       //read each line of tiles
       std::string line;
       while (std::getline(layer_file, line)) {
@@ -51,8 +53,12 @@ namespace tilemap {
            try {
              int type = std::stoi(substr);
 
-             //add the tile to the map contents
-             this->contents.back().push_back(std::make_shared<tile_t>(x,y,dim,type,debug));
+             if (type != -1) {
+               //add the tile to the map contents
+               this->contents.back().push_back(std::make_shared<tile_t>(x,y,dim,type,debug));
+             } else {
+               this->contents.back().push_back(blank);
+             }
 
            } catch (...) { }
            x++;
