@@ -18,8 +18,8 @@ namespace exceptions {
    */
   struct rsrc_exception_t : public std::exception {
   private:
-    std::string detail;
     std::string path;
+    std::string detail;
   public:
     //constructor with path
     rsrc_exception_t(const std::string& path)

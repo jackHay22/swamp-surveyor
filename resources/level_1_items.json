@@ -4,5 +4,11 @@
     "y" : 40,
     "texture_path" : "resources/items/label.png",
     "type" : "chemical_label"
+  },
+  {
+    "x" : 96,
+    "y" : 88,
+    "texture_path" : "resources/items/sprayer.png",
+    "type" : "foam_sprayer"
   }
 ]

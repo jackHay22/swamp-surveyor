@@ -9,6 +9,7 @@
 #include <json/nlohmann_json.h>
 #include <fstream>
 #include "chemical_label.h"
+#include "sprayer.h"
 
 namespace impl {
 namespace items {
@@ -16,6 +17,7 @@ namespace items {
   typedef nlohmann::json json;
 
   #define CHEMICAL_LABEL_TYPE "chemical_label"
+  #define FOAM_SPRAYER_TYPE "foam_sprayer"
 
   /**
    * Configuration options
@@ -68,6 +70,12 @@ namespace items {
                                                              cfg.texture_path,
                                                              renderer,
                                                              debug));
+        } else if (cfg.type == FOAM_SPRAYER_TYPE) {
+          items.push_back(std::make_shared<sprayer_t>(cfg.x,
+                                                      cfg.y,
+                                                      cfg.texture_path,
+                                                      renderer,
+                                                      debug));
         }
       }
 

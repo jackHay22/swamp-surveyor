@@ -4,8 +4,8 @@
  * Untitled Swamp game
  */
 
-#ifndef _IO_JACKHAY_SWAMP_CHEMICAL_LABEL_H
-#define _IO_JACKHAY_SWAMP_CHEMICAL_LABEL_H
+#ifndef _IO_JACKHAY_SWAMP_SPRAYER_H
+#define _IO_JACKHAY_SWAMP_SPRAYER_H
 
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
@@ -16,10 +16,10 @@ namespace impl {
 namespace items {
 
   /**
-   * A chemical label that can be picked up
-   * by the player
+   * A sprayer item the player needs to
+   * disperse foam
    */
-  struct chemical_label_t : public item_t {
+  struct sprayer_t : public item_t {
 
   public:
     /**
@@ -30,15 +30,15 @@ namespace items {
      * @param renderer     the renderer for loading the texture
      * @param debug        whether debug mode enabled
      */
-    chemical_label_t(int x, int y,
+    sprayer_t(int x, int y,
                      const std::string& texture_path,
                      SDL_Renderer& renderer,
                      bool debug)
-      :  item_t(x,y,texture_path,renderer,debug) {}
-    chemical_label_t(const chemical_label_t&) = delete;
-    chemical_label_t& operator=(const chemical_label_t&) = delete;
+       : item_t(x,y,texture_path,renderer,debug) {}
+    sprayer_t(const sprayer_t&) = delete;
+    sprayer_t& operator=(const sprayer_t&) = delete;
 
   };
 }}
 
-#endif /*_IO_JACKHAY_SWAMP_CHEMICAL_LABEL_H*/
+#endif /*_IO_JACKHAY_SWAMP_SPRAYER_H*/

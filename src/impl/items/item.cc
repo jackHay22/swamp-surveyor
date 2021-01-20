@@ -154,15 +154,10 @@ namespace items {
         y = last_y;
       }
     } else if (position_ticks < PICKUP_TICKS) {
-      int dist_x = (target_x - x);
       int dist_y = (target_y - y);
 
-      //based on direction move the item
-      if (dist_x - 1 > 0) {
-        this->x -= (dist_x / 2);
-      } else if (dist_x + 1 < 0) {
-        this->x += (dist_x / 2);
-      }
+      this->x += ((target_x - x) / 2);
+
       if (dist_y - 1 > 0) {
         this->y -= (dist_y / 2);
       } else if (dist_y + 1 < 0) {
