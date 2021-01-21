@@ -21,6 +21,7 @@
 #include "../environment/environment_builder.h"
 #include "../items/item_builder.h"
 #include "../items/item.h"
+#include "../misc/map_fork.h"
 
 namespace impl {
 namespace state {
@@ -53,6 +54,8 @@ namespace state {
     std::string items_path;
     //transparent blocks path
     std::string transparent_blocks_path = "";
+    //map fork config path
+    std::string map_fork_path = "";
   };
 
   /**
@@ -73,6 +76,7 @@ namespace state {
     j.at("bg_stationary").get_to(c.bg_stationary);
     j.at("items_path").get_to(c.items_path);
     j.at("transparent_blocks_path").get_to(c.transparent_blocks_path);
+    j.at("map_fork_path").get_to(c.map_fork_path);
   }
 
   /**
@@ -155,6 +159,10 @@ namespace state {
                                    cfg.transparent_blocks_path,
                                    renderer, debug);
 
+    //load map forks
+    std::vector<std::shared_ptr<misc::map_fork_t>> forks;
+    misc::load_forks(forks,cfg.map_fork_path,renderer);
+
     //make the state and add it to the manager
     state_manager.add_state(std::make_unique<state::tilemap_state_t>(tilemap,
                                                                      entities,
@@ -162,6 +170,7 @@ namespace state {
                                                                      env_renderable,
                                                                      level_items,
                                                                      tblocks,
+                                                                     forks,
                                                                      cfg.player_idx,
                                                                      state_manager,
                                                                      camera));

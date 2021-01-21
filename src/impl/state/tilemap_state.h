@@ -21,6 +21,7 @@
 #include "../entity/indicator_bar.h"
 #include "../environment/renderable.h"
 #include "../items/item.h"
+#include "../misc/map_fork.h"
 
 namespace impl {
 namespace state {
@@ -51,6 +52,9 @@ namespace state {
     //transparent blocks in the level
     std::vector<std::shared_ptr<tilemap::transparent_block_t>> trans_blocks;
 
+    //forks in the map
+    std::vector<std::shared_ptr<misc::map_fork_t>> forks;
+
     //whether indicator bars are visible
     bool show_bars;
     //the indicator bar showing player health
@@ -79,6 +83,7 @@ namespace state {
      * @param env_renderable environmental elements that can be rendered
      * @param level_items the items in this level
      * @param trans_blocks transparent blocks in the level
+     * @param forks      forks in the map
      * @param player_idx the index of the player in the entity list
      * @param manager    the state manager
      * @param camera     the level camera
@@ -89,6 +94,7 @@ namespace state {
                     std::vector<std::shared_ptr<environment::renderable_t>>& env_renderable,
                     std::vector<std::shared_ptr<items::item_t>>& level_items,
                     std::vector<std::shared_ptr<tilemap::transparent_block_t>>& trans_blocks,
+                    std::vector<std::shared_ptr<misc::map_fork_t>>& forks,
                     int player_idx, state_manager_t& manager,
                     SDL_Rect& camera);
     tilemap_state_t(const tilemap_state_t&) = delete;

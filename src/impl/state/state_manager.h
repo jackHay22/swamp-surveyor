@@ -19,6 +19,12 @@ namespace state {
 
   class state_t;
 
+  enum state_type {
+    TITLE,
+    SWAMP,
+    TRACKS
+  };
+
   /**
    * Manages thhe current game state
    */
@@ -29,6 +35,7 @@ namespace state {
 
     //configuration paths for lazy loading
     std::vector<std::string> deferred_cfgs;
+
     //the last deferred state that was loaded
     int last_loaded;
 
@@ -49,11 +56,9 @@ namespace state {
     //debug mode
     bool debug;
 
-    //the current state of the game
-    //and the previous state for storage when paused
-    enum {
-      TITLE, LEVEL1, PAUSE
-    } current_state = TITLE, last_state = TITLE;
+    //the current state
+    state_type current_state;
+    state_type last_state;
 
   public:
     /**
@@ -77,9 +82,10 @@ namespace state {
     void set_pause(bool pause);
 
     /**
-     * Get the next level state
+     * Set the current level state
+     * @param name the state type
      */
-    void next_level_state();
+    void set_state(state_type type);
 
     /**
      * Handle some keypress event

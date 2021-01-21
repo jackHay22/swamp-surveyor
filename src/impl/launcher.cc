@@ -131,7 +131,7 @@ namespace launcher {
     //title state not shown in debug mode
     if (cfg.debug) {
       //load first level right away
-      state_manager->next_level_state();
+      state_manager->set_state(state::SWAMP);
     }
 
 

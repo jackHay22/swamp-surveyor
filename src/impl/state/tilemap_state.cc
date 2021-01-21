@@ -19,18 +19,20 @@ namespace state {
    * @param env_renderable environmental elements that can be rendered
    * @param level_items the items in this level
    * @param trans_blocks transparent blocks in the level
+   * @param forks      forks in the map
    * @param player_idx the index of the player in the entity list
    * @param manager    the state manager
    * @param camera     the level camera
    */
   tilemap_state_t::tilemap_state_t(std::shared_ptr<tilemap::tilemap_t> tilemap,
-                                  std::vector<std::shared_ptr<entity::entity_t>>& entities,
-                                  std::shared_ptr<entity::insects_t> insects,
-                                  std::vector<std::shared_ptr<environment::renderable_t>>& env_renderable,
-                                  std::vector<std::shared_ptr<items::item_t>>& level_items,
-                                  std::vector<std::shared_ptr<tilemap::transparent_block_t>>& trans_blocks,
-                                  int player_idx, state_manager_t& manager,
-                                  SDL_Rect& camera)
+                                    std::vector<std::shared_ptr<entity::entity_t>>& entities,
+                                    std::shared_ptr<entity::insects_t> insects,
+                                    std::vector<std::shared_ptr<environment::renderable_t>>& env_renderable,
+                                    std::vector<std::shared_ptr<items::item_t>>& level_items,
+                                    std::vector<std::shared_ptr<tilemap::transparent_block_t>>& trans_blocks,
+                                    std::vector<std::shared_ptr<misc::map_fork_t>>& forks,
+                                    int player_idx, state_manager_t& manager,
+                                    SDL_Rect& camera)
     : state_t(manager, camera),
       tilemap(tilemap),
       entities(entities),
@@ -38,6 +40,7 @@ namespace state {
       env_renderable(env_renderable),
       level_items(level_items),
       trans_blocks(trans_blocks),
+      forks(forks),
       show_bars(false),
       player_health_bar(5,120,50,1000,255,0,0) {
     //sanity check
@@ -115,6 +118,7 @@ namespace state {
 
     //the action
     environment::player_action action = environment::NONE;
+    bool use_fork = false;
 
     //check if key is pressed or released
     if (e.type == SDL_KEYDOWN) {
@@ -126,6 +130,19 @@ namespace state {
         case SDLK_i:
           show_bars = !show_bars;
           break;
+        case SDLK_f:
+          use_fork = true;
+          break;
+      }
+    }
+
+    if (use_fork) {
+      //update map forks
+      for (size_t i=0; i<forks.size(); i++) {
+        if (forks.at(i)->can_interact()) {
+          //change the current state
+          manager.set_state(forks.at(i)->get_dest());
+        }
       }
     }
 
@@ -185,6 +202,11 @@ namespace state {
     //update transparent blocks
     for (size_t i=0; i<trans_blocks.size(); i++) {
       trans_blocks.at(i)->update(player_bounds);
+    }
+
+    //update map forks
+    for (size_t i=0; i<forks.size(); i++) {
+      forks.at(i)->update(player_bounds);
     }
 
     //update the items
@@ -283,6 +305,11 @@ namespace state {
     //render transparent blocks
     for (size_t i=0; i<trans_blocks.size(); i++) {
       trans_blocks.at(i)->render(renderer,this->camera);
+    }
+
+    //render map forks
+    for (size_t i=0; i<forks.size(); i++) {
+      forks.at(i)->render(renderer, this->camera);
     }
 
     //render indicator bars on screen
