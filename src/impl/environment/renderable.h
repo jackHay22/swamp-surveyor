@@ -74,11 +74,14 @@ namespace environment {
     const SDL_Rect& get_bounds() const { return bounds; }
 
     /**
-     * Check if this element is in view of the camera
+     * Check if this element collides with some bounding box
      * @param  recr the collision box
+     * @param  interaction whether the collision is for interaction (t)
+     * of just physics (f)
      * @return
      */
-    virtual bool is_collided(const SDL_Rect& rect) const;
+    virtual bool is_collided(const SDL_Rect& rect,
+                             bool interaction) const;
 
     /**
      * Check if some coordinate collides with this element

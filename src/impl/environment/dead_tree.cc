@@ -84,9 +84,11 @@ namespace environment {
   /**
    * Check if this element is in view of the camera
    * @param  recr the collision box
+   * @param  interaction whether the test is for interaction or physics
    * @return
    */
-  bool dead_tree_t::is_collided(const SDL_Rect& rect) const {
+  bool dead_tree_t::is_collided(const SDL_Rect& rect,
+                                bool interaction) const {
     if (felled) {
       //tree has fallen, check collision with new bounding region
       return ((felled_bounds.x < (rect.x + rect.w)) &&
@@ -94,7 +96,7 @@ namespace environment {
               (felled_bounds.y < (rect.y + rect.h)) &&
               ((felled_bounds.y + felled_bounds.h) > rect.y));
     } else {
-      return renderable_t::is_collided(rect);
+      return renderable_t::is_collided(rect, interaction);
     }
   }
 
@@ -131,30 +133,32 @@ namespace environment {
    * @param camera   the camera
    */
   void dead_tree_t::render(SDL_Renderer& renderer, const SDL_Rect& camera) const {
-    //render the animation
-    anim->render(renderer,
-                 (bounds.x - (bounds.w / 2)) - camera.x,
-                 bounds.y - camera.y);
+    if (this->is_collided(camera,false)) {
+      //render the animation
+      anim->render(renderer,
+                   (bounds.x - (bounds.w / 2)) - camera.x,
+                   bounds.y - camera.y);
 
-    if (debug) {
-      //the bounds for drawing the debug box
-      SDL_Rect debug_bounds = {bounds.x - camera.x,
-                               bounds.y - camera.y,
-                               bounds.w, bounds.h};
+      if (debug) {
+        //the bounds for drawing the debug box
+        SDL_Rect debug_bounds = {bounds.x - camera.x,
+                                 bounds.y - camera.y,
+                                 bounds.w, bounds.h};
 
-      if (felled) {
-        //draw felled bounds
-        debug_bounds = {felled_bounds.x - camera.x,
-                        felled_bounds.y - camera.y,
-                        felled_bounds.w,
-                        felled_bounds.h};
+        if (felled) {
+          //draw felled bounds
+          debug_bounds = {felled_bounds.x - camera.x,
+                          felled_bounds.y - camera.y,
+                          felled_bounds.w,
+                          felled_bounds.h};
+        }
+
+        //set the draw color
+        SDL_SetRenderDrawColor(&renderer,255,102,0,255);
+
+        //render the bounds
+        SDL_RenderDrawRect(&renderer,&debug_bounds);
       }
-
-      //set the draw color
-      SDL_SetRenderDrawColor(&renderer,255,102,0,255);
-
-      //render the bounds
-      SDL_RenderDrawRect(&renderer,&debug_bounds);
     }
   }
 

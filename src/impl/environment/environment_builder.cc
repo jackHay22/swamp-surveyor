@@ -11,6 +11,7 @@
 #include "chemical_foam.h"
 #include "dead_tree.h"
 #include "chemical_seep.h"
+#include "door.h"
 
 namespace impl {
 namespace environment {
@@ -20,6 +21,7 @@ namespace environment {
   #define CHEMICAL_FOAM_TYPE "chemical_foam"
   #define DEAD_TREE_TYPE "dead_tree"
   #define CHEMICAL_SEEP_TYPE "chemical_seep"
+  #define DOOR_TYPE "door"
 
   /**
    * Configuration options
@@ -99,6 +101,16 @@ namespace environment {
                                                                          cfg.w,
                                                                          cfg.h,
                                                                          debug));
+        } else if (cfg.type == DOOR_TYPE) {
+          //add a door to the environment
+          elems.push_back(std::make_shared<environment::door_t>(cfg.x,
+                                                                cfg.y,
+                                                                cfg.w,
+                                                                cfg.h,
+                                                                cfg.animation_path,
+                                                                renderer,
+                                                                cfg.animation_frames,
+                                                                debug));
         }
       }
 

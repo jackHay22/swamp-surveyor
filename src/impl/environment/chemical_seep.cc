@@ -75,24 +75,27 @@ namespace environment {
    */
   void chemical_seep_t::render(SDL_Renderer& renderer,
                                const SDL_Rect& camera) const {
-    //set the color
-    SDL_SetRenderDrawColor(&renderer,DRIP_R,DRIP_G,DRIP_B,225);
 
-    for (size_t i=0; i<drips.size(); i++) {
-      SDL_RenderDrawPoint(&renderer,
-                          drips.at(i).first - camera.x,
-                          drips.at(i).second - camera.y);
-    }
+    if (this->is_collided(camera,false)) {
+      //set the color
+      SDL_SetRenderDrawColor(&renderer,DRIP_R,DRIP_G,DRIP_B,225);
 
-    if (debug) {
-      //render the bounds
-      SDL_SetRenderDrawColor(&renderer,53,81,92,225);
-      //get the current bounds (corrected by camera view)
-      SDL_Rect debug_bounds = {bounds.x - camera.x - 1,
-                               bounds.y - camera.y,
-                               bounds.w, bounds.h};
-      //render the bounds
-      SDL_RenderDrawRect(&renderer,&debug_bounds);
+      for (size_t i=0; i<drips.size(); i++) {
+        SDL_RenderDrawPoint(&renderer,
+                            drips.at(i).first - camera.x,
+                            drips.at(i).second - camera.y);
+      }
+
+      if (debug) {
+        //render the bounds
+        SDL_SetRenderDrawColor(&renderer,53,81,92,225);
+        //get the current bounds (corrected by camera view)
+        SDL_Rect debug_bounds = {bounds.x - camera.x - 1,
+                                 bounds.y - camera.y,
+                                 bounds.w, bounds.h};
+        //render the bounds
+        SDL_RenderDrawRect(&renderer,&debug_bounds);
+      }
     }
   }
 }}

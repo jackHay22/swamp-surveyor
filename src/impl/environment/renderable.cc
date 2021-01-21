@@ -10,11 +10,14 @@ namespace impl {
 namespace environment {
 
   /**
-   * Check if this element is in view of the camera
+   * Check if this element collides with some bounding box
    * @param  recr the collision box
+   * @param  interaction whether the collision is for interaction (t)
+   * of just physics (f)
    * @return
    */
-  bool renderable_t::is_collided(const SDL_Rect& rect) const{
+  bool renderable_t::is_collided(const SDL_Rect& rect,
+                                 bool /*interaction*/) const{
     //look for rectangular collision
     return ((bounds.x < (rect.x + rect.w)) &&
             ((bounds.x + bounds.w) > rect.x) &&
