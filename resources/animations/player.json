@@ -1,5 +1,7 @@
 {
   "entity_type" : "player",
+  "x" : 830,
+  "y" : 70,
   "width" : 10,
   "height" : 24,
   "anim_paths" : [

@@ -1,0 +1,9 @@
+[
+  {
+    "x" : 850,
+    "y" : 70,
+    "target_name" : "tracks",
+    "target_text" : "Follow Tracks [f]",
+    "font_path" : "/usr/share/fonts/noto/NotoSans-Light.ttf"
+  }
+]

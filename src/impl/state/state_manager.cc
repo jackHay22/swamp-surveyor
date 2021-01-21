@@ -29,45 +29,55 @@ namespace state {
       renderer(renderer),
       camera(camera),
       tile_dim(tile_dim),
-      debug(debug) {}
+      debug(debug),
+      current_state(TITLE),
+      last_state(TITLE) {}
 
   /**
    * Set the state to pause or unpause to previous
    * @param pause whether to pause (true) or unpause (false)
    */
   void state_manager_t::set_pause(bool pause) {
-    if (pause) {
-      last_state = current_state;
-      current_state = PAUSE;
-    } else if (current_state == PAUSE) {
-      current_state = last_state;
-    }
+    // if (pause) {
+    //   last_state = current_state;
+    //   current_state = PAUSE;
+    // } else if (current_state == PAUSE) {
+    //   current_state = last_state;
+    // }
   }
 
   /**
-   * Get the next level state
+   * Set the current level state
+   * @param name the state type
    */
-  void state_manager_t::next_level_state() {
-    if (current_state == TITLE) {
-      current_state = LEVEL1;
-    }
-    if (states.size() <= current_state) {
+  void state_manager_t::set_state(state_type type) {
+    //check if the state is not yet loaded
+    if (type >= states.size()) {
       //lazily load the next state
       last_loaded++;
 
+      //attempt to load from deferred cfg list
       if (debug) {
-        logger::log_info("state manager loading " +
+        logger::log_info("loading state " +
                          deferred_cfgs.at(last_loaded));
       }
 
-      //load a new state (state_builder.h)
-      load_tm_state(*this,
-                    deferred_cfgs.at(last_loaded),
-                    renderer,
-                    camera,
-                    tile_dim,
-                    debug);
+      if (last_loaded < deferred_cfgs.size()) {
+        //load a new state (state_builder.h)
+        load_tm_state(*this,
+                      deferred_cfgs.at(last_loaded),
+                      renderer,
+                      camera,
+                      tile_dim,
+                      debug);
+      } else {
+        logger::log_err("no cfg provided for next level");
+        return;
+      }
     }
+
+    //set the current state
+    current_state = type;
   }
 
   /**

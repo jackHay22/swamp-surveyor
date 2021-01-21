@@ -61,12 +61,14 @@ namespace utils {
    * @param  size      the size of the font
    * @param  w         the width of the loaded texture set by the call
    * @param  h         the height of the loaded texture set by the call
+   * @param  color     the color for the text
    * @return           the loaded texture
    */
   SDL_Texture* load_font(const std::string& text,
                          const std::string& font_path,
                          SDL_Renderer& renderer,
-                         int size, int& w, int& h) {
+                         int size, int& w, int& h,
+                         SDL_Color color) {
 
     //load the font by path
     TTF_Font *font = TTF_OpenFont(font_path.c_str(), size);
@@ -76,9 +78,6 @@ namespace utils {
                                          "could not load font (" +
                                          std::string(TTF_GetError()) + ")");
     }
-
-    //default color
-    SDL_Color color = {0,0,0};
 
     //load the text surface
     SDL_Surface* text_surface = TTF_RenderText_Solid(font,text.c_str(),color);
