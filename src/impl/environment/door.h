@@ -27,6 +27,9 @@ namespace environment {
     //the single sequence animation
     std::unique_ptr<single_seq_anim_t> anim;
 
+    //whether the door opened left
+    bool left;
+
     //whether debug mode enabled
     bool debug;
 

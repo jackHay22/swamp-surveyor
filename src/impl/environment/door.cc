@@ -32,6 +32,7 @@ namespace environment {
                  bool debug)
     : renderable_t({x,y,w,h}, true,true),
       opened(false),
+      left(false),
       debug(debug) {
     //load the animation
     anim = std::make_unique<single_seq_anim_t>(texture_path,
@@ -49,8 +50,12 @@ namespace environment {
     if (a == PUSH) {
       //determine the side the player is on and flip animation
       //if necessary
-      anim->set_flipped(x > (bounds.x + (bounds.w / 2)));
+      left = x > (bounds.x + (bounds.w / 2));
+      anim->set_flipped(left);
 
+      if (left) {
+        bounds.x -= DEFAULT_DOOR_W;
+      }
       //set the width for camera collision
       bounds.w = DEFAULT_DOOR_W;
 
@@ -96,9 +101,10 @@ namespace environment {
    */
   void door_t::render(SDL_Renderer& renderer, const SDL_Rect& camera) const {
     if (this->is_collided(camera,false)) {
+      int texture_x = bounds.x + (DEFAULT_DOOR_W * (opened && left));
       //render animation
       anim->render(renderer,
-                   bounds.x - camera.x,
+                   texture_x - camera.x,
                    bounds.y - camera.y);
 
       if (debug) {
