@@ -8,7 +8,7 @@ LDFLAGS := -lpthread -lSDL2 -lSDL2_image -lSDL2_ttf
 swamp.out: $(OBJECTS)
 	g++ $(CFLAGSO) -o $@ $^ $(LDFLAGS)
 macos: $(OBJECTS)
-	g++ $(CFLAGS) -DBUILD__MACOS__ -o SwampSurveyor $^ $(LDFLAGS)
+	g++ -headerpad_max_install_names $(CFLAGS) -DBUILD__MACOS__ -o SwampSurveyor $^ $(LDFLAGS)
 debug: $(OBJECTS)
 	g++ $(CFLAGS) -o swamp.out $^ $(LDFLAGS)
 clean::

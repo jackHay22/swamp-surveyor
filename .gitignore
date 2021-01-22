@@ -7,3 +7,4 @@ macos_cfg.json
 swamp
 SwampSurveyor
 *.dSYM
+*.zip

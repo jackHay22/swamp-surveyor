@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
   std::string cfg_name = "cfg.json";
 
   #ifdef BUILD__MACOS__
-  std::string font = "/System/Library/Fonts/SFCompactDisplay-Thin.otf";
+  std::string font = "/System/Library/Fonts/Helvetica.ttc";
   std::string base_path = "/Library/Application Support/io.jackhay/swamp_surveyor/";
   #else
   std::string font = "/usr/share/fonts/noto/NotoSans-Light.ttf";
