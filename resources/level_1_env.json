@@ -48,5 +48,25 @@
     "animation_path" : "",
     "animation_frames" : 0,
     "type" : "chemical_seep"
+  },
+  {
+    "x" : 1016,
+    "y" : 64,
+    "w" : 2,
+    "h" : 24,
+    "density" : 0.0,
+    "animation_path" : "resources/animations/door.png",
+    "animation_frames" : 5,
+    "type" : "door"
+  },
+  {
+    "x" : 1023,
+    "y" : 104,
+    "w" : 2,
+    "h" : 24,
+    "density" : 0.0,
+    "animation_path" : "resources/animations/door.png",
+    "animation_frames" : 5,
+    "type" : "door"
   }
 ]

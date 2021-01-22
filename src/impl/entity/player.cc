@@ -88,6 +88,8 @@ namespace entity {
         case SDLK_p:
           //no overlap
           if ((performing_action == false) || (action != PUSH)) {
+            //store the current state to revert after push complete
+            prev_state = state;
             state = ACTION;
             performing_action = true;
             action = PUSH;
@@ -109,7 +111,6 @@ namespace entity {
           if (state == ACTION) {
             state = IDLE;
             performing_action = false;
-
           }
           break;
       }
@@ -133,7 +134,7 @@ namespace entity {
 
       if (move_tick_counter == 0) {
         //set state to idle
-        state = IDLE;
+        state = prev_state;
       }
     }
 

@@ -71,9 +71,11 @@ namespace environment {
     /**
      * Check if this element is in view of the camera
      * @param  recr the collision box
+     * @param  interaction whether this test is for interactive bounds
+     * (if false, physics)
      * @return
      */
-    bool is_collided(const SDL_Rect& rect) const;
+    bool is_collided(const SDL_Rect& rect, bool interaction) const;
 
     /**
      * Check if some coordinate collides with this foam

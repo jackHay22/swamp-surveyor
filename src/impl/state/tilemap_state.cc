@@ -101,7 +101,7 @@ namespace state {
     //check each environmental element for a collision
     for (size_t i=0; i<env_renderable.size(); i++) {
       if (env_renderable.at(i)->is_solid() &&
-          env_renderable.at(i)->is_collided(bounds)) {
+          env_renderable.at(i)->is_collided(bounds,false)) {
         return true;
       }
     }
@@ -152,7 +152,7 @@ namespace state {
 
     //perform any interactions
     for (size_t i=0; i<env_renderable.size(); i++) {
-      if (env_renderable.at(i)->is_collided(player_bounds) &&
+      if (env_renderable.at(i)->is_collided(player_bounds,true) &&
           env_renderable.at(i)->is_interactive()) {
         //interact with the environmental element
         env_renderable.at(i)->interact(action,px,py);
@@ -234,7 +234,7 @@ namespace state {
     //update each renderable environment element
     for (size_t i=0; i<env_renderable.size(); i++) {
       //check for player/environment interaction
-      if (env_renderable.at(i)->is_collided(player_bounds)) {
+      if (env_renderable.at(i)->is_collided(player_bounds,true)) {
         player->do_damage(env_renderable.at(i)->get_damage());
       }
 

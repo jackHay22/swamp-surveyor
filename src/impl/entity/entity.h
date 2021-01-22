@@ -63,13 +63,14 @@ namespace entity {
     bool debug;
 
     //the current state of the entity, can be set by subclasses
+    //previous state used for restoring last state
     enum {
       IDLE,
       MOVE,
       CLIMB,
       DROP,
       ACTION,
-    } state = IDLE;
+    } state = IDLE, prev_state = IDLE;
 
   public:
     /**

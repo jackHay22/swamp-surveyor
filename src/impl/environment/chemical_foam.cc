@@ -124,11 +124,12 @@ namespace environment {
   /**
    * Check if this element is in view of the camera
    * @param  recr the collision box
+   * @param interaction whether the test is for interaction
    * @return
    */
-  bool chemical_foam_t::is_collided(const SDL_Rect& rect) const {
+  bool chemical_foam_t::is_collided(const SDL_Rect& rect, bool interaction) const {
     //cannot collide if dispersed
-    return !dispersed && renderable_t::is_collided(rect);
+    return !dispersed && renderable_t::is_collided(rect,interaction);
   }
 
   /**
@@ -178,7 +179,7 @@ namespace environment {
   void chemical_foam_t::render(SDL_Renderer& renderer,
                                const SDL_Rect& camera) const {
     //check if this element is in view
-    if (this->is_collided(camera) && !this->dispersed) {
+    if (this->is_collided(camera,false) && !this->dispersed) {
       //temp foam color
       SDL_SetRenderDrawColor(&renderer,FOAM_R,FOAM_G,FOAM_B,225);
       //render foam
