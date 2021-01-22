@@ -41,6 +41,7 @@ namespace state {
       level_items(level_items),
       trans_blocks(trans_blocks),
       forks(forks),
+      player_idx(player_idx),
       show_bars(false),
       player_health_bar(5,120,50,1000,255,0,0) {
     //sanity check
@@ -55,6 +56,17 @@ namespace state {
     if (!player) {
       throw exceptions::rsrc_exception_t("player idx in entity list does not refer to player type");
     }
+  }
+
+  /**
+   * Set the player
+   * @param player the player to add to state
+   */
+  void tilemap_state_t::set_player(std::shared_ptr<entity::player_t> player) {
+    this->player = player;
+
+    //update the player in the entities list
+    entities.at(player_idx) = player;
   }
 
   /**
@@ -140,6 +152,13 @@ namespace state {
       //update map forks
       for (size_t i=0; i<forks.size(); i++) {
         if (forks.at(i)->can_interact()) {
+          //set the player position
+          int target_x;
+          int target_y;
+          forks.at(i)->get_target(target_x, target_y);
+          //set the player position
+          player->set_position(target_x, target_y);
+
           //change the current state
           manager.set_state(forks.at(i)->get_dest());
         }

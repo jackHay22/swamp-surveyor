@@ -95,6 +95,13 @@ namespace entity {
     virtual ~entity_t() {}
 
     /**
+     * Set the entity position
+     * @param x x coord for entity
+     * @param y y coord for entity
+     */
+    void set_position(int x, int y) { this->x = x; this->y = y; }
+
+    /**
      * Get the entity health remaining
      * @return the entity health
      */

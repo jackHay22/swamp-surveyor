@@ -1,0 +1,23 @@
+{
+  "tileset_path" : "resources/tilesets/tracks.png",
+  "map_layer_paths" : [
+    "resources/maps/tracks_background.txt",
+    "resources/maps/tracks_background_near.txt",
+    "resources/maps/tracks_ground.txt",
+    "resources/maps/tracks_foreground.txt"
+  ],
+  "entity_layer_idx" : 2,
+  "entity_layer_solid" :
+    [3,730,573,729,728,726,727,731,724,660,663,725,722,721],
+  "entity_layer_water" : [],
+  "entity_cfg_paths" : [
+    "resources/animations/player.json"
+  ],
+  "player_idx" : 0,
+  "bg_stationary" : false,
+  "insect_cfg_path" : "resources/cfg/tracks_insects.json",
+  "env_elems_path" : "resources/cfg/tracks_env.json",
+  "items_path" : "resources/cfg/tracks_items.json",
+  "transparent_blocks_path" : "resources/cfg/tracks_tpblocks.json",
+  "map_fork_path" : "resources/cfg/tracks_forks.json"
+}

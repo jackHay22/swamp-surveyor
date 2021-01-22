@@ -1,0 +1,11 @@
+[
+  {
+    "x" : 760,
+    "y" : 80,
+    "target_x" : 850,
+    "target_y" : 64,
+    "target_name" : "swamp",
+    "target_text" : "Return to swamp [f]",
+    "font_path" : "/usr/share/fonts/noto/NotoSans-Light.ttf"
+  }
+]

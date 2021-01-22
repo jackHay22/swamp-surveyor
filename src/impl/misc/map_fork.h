@@ -38,6 +38,10 @@ namespace misc {
     int x;
     int y;
 
+    //target position
+    int target_x;
+    int target_y;
+
     //texture for the fork message
     SDL_Texture *texture;
     int texture_w;
@@ -61,12 +65,15 @@ namespace misc {
      * Constructor
      * @param x           fork position x
      * @param y           fork position y
+     * @param target_x    target position x (dest map)
+     * @param target_y    target position y
      * @param target_text the name to display to player
      * @param target_name the name of the target state
      * @param font_path   path to the font to load
      * @param renderer    renderer for loading the font
      */
     map_fork_t(int x, int y,
+               int target_x, int target_y,
                const std::string& target_text,
                const std::string& target_name,
                const std::string& font_path,
@@ -78,6 +85,13 @@ namespace misc {
      * Free texture
      */
     ~map_fork_t();
+
+    /**
+     * Get the target position
+     * @param tx position x
+     * @param ty position y
+     */
+    void get_target(int& tx, int& ty) const { tx = target_x; ty = target_y; }
 
     /**
      * Whether the fork can be taken

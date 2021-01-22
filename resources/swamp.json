@@ -1,5 +1,5 @@
 {
-  "tileset_path" : "resources/swamp_1.png",
+  "tileset_path" : "resources/tilesets/swamp_1.png",
   "map_layer_paths" : [
     "resources/maps/swamp_1_background.txt",
     "resources/maps/swamp_1_background_near.txt",
@@ -16,9 +16,9 @@
   ],
   "player_idx" : 0,
   "bg_stationary" : false,
-  "insect_cfg_path" : "resources/insects.json",
-  "env_elems_path" : "resources/level_1_env.json",
-  "items_path" : "resources/level_1_items.json",
-  "transparent_blocks_path" : "resources/level_1_tpblocks.json",
-  "map_fork_path" : "resources/level_1_forks.json"
+  "insect_cfg_path" : "resources/cfg/swamp_insects.json",
+  "env_elems_path" : "resources/cfg/swamp_env.json",
+  "items_path" : "resources/cfg/swamp_items.json",
+  "transparent_blocks_path" : "resources/cfg/swamp_tpblocks.json",
+  "map_fork_path" : "resources/cfg/swamp_forks.json"
 }

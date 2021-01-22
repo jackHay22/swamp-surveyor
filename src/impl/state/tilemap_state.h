@@ -39,6 +39,8 @@ namespace state {
 
     //the index of the player in the entity list
     std::shared_ptr<entity::player_t> player;
+    //the player index in the entity list
+    int player_idx;
 
     //insects in the map
     std::shared_ptr<entity::insects_t> insects;
@@ -99,6 +101,17 @@ namespace state {
                     SDL_Rect& camera);
     tilemap_state_t(const tilemap_state_t&) = delete;
     tilemap_state_t& operator=(const tilemap_state_t&) = delete;
+
+    /**
+     * Set the player
+     * @param player the player to add to state
+     */
+    void set_player(std::shared_ptr<entity::player_t> player);
+
+    /**
+     * Get the player
+     */
+    std::shared_ptr<entity::player_t> get_player() { return player; }
 
     /**
      * Handle some key event

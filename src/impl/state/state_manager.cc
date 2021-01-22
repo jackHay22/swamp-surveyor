@@ -7,6 +7,7 @@
 #include "state_manager.h"
 #include "state_builder.h"
 #include "../logger.h"
+#include "tilemap_state.h"
 
 namespace impl {
 namespace state {
@@ -73,6 +74,15 @@ namespace state {
       } else {
         logger::log_err("no cfg provided for next level");
         return;
+      }
+    }
+
+    //set player if previous and next states are tilemaps
+    if (tilemap_state_t *src = dynamic_cast<tilemap_state_t*>(states.at(current_state).get())) {
+      if (tilemap_state_t *dest = dynamic_cast<tilemap_state_t*>(states.at(type).get())) {
+
+        //set player ptr
+        dest->set_player(src->get_player());
       }
     }
 

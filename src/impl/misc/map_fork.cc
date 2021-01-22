@@ -22,6 +22,8 @@ namespace misc {
   struct fork_cfg {
     int x;
     int y;
+    int target_x;
+    int target_y;
     std::string target_text;
     std::string target_name;
     std::string font_path;
@@ -35,6 +37,8 @@ namespace misc {
   void from_json(const json& j, fork_cfg& c) {
     j.at("x").get_to(c.x);
     j.at("y").get_to(c.y);
+    j.at("target_x").get_to(c.target_x);
+    j.at("target_y").get_to(c.target_y);
     j.at("target_text").get_to(c.target_text);
     j.at("target_name").get_to(c.target_name);
     j.at("font_path").get_to(c.font_path);
@@ -62,6 +66,8 @@ namespace misc {
         //add a new fork from cfg
         forks.push_back(std::make_shared<map_fork_t>(cfg.x,
                                                      cfg.y,
+                                                     cfg.target_x,
+                                                     cfg.target_y,
                                                      cfg.target_text,
                                                      cfg.target_name,
                                                      cfg.font_path,
@@ -77,17 +83,23 @@ namespace misc {
    * Constructor
    * @param x           fork position x
    * @param y           fork position y
+   * @param target_x    target position x (dest map)
+   * @param target_y    target position y
    * @param target_text the name to display to player
    * @param target_name the name of the target state
    * @param font_path   path to the font to load
    * @param renderer    renderer for loading the font
    */
   map_fork_t::map_fork_t(int x, int y,
+                         int target_x, int target_y,
                          const std::string& target_text,
                          const std::string& target_name,
                          const std::string& font_path,
                          SDL_Renderer& renderer)
-    : x(x), y(y), display(false) {
+    : x(x), y(y),
+      target_x(target_x),
+      target_y(target_y),
+      display(false) {
     //load text to texture
     texture = utils::load_font(target_text,
                                font_path,

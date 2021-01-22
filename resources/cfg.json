@@ -9,6 +9,7 @@
   "caret_image" : "resources/caret.png",
   "menu_font" : "/usr/share/fonts/noto/NotoSans-Light.ttf",
   "level_cfgs" : [
-    "resources/level_1.json"
+    "resources/swamp.json",
+    "resources/tracks.json"
   ]
 }
