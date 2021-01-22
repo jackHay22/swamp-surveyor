@@ -51,17 +51,19 @@ namespace entity {
    * @param  path the path to the cfg file
    * @param  renderer the renderer for loading textures
    * @param  tile_dim the dimension of tiles
+   * @param  base_path the resource dir base path
    * @param  debug    whether debug mode enabled
    * @return      the entity
    */
   std::shared_ptr<entity_t> load_entity(const std::string& path,
                                         SDL_Renderer& renderer,
                                         int tile_dim,
+                                        const std::string& base_path,
                                         bool debug) {
 
     try {
       //load the config file
-      std::ifstream in_stream(path);
+      std::ifstream in_stream(base_path + path);
       nlohmann::json config;
 
       in_stream >> config;
@@ -76,6 +78,7 @@ namespace entity {
                                                   cfg.anim_paths,
                                                   renderer,
                                                   tile_dim,
+                                                  base_path,
                                                   debug);
       }
 
@@ -87,7 +90,7 @@ namespace entity {
       throw e;
 
     } catch (...) {
-      throw exceptions::rsrc_exception_t("failed to load as json: " + path);
+      throw exceptions::rsrc_exception_t("failed to load as json: " + base_path + path);
     }
   }
 }}

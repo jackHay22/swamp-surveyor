@@ -1,2 +1,9 @@
 *.out
+*.out.*
 resources/projects
+*.app
+resources/macos_cfg
+macos_cfg.json
+swamp
+SwampSurveyor
+*.dSYM

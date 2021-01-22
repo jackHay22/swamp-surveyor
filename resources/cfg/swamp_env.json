@@ -25,7 +25,7 @@
     "w" : 4,
     "h" : 48,
     "density" : 0.0,
-    "animation_path" : "resources/animations/tree_fall_1.png",
+    "animation_path" : "animations/tree_fall_1.png",
     "animation_frames" : 10,
     "type" : "dead_tree"
   },
@@ -35,7 +35,7 @@
     "w" : 4,
     "h" : 48,
     "density" : 0.0,
-    "animation_path" : "resources/animations/tree_fall_1.png",
+    "animation_path" : "animations/tree_fall_1.png",
     "animation_frames" : 10,
     "type" : "dead_tree"
   },
@@ -55,7 +55,7 @@
     "w" : 2,
     "h" : 24,
     "density" : 0.0,
-    "animation_path" : "resources/animations/door.png",
+    "animation_path" : "animations/door.png",
     "animation_frames" : 5,
     "type" : "door"
   },
@@ -65,7 +65,7 @@
     "w" : 2,
     "h" : 24,
     "density" : 0.0,
-    "animation_path" : "resources/animations/door.png",
+    "animation_path" : "animations/door.png",
     "animation_frames" : 5,
     "type" : "door"
   }

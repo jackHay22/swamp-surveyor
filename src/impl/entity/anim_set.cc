@@ -44,18 +44,19 @@ namespace entity {
     j.at("duration").get_to(c.duration);
   }
 
-
   /**
-   * Construct the animation set
-   * @param path            the resource path
-   * @param renderer        the renderer for loading images
+   * Constructor
+   * @param path      the path to the texture
+   * @param renderer  the renderer for loading the texture
+   * @param base_path the path to the resources folder
    */
   anim_set_t::anim_set_t(const std::string& path,
-                         SDL_Renderer& renderer)
+                         SDL_Renderer& renderer,
+                         const std::string& base_path)
     : current_frame(0) {
 
     //read from the configuration file
-    std::ifstream in_stream(path);
+    std::ifstream in_stream(base_path + path);
     nlohmann::json config;
 
     try {
@@ -72,12 +73,12 @@ namespace entity {
       int width = this->frame_width * this->anim_frames;
 
       //load the texture
-      this->texture = utils::load_texture(cfg.rsrc_path,
+      this->texture = utils::load_texture(base_path + cfg.rsrc_path,
                                           renderer, width,
                                           this->frame_height);
 
     } catch (...) {
-      throw exceptions::rsrc_exception_t("failed to load animation from cfg: " + path);
+      throw exceptions::rsrc_exception_t("failed to load animation from cfg: " + base_path + path);
     }
   }
 

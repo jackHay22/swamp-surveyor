@@ -22,10 +22,12 @@ namespace misc {
    * Load map forks
    * @param forks    forks loaded by the call
    * @param cfg_path path to the fork configuration file
+   * @pararm font_path the path to the font to use
    * @param renderer the sdl renderer for loading textures
    */
   void load_forks(std::vector<std::shared_ptr<map_fork_t>>& forks,
                   const std::string& cfg_path,
+                  const std::string& font_path,
                   SDL_Renderer& renderer);
 
   /**

@@ -53,6 +53,11 @@ namespace state {
     //the tile dimension
     int tile_dim;
 
+    //resource directory base path
+    std::string base_path;
+    //the font to use
+    std::string font_path;
+
     //debug mode
     bool debug;
 
@@ -103,8 +108,12 @@ namespace state {
      * Set the state paths in the manager but don't
      * load until the level is required
      * @param cfgs     the paths to the level configurations
+     * @param base_path the resource directory base path
+     * @param font_path the path to the font to use
      */
-    void load_defer(const std::vector<std::string>& cfgs);
+    void load_defer(const std::vector<std::string>& cfgs,
+                    const std::string& base_path,
+                    const std::string& font_path);
 
     /**
      * Check whether the game is running

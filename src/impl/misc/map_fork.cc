@@ -26,7 +26,6 @@ namespace misc {
     int target_y;
     std::string target_text;
     std::string target_name;
-    std::string font_path;
   };
 
   /**
@@ -41,21 +40,22 @@ namespace misc {
     j.at("target_y").get_to(c.target_y);
     j.at("target_text").get_to(c.target_text);
     j.at("target_name").get_to(c.target_name);
-    j.at("font_path").get_to(c.font_path);
   }
 
   /**
    * Load map forks
    * @param forks    forks loaded by the call
-   * @param path     path to the fork configuration file
+   * @param cfg_path path to the fork configuration file
+   * @pararm font_path the path to the font to use
    * @param renderer the sdl renderer for loading textures
    */
   void load_forks(std::vector<std::shared_ptr<map_fork_t>>& forks,
-                  const std::string& path,
+                  const std::string& cfg_path,
+                  const std::string& font_path,
                   SDL_Renderer& renderer) {
     try {
       nlohmann::json config;
-      std::ifstream in_stream(path);
+      std::ifstream in_stream(cfg_path);
       in_stream >> config;
 
       //load each env element
@@ -70,12 +70,12 @@ namespace misc {
                                                      cfg.target_y,
                                                      cfg.target_text,
                                                      cfg.target_name,
-                                                     cfg.font_path,
+                                                     font_path,
                                                      renderer));
       }
 
     } catch (...) {
-      throw exceptions::rsrc_exception_t(path);
+      throw exceptions::rsrc_exception_t(cfg_path);
     }
   }
 

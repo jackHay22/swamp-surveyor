@@ -82,12 +82,14 @@ namespace entity {
      * @param anim_cfg_paths     the paths to the configuration files for each animation
      * @param renderer           the renderer for loading textures
      * @param tile_dim           the dimensions of tiles
+     * @param base_path          the resource directory base path
      */
     entity_t(int x, int y,
              int w, int h,
              const std::vector<std::string>& anim_cfg_paths,
              SDL_Renderer& renderer,
              int tile_dim,
+             const std::string& base_path,
              bool debug);
     entity_t(const entity_t&) = delete;
     entity_t& operator=(const entity_t&) = delete;

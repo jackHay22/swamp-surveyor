@@ -24,6 +24,7 @@ namespace state {
    * @param bg_path  the path to the background image
    * @param caret_path the path to the caret texture for current selection
    * @param font_path the path to the menu font
+   * @param base_path the base resource dir path
    * @param renderer the renderer for loading the texture
    * @param manager  the state manager
    */
@@ -32,6 +33,7 @@ namespace state {
                                const std::string& bg_path,
                                const std::string& caret_path,
                                const std::string& font_path,
+                               const std::string& base_path,
                                SDL_Renderer& renderer,
                                state_manager_t& manager)
     : state_t(manager, SDL_Rect {0,0,width,height}),
@@ -40,10 +42,13 @@ namespace state {
 
     int w,h = 0;
     //load the background texture
-    this->texture = utils::load_texture(bg_path,renderer,w,h);
+    this->texture = utils::load_texture(base_path + bg_path,renderer,w,h);
 
     //load the caret selection texture
-    this->caret_texture = utils::load_texture(caret_path,renderer,caret_w,caret_h);
+    this->caret_texture = utils::load_texture(base_path + caret_path,
+                                              renderer,
+                                              caret_w,
+                                              caret_h);
 
     //load the font textures
     start_texture = utils::load_font(START_TEXT,

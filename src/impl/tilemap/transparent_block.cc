@@ -49,15 +49,17 @@ namespace tilemap {
    * @param blocks   the blocks vec set by the call
    * @param path     the path to the configuration file
    * @param renderer the renderer for loading textures
+   * @param base_path the resource directory base path
    * @param debug    whether debug mode enabled
    */
   void mk_transparent_blocks(std::vector<std::shared_ptr<transparent_block_t>>& blocks,
                              const std::string& path,
                              SDL_Renderer& renderer,
+                             const std::string& base_path,
                              bool debug) {
     try {
       nlohmann::json config;
-      std::ifstream in_stream(path);
+      std::ifstream in_stream(base_path + path);
       in_stream >> config;
 
       //load each env element
@@ -71,7 +73,7 @@ namespace tilemap {
                                                                  cfg.y,
                                                                  cfg.w,
                                                                  cfg.h,
-                                                                 cfg.texture_path,
+                                                                 base_path + cfg.texture_path,
                                                                  renderer,
                                                                  debug));
         } else {
@@ -87,7 +89,7 @@ namespace tilemap {
       }
 
     } catch (...) {
-      throw exceptions::rsrc_exception_t(path);
+      throw exceptions::rsrc_exception_t(base_path + path);
     }
   }
 

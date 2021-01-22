@@ -1,5 +1,5 @@
 {
-  "rsrc_path" : "resources/animations/surveyor_spray.png",
+  "rsrc_path" : "animations/surveyor_spray.png",
   "frame_width" : 18,
   "frame_height" : 24,
   "anim_frames" : 1,

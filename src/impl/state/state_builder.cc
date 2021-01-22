@@ -87,6 +87,8 @@ namespace state {
    * @param  renderer the renderer for the level
    * @param  camera   the starting level camera
    * @param  tile_dim the dimensions of tiles
+   * @param  base_path resource directory base path
+   * @param  font_path the path to the font to use
    * @param  debug    whether debug mode enabled
    */
   void load_tm_state(state::state_manager_t& state_manager,
@@ -94,13 +96,15 @@ namespace state {
                      SDL_Renderer& renderer,
                      SDL_Rect& camera,
                      int tile_dim,
+                     const std::string& base_path,
+                     const std::string& font_path,
                      bool debug) {
 
     //load the file
     state_cfg_t cfg;
 
     try {
-      std::ifstream in_stream(path);
+      std::ifstream in_stream(base_path + path);
       nlohmann::json config;
 
       in_stream >> config;
@@ -112,10 +116,15 @@ namespace state {
 
     //initialize the tileset from image
     std::shared_ptr<tilemap::tileset_t> tileset =
-      std::make_shared<tilemap::tileset_t>(cfg.tileset_path,
+      std::make_shared<tilemap::tileset_t>(base_path + cfg.tileset_path,
                                            tile_dim,
                                            renderer,
                                            debug);
+
+    //add base path to map layer paths
+    for (size_t i=0; i<cfg.map_layer_paths.size(); i++) {
+      cfg.map_layer_paths.at(i) = base_path + cfg.map_layer_paths.at(i);
+    }
 
     //the tilemap from layer paths
     std::shared_ptr<tilemap::tilemap_t> tilemap =
@@ -133,35 +142,40 @@ namespace state {
 
     //load entities
     for (const std::string& epath : cfg.entity_cfg_paths) {
-      entities.push_back(entity::load_entity(epath,renderer,tile_dim,debug));
+      entities.push_back(entity::load_entity(epath,renderer,tile_dim,base_path,debug));
     }
 
     //load insects
     std::shared_ptr<entity::insects_t> insects =
-      std::make_shared<entity::insects_t>(cfg.insect_cfg_path);
+      std::make_shared<entity::insects_t>(base_path + cfg.insect_cfg_path);
 
     //load renderable environmental elements
     std::vector<std::shared_ptr<environment::renderable_t>> env_renderable;
     environment::load_env_elems(env_renderable,
                                 cfg.env_elems_path,
                                 renderer,
+                                base_path,
                                 debug);
 
     //load items
     std::vector<std::shared_ptr<items::item_t>> level_items;
     items::load_items(level_items,
                       cfg.items_path,
-                      renderer, debug);
+                      renderer,
+                      base_path,
+                      debug);
 
     //load transparent blocks
     std::vector<std::shared_ptr<tilemap::transparent_block_t>> tblocks;
     tilemap::mk_transparent_blocks(tblocks,
                                    cfg.transparent_blocks_path,
-                                   renderer, debug);
+                                   renderer,
+                                   base_path,
+                                   debug);
 
     //load map forks
     std::vector<std::shared_ptr<misc::map_fork_t>> forks;
-    misc::load_forks(forks,cfg.map_fork_path,renderer);
+    misc::load_forks(forks,base_path + cfg.map_fork_path,font_path,renderer);
 
     //make the state and add it to the manager
     state_manager.add_state(std::make_unique<state::tilemap_state_t>(tilemap,

@@ -22,12 +22,14 @@ namespace entity {
    * @param  path the path to the cfg file
    * @param  renderer the renderer for loading textures
    * @param  tile_dim the dimension of tiles
+   * @param  base_path the resource dir base path
    * @param  debug    whether debug mode enabled
    * @return      the entity
    */
   std::shared_ptr<entity_t> load_entity(const std::string& path,
                                         SDL_Renderer& renderer,
                                         int tile_dim,
+                                        const std::string& base_path,
                                         bool debug);
 }}
 

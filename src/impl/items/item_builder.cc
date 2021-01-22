@@ -46,16 +46,18 @@ namespace items {
    * @param items    a vector of loaded items set by the call
    * @param cfg_path the path to the items configuration
    * @param renderer the sdl renderer
+   * @param base_path the resource directory base path
    * @param debug    whether debug mode is enabled
    */
   void load_items(std::vector<std::shared_ptr<item_t>>& items,
-                  const std::string& cfg_path,
-                  SDL_Renderer& renderer,
-                  bool debug) {
+                    const std::string& cfg_path,
+                    SDL_Renderer& renderer,
+                    const std::string& base_path,
+                    bool debug) {
     nlohmann::json config;
 
     try {
-      std::ifstream in_stream(cfg_path);
+      std::ifstream in_stream(base_path + cfg_path);
       in_stream >> config;
 
       //load each env element
@@ -67,20 +69,20 @@ namespace items {
         if (cfg.type == CHEMICAL_LABEL_TYPE) {
           items.push_back(std::make_shared<chemical_label_t>(cfg.x,
                                                              cfg.y,
-                                                             cfg.texture_path,
+                                                             base_path + cfg.texture_path,
                                                              renderer,
                                                              debug));
         } else if (cfg.type == FOAM_SPRAYER_TYPE) {
           items.push_back(std::make_shared<sprayer_t>(cfg.x,
                                                       cfg.y,
-                                                      cfg.texture_path,
+                                                      base_path + cfg.texture_path,
                                                       renderer,
                                                       debug));
         }
       }
 
     } catch (...) {
-      throw exceptions::rsrc_exception_t(cfg_path);
+      throw exceptions::rsrc_exception_t(base_path + cfg_path);
     }
   }
 }}

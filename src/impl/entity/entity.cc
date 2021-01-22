@@ -27,12 +27,14 @@ namespace entity {
    * @param anim_cfg_paths     the paths to the configuration files for each animation
    * @param renderer           the renderer for loading textures
    * @param tile_dim           the dimensions of tiles
+   * @param base_path          the resource directory base path
    */
   entity_t::entity_t(int x, int y,
                      int w, int h,
                      const std::vector<std::string>& anim_cfg_paths,
                      SDL_Renderer& renderer,
                      int tile_dim,
+                     const std::string& base_path,
                      bool debug)
     : x(x), y(y),
       w(w), h(h),
@@ -53,7 +55,7 @@ namespace entity {
     //load animation frames (must be in order)
     for (int i=0; i<ENTITY_STATES; i++) {
       //create the animation set and add to list
-      anims.push_back(std::make_unique<anim_set_t>(anim_cfg_paths.at(i),renderer));
+      anims.push_back(std::make_unique<anim_set_t>(anim_cfg_paths.at(i),renderer,base_path));
     }
   }
 

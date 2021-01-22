@@ -94,11 +94,13 @@ namespace tilemap {
    * @param blocks   the blocks vec set by the call
    * @param path     the path to the configuration file
    * @param renderer the renderer for loading textures
+   * @param base_path the resource directory base path
    * @param debug    whether debug mode enabled
    */
   void mk_transparent_blocks(std::vector<std::shared_ptr<transparent_block_t>>& blocks,
                              const std::string& path,
                              SDL_Renderer& renderer,
+                             const std::string& base_path,
                              bool debug);
 }}
 

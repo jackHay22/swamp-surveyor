@@ -24,14 +24,16 @@ namespace entity {
    * @param texture_paths      paths for each of the 4 basic animations
    * @param renderer           the renderer for loading textures
    * @param tile_dim           the dimension of tiles
+   * @param base_path          the resource directory base path
    */
   player_t::player_t(int x, int y,
                      int w, int h,
                      const std::vector<std::string>& anim_cfg_paths,
                      SDL_Renderer& renderer,
                      int tile_dim,
+                     const std::string& base_path,
                      bool debug)
-    : entity_t(x,y,w,h,anim_cfg_paths,renderer,tile_dim,debug),
+    : entity_t(x,y,w,h,anim_cfg_paths,renderer,tile_dim,base_path,debug),
       performing_action(false),
       actions(),
       held_items(),
@@ -45,7 +47,8 @@ namespace entity {
       for (size_t i=ENTITY_STATES; i<anim_cfg_paths.size(); i++) {
         //load additional animations
         anims.push_back(std::make_unique<anim_set_t>(anim_cfg_paths.at(i),
-                                                     renderer));
+                                                     renderer,
+                                                     base_path));
       }
     }
   }

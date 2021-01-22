@@ -80,6 +80,7 @@ namespace state {
      * @param bg_path  the path to the background image
      * @param caret_path the path to the caret texture for current selection
      * @param font_path the path to the menu font
+     * @param base_path the base resource dir path
      * @param renderer the renderer for loading the texture
      * @param manager  the state manager
      */
@@ -88,6 +89,7 @@ namespace state {
                   const std::string& bg_path,
                   const std::string& caret_path,
                   const std::string& font_path,
+                  const std::string& base_path,
                   SDL_Renderer& renderer,
                   state_manager_t& manager);
     title_state_t(const title_state_t&) = delete;

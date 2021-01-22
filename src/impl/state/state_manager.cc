@@ -30,6 +30,8 @@ namespace state {
       renderer(renderer),
       camera(camera),
       tile_dim(tile_dim),
+      base_path("resources/"),
+      font_path("/usr/share/fonts/noto/NotoSans-Light.ttf"),
       debug(debug),
       current_state(TITLE),
       last_state(TITLE) {}
@@ -70,6 +72,8 @@ namespace state {
                       renderer,
                       camera,
                       tile_dim,
+                      base_path,
+                      font_path,
                       debug);
       } else {
         logger::log_err("no cfg provided for next level");
@@ -111,10 +115,16 @@ namespace state {
    * Set the state paths in the manager but don't
    * load until the level is required
    * @param cfgs     the paths to the level configurations
+   * @param base_path the resource directory base path
+   * @param font_path the path to the font to use
    */
-  void state_manager_t::load_defer(const std::vector<std::string>& cfgs) {
+  void state_manager_t::load_defer(const std::vector<std::string>& cfgs,
+                                   const std::string& base_path,
+                                   const std::string& font_path) {
     //set the deferred states
     deferred_cfgs = cfgs;
+    this->base_path = base_path;
+    this->font_path = font_path;
   }
 
 

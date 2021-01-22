@@ -24,6 +24,8 @@ namespace state {
    * @param  renderer the renderer for the level
    * @param  camera   the starting level camera
    * @param  tile_dim the dimensions of tiles
+   * @param  base_path resource directory base path
+   * @param  font_path the path to the font to use
    * @param  debug    whether debug mode enabled
    */
   void load_tm_state(state::state_manager_t& state_manager,
@@ -31,6 +33,8 @@ namespace state {
                      SDL_Renderer& renderer,
                      SDL_Rect& camera,
                      int tile_dim,
+                     const std::string& base_path,
+                     const std::string& font_path,
                      bool debug);
 }}
 

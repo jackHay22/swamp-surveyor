@@ -29,10 +29,8 @@ namespace launcher {
     j.at("window_scale").get_to(c.window_scale);
     j.at("tile_dim").get_to(c.tile_dim);
     j.at("debug").get_to(c.debug);
-    j.at("debug_font").get_to(c.debug_font);
     j.at("title_image").get_to(c.title_image);
     j.at("caret_image").get_to(c.caret_image);
-    j.at("menu_font").get_to(c.menu_font);
     j.at("level_cfgs").get_to(c.level_cfgs);
   }
 
@@ -121,12 +119,13 @@ namespace launcher {
                                                                     cfg.window_height_p,
                                                                     cfg.title_image,
                                                                     cfg.caret_image,
-                                                                    cfg.menu_font,
+                                                                    cfg.font,
+                                                                    cfg.base_path,
                                                                     *renderer,
                                                                     *state_manager));
 
     //set the configuration paths in the state manager for future load
-    state_manager->load_defer(cfg.level_cfgs);
+    state_manager->load_defer(cfg.level_cfgs, cfg.base_path, cfg.font);
 
     //title state not shown in debug mode
     if (cfg.debug) {
@@ -143,7 +142,7 @@ namespace launcher {
       logger::log_err("failed to start update thread");
       success = false;
     } else {
-      if (!engine::start_renderer(*renderer,state_manager,cfg.debug,cfg.debug_font)) {
+      if (!engine::start_renderer(*renderer,state_manager,cfg.debug,cfg.font)) {
         logger::log_err("failed to start renderer");
         success = false;
       }

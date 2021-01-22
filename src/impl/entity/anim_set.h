@@ -47,7 +47,8 @@ namespace entity {
 
   public:
     anim_set_t(const std::string& path,
-               SDL_Renderer& renderer);
+               SDL_Renderer& renderer,
+               const std::string& base_path);
     anim_set_t(const anim_set_t&) = delete;
     anim_set_t& operator=(const anim_set_t&) = delete;
 

@@ -58,16 +58,18 @@ namespace environment {
    * @param elems    a vector of loaded elements set by the call
    * @param cfg_path the path to the environment configuration
    * @param renderer the sdl renderer
+   * @param base_path the resource folder base path
    * @param debug    whether debug mode is enabled
    */
   void load_env_elems(std::vector<std::shared_ptr<environment::renderable_t>>& elems,
                       const std::string& cfg_path,
                       SDL_Renderer& renderer,
+                      const std::string& base_path,
                       bool debug) {
     nlohmann::json config;
 
     try {
-      std::ifstream in_stream(cfg_path);
+      std::ifstream in_stream(base_path + cfg_path);
       in_stream >> config;
 
       //load each env element
@@ -90,7 +92,7 @@ namespace environment {
                                                                      cfg.y,
                                                                      cfg.w,
                                                                      cfg.h,
-                                                                     cfg.animation_path,
+                                                                     base_path + cfg.animation_path,
                                                                      renderer,
                                                                      cfg.animation_frames,
                                                                      debug));
@@ -107,7 +109,7 @@ namespace environment {
                                                                 cfg.y,
                                                                 cfg.w,
                                                                 cfg.h,
-                                                                cfg.animation_path,
+                                                                base_path + cfg.animation_path,
                                                                 renderer,
                                                                 cfg.animation_frames,
                                                                 debug));
@@ -115,7 +117,7 @@ namespace environment {
       }
 
     } catch (...) {
-      throw exceptions::rsrc_exception_t(cfg_path);
+      throw exceptions::rsrc_exception_t(base_path + cfg_path);
     }
   }
 }}

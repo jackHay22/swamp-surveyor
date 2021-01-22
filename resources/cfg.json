@@ -4,12 +4,10 @@
   "window_scale" : 6,
   "tile_dim" : 8,
   "debug" : false,
-  "debug_font" : "/usr/share/fonts/noto/NotoSans-Light.ttf",
-  "title_image" : "resources/title_splash.png",
-  "caret_image" : "resources/caret.png",
-  "menu_font" : "/usr/share/fonts/noto/NotoSans-Light.ttf",
+  "title_image" : "title_splash.png",
+  "caret_image" : "caret.png",
   "level_cfgs" : [
-    "resources/swamp.json",
-    "resources/tracks.json"
+    "swamp.json",
+    "tracks.json"
   ]
 }

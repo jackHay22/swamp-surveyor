@@ -5,7 +5,6 @@
     "target_x" : 760,
     "target_y" : 82,
     "target_name" : "tracks",
-    "target_text" : "Follow Tracks [f]",
-    "font_path" : "/usr/share/fonts/noto/NotoSans-Light.ttf"
+    "target_text" : "Follow Tracks [f]"
   }
 ]
