@@ -91,6 +91,9 @@ install_name_tool -change /usr/local/opt/libpng/lib/libpng16.16.dylib \
 #check dylib location rename
 #otool -L ${APP_DIR}/Contents/MacOS/${APP_NAME}
 
+#publish resources
+#zip -r resources-1.0.zip resources
+
 #zip
 rm ${APP_NAME}.zip
 zip -r ${APP_NAME}.zip resources $APP_DIR macos_installer.sh > /dev/null 2>&1

@@ -6,6 +6,8 @@
   "debug" : false,
   "title_image" : "title_splash.png",
   "caret_image" : "caret.png",
+  "minor" : 0,
+  "major" : 1,
   "level_cfgs" : [
     "swamp.json",
     "tracks.json"

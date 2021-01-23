@@ -34,6 +34,10 @@ namespace launcher {
     std::vector<std::string> level_cfgs = {};
     //the base directory path
     std::string base_path = "resources/";
+    //major version
+    int major = 1;
+    //minor version
+    int minor = 0;
   } launch_cfg_t;
 
   /**

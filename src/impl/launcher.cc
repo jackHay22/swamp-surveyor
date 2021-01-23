@@ -18,6 +18,8 @@
 namespace impl {
 namespace launcher {
 
+  #define WINDOW_TITLE "SwampSurveyor"
+
   /**
    * Conversion to cfg from json
    * @param j the json to load
@@ -32,6 +34,8 @@ namespace launcher {
     j.at("title_image").get_to(c.title_image);
     j.at("caret_image").get_to(c.caret_image);
     j.at("level_cfgs").get_to(c.level_cfgs);
+    j.at("major").get_to(c.major);
+    j.at("minor").get_to(c.minor);
   }
 
   /**
@@ -53,7 +57,7 @@ namespace launcher {
     //get the scaled window dimensions
     int actual_width = cfg.window_width_p * cfg.window_scale;
     int actual_height = cfg.window_height_p * cfg.window_scale;
-    std::string window_title = "swamp";
+    std::string window_title = WINDOW_TITLE;
 
     if (cfg.debug) {
       window_title += " [debug]";
