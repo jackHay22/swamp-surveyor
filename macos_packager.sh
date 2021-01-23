@@ -25,9 +25,24 @@ cp /usr/local/opt/freetype/lib/libfreetype.6.dylib ${APP_DIR}/Contents/Macos
 #copy the binary
 cp $APP_NAME ${APP_DIR}/Contents/MacOS/
 
-#copy the app icon and metadata
+#make the iconset
+mkdir ${APP_NAME}.iconset
+sips -z 16 16   resources/dist/icon.png --out ${APP_NAME}.iconset/icon_16x16.png
+sips -z 32 32   resources/dist/icon.png --out ${APP_NAME}.iconset/icon_16x16@2x.png
+sips -z 32 32   resources/dist/icon.png --out ${APP_NAME}.iconset/icon_32x32.png
+sips -z 64 64   resources/dist/icon.png --out ${APP_NAME}.iconset/icon_32x32@2x.png
+sips -z 128 128 resources/dist/icon.png --out ${APP_NAME}.iconset/icon_128x128.png
+sips -z 256 256 resources/dist/icon.png --out ${APP_NAME}.iconset/icon_128x128@2x.png
+sips -z 256 256 resources/dist/icon.png --out ${APP_NAME}.iconset/icon_256x256.png
+sips -z 512 512 resources/dist/icon.png --out ${APP_NAME}.iconset/icon_256x256@2x.png
+sips -z 512 512 resources/dist/icon.png --out ${APP_NAME}.iconset/icon_512x512.png
+cp resources/dist/icon.png ${APP_NAME}.iconset/icon_512x512@2x.png
+iconutil -c icns ${APP_NAME}.iconset
+rm -R ${APP_NAME}.iconset
+
+#add the app icon and metadata
 cp resources/dist/Info.plist ${APP_DIR}/Contents/
-cp resources/dist/Swamp.icns ${APP_DIR}/Contents/Resources
+mv ${APP_NAME}.icns ${APP_DIR}/Contents/Resources
 
 #change dylib paths in executable
 install_name_tool -change /usr/local/opt/sdl2/lib/libSDL2-2.0.0.dylib \

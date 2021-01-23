@@ -11,7 +11,7 @@
   <key>CFBundleExecutable</key>
   <string>SwampSurveyor</string>
   <key>CFBundleIconFile</key>
-  <string>Swamp.icns</string>
+  <string>SwampSurveyor.icns</string>
   <key>CFBundleIdentifier</key>
   <string>swampsurveyor</string>
   <key>CFBundleInfoDictionaryVersion</key>
