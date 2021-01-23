@@ -12,6 +12,7 @@
 #include "dead_tree.h"
 #include "chemical_seep.h"
 #include "door.h"
+#include "pushable.h"
 
 namespace impl {
 namespace environment {
@@ -22,6 +23,7 @@ namespace environment {
   #define DEAD_TREE_TYPE "dead_tree"
   #define CHEMICAL_SEEP_TYPE "chemical_seep"
   #define DOOR_TYPE "door"
+  #define PUSHABLE_TYPE "pushable"
 
   /**
    * Configuration options
@@ -31,6 +33,7 @@ namespace environment {
     int y;
     int w;
     int h;
+    int range;
     float density;
     std::string animation_path;
     int animation_frames;
@@ -47,6 +50,7 @@ namespace environment {
     j.at("y").get_to(c.y);
     j.at("w").get_to(c.w);
     j.at("h").get_to(c.h);
+    j.at("range").get_to(c.range);
     j.at("density").get_to(c.density);
     j.at("animation_path").get_to(c.animation_path);
     j.at("animation_frames").get_to(c.animation_frames);
@@ -113,6 +117,17 @@ namespace environment {
                                                                 renderer,
                                                                 cfg.animation_frames,
                                                                 debug));
+        } else if (cfg.type == PUSHABLE_TYPE) {
+          //add the pushable element
+          elems.push_back(std::make_shared<environment::pushable_t>(cfg.x,
+                                                                    cfg.y,
+                                                                    cfg.w,
+                                                                    cfg.h,
+                                                                    cfg.range,
+                                                                    cfg.y + (cfg.h - 2),
+                                                                    base_path + cfg.animation_path,
+                                                                    renderer,
+                                                                    debug));
         }
       }
 

@@ -85,12 +85,12 @@ namespace environment {
                      bool interaction) const;
 
     /**
-     * Update the tree
+     * Update the door
      */
     void update();
 
     /**
-     * Render the tree
+     * Render the door
      * @param renderer the renderer to use
      * @param camera   the camera
      */
