@@ -52,18 +52,21 @@ namespace environment {
    * Player interaction with env elements that collide
    * @param  action        the player action
    * @param  player_bounds the bounds of the player
+   * @param  facing_left   whether the player is facing left
    */
   void environment_t::interact(player_action action,
-                               const SDL_Rect& player_bounds) {
+                               const SDL_Rect& player_bounds,
+                               bool facing_left) {
+    //compute player center
+    int center_x = player_bounds.x + (player_bounds.w / 2);
+    int center_y = player_bounds.y + (player_bounds.h / 2);
+
     for (size_t i=0; i<env_renderable.size(); i++) {
       //check if player can interact with env element
       if (env_renderable.at(i)->is_collided(player_bounds,true) &&
           env_renderable.at(i)->is_interactive()) {
-
         //interact with element
-        env_renderable.at(i)->interact(action,
-                                       player_bounds.x,
-                                       player_bounds.y);
+        env_renderable.at(i)->interact(action,center_x,center_y,facing_left);
       }
     }
   }

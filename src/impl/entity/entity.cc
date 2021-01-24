@@ -198,34 +198,47 @@ namespace entity {
       if (state == MOVE) {
         //the x,y position to check for solid blocks
         int x_bounds = current_bounds.x + current_bounds.w + 2;
-        int base_height = current_bounds.y + current_bounds.h - 2;
+        int base_height = current_bounds.y + current_bounds.h;
 
         if (facing_left) {
           x_bounds = current_bounds.x - 2;
         }
 
         //check for tilemap collision
-        if (map.is_solid(x_bounds, base_height) &&
-            !map.is_solid(x_bounds, base_height - tile_dim)) {
-          //climbing on tiles
-          climbing = true;
-          climb_counter = CLIMB_FRAMES;
-          climb_height = tile_dim;
+        bool open_above = true;
+        //check if there is open space to step onto above
+        for (int i=1; i<=tile_dim; i++) {
+          if (map.is_solid(x_bounds,base_height - tile_dim - i)) {
+            open_above = false;
+            break;
+          }
+        }
 
-        } else {
+        if (open_above) {
+          for (int i=0; i<tile_dim; i++) {
+            if (map.is_solid(x_bounds, base_height - tile_dim + i)) {
+              climbing = true;
+              climb_height = tile_dim - i;
+              climb_counter = climb_height * 2.5;
+              break;
+            }
+          }
+        }
+
+        //if not climbing on tilemap, check env
+        if (!climbing) {
           //modify base height
-          base_height = current_bounds.y + current_bounds.h;
-          bool open_above = true;
+          bool open_above_env = true;
 
           //check if there is open space to step onto above
           for (int i=1; i<=tile_dim; i++) {
             if (env.is_solid(x_bounds,base_height - tile_dim - i)) {
-              open_above = false;
+              open_above_env = false;
               break;
             }
           }
 
-          if (open_above) {
+          if (open_above_env) {
             //check if there is solid ground to stand on
             for (int i=0; i<tile_dim; i++) {
               if (env.is_solid(x_bounds, base_height - tile_dim + i)) {

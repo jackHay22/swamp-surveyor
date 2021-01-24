@@ -43,22 +43,27 @@ namespace environment {
    * @param a the interaction type
    * @param x the player position x
    * @param y the player position y
+   * @param facing_left   whether the player is facing left
    */
-  void door_t::interact(player_action a, int x, int y) {
+  void door_t::interact(player_action a, int x, int y, bool facing_left) {
     if (a == PUSH) {
       //determine the side the player is on and flip animation
       //if necessary
       left = x > (bounds.x + (bounds.w / 2));
-      anim->set_flipped(left);
 
-      if (left) {
-        bounds.x -= DEFAULT_DOOR_W;
+      //check that the player position and direction match
+      if (left == facing_left) {
+        anim->set_flipped(left);
+
+        if (left) {
+          bounds.x -= DEFAULT_DOOR_W;
+        }
+        //set the width for camera collision
+        bounds.w = DEFAULT_DOOR_W;
+
+        //set opened
+        opened = true;
       }
-      //set the width for camera collision
-      bounds.w = DEFAULT_DOOR_W;
-
-      //set opened
-      opened = true;
     }
   }
 

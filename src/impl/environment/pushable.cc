@@ -74,13 +74,18 @@ namespace environment {
    * @param a the interaction type
    * @param x the player position x
    * @param y the player position y
+   * @param  facing_left   whether the player is facing left
    */
-  void pushable_t::interact(player_action a, int x, int y) {
+  void pushable_t::interact(player_action a, int x, int y, bool facing_left) {
     if (a == PUSH) {
       //determine the side the player is on and flip animation
       //if necessary
       left = x > (interact_bounds.x + (interact_bounds.w / 2));
-      moving_frames = MOVING_FRAMES_PER_PUSH;
+
+      //if the player is to the left and facing left
+      if (left == facing_left) {
+        moving_frames = MOVING_FRAMES_PER_PUSH;
+      }
     }
   }
 
@@ -139,7 +144,7 @@ namespace environment {
         SDL_RenderDrawRect(&renderer,&solid_bounds);
 
         //render the interactive portion
-        SDL_Rect interact_bounds = {interact_bounds.x - camera.x,
+        SDL_Rect pushable_bounds = {interact_bounds.x - camera.x,
                                     interact_bounds.y - camera.y,
                                     interact_bounds.w, interact_bounds.h};
 
@@ -147,7 +152,7 @@ namespace environment {
         SDL_SetRenderDrawColor(&renderer,255,102,0,255);
 
         //render the bounds
-        SDL_RenderDrawRect(&renderer,&interact_bounds);
+        SDL_RenderDrawRect(&renderer,&pushable_bounds);
       }
     }
   }

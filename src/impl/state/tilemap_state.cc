@@ -132,7 +132,9 @@ namespace state {
     }
 
     //interact with the environment
-    env->interact(action,player->get_bounds());
+    env->interact(action,
+                  player->get_bounds(),
+                  player->is_facing_left());
   }
 
   /**

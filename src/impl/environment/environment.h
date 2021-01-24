@@ -67,8 +67,11 @@ namespace environment {
      * Player interaction with env elements that collide
      * @param  action        the player action
      * @param  player_bounds the bounds of the player
+     * @param  facing_left   whether the player is facing left
      */
-    void interact(player_action action, const SDL_Rect& player_bounds);
+    void interact(player_action action,
+                  const SDL_Rect& player_bounds,
+                  bool facing_left);
 
     /**
      * Update elements

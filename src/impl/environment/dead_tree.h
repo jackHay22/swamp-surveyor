@@ -57,8 +57,9 @@ namespace environment {
      * @param a the interaction type
      * @param x the player position x
      * @param y the player position y
+     * @param  facing_left   whether the player is facing left
      */
-    void interact(player_action a, int x, int y);
+    void interact(player_action a, int x, int y, bool facing_left);
 
     /**
      * Whether this tree can still be felled

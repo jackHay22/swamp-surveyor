@@ -95,6 +95,12 @@ namespace entity {
     virtual ~entity_t() {}
 
     /**
+     * Check whether the entity is facing left
+     * @return whether the entity is facing left
+     */
+    bool is_facing_left() const { return facing_left; }
+
+    /**
      * Set the entity position
      * @param x x coord for entity
      * @param y y coord for entity
