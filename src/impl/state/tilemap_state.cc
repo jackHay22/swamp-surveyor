@@ -161,7 +161,7 @@ namespace state {
         if (tilemap->is_collided(entities.at(i)->get_bounds()) ||
             env->is_collided(entities.at(i)->get_bounds())) {
           //TODO allow entity to climb env elements
-          entities.at(i)->step_back_x(*tilemap);
+          entities.at(i)->step_back_x(*tilemap, *env);
         }
       }
 

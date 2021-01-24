@@ -180,9 +180,11 @@ namespace entity {
 
   /**
    * Called when entity collides in the x direction
-   * @param layer used to determine if the entity can step up
+   * @param map used to determine if the entity can climb
+   * @param env used to determine if the entity can climb
    */
-  void entity_t::step_back_x(const tilemap::tilemap_t& map) {
+  void entity_t::step_back_x(const tilemap::tilemap_t& map,
+                             const environment::environment_t& env) {
     //get the current player position
     SDL_Rect current_bounds = this->get_bounds();
 
@@ -191,42 +193,49 @@ namespace entity {
 
     //make sure the entity is not already climbing
     if (state != CLIMB) {
-      //the lowest collision check height
-      int base_height = current_bounds.y + current_bounds.h - 2;
+      bool climbing = false;
 
-      //check for a 1-high collision
-      if ((state == MOVE) && !facing_left) {
-        //check upper and lower adjacent tiles
-        if (map.is_solid(current_bounds.x + current_bounds.w + 2,
-                         base_height) &&
-            !map.is_solid(current_bounds.x + current_bounds.w + 2,
-                          base_height - tile_dim)) {
-          //climb mode
-          state = CLIMB;
-          climb_counter = CLIMB_FRAMES;
-          climb_height = tile_dim;
+      //if moving check if the player can climb
+      if (state == MOVE) {
+        //the x,y position to check for solid blocks
+        int x_bounds = current_bounds.x + current_bounds.w + 2;
+        int base_height = current_bounds.y + current_bounds.h - 2;
 
-          //reset the climb animation
-          anims.at(state)->reset();
-          anims.at(state)->set_once(true);
-          return;
+        if (facing_left) {
+          x_bounds = current_bounds.x - 2;
         }
 
-      } else if (state == MOVE) {
-        //check upper and lower adjacent tiles
-        if (map.is_solid(current_bounds.x - 2,
-                         base_height) &&
-            !map.is_solid(current_bounds.x - 2,
-                          base_height - tile_dim)) {
-          //climb mode
-          state = CLIMB;
+        //check for tilemap collision
+        if (map.is_solid(x_bounds, base_height) &&
+            !map.is_solid(x_bounds, base_height - tile_dim)) {
+          //climbing on tiles
+          climbing = true;
           climb_counter = CLIMB_FRAMES;
           climb_height = tile_dim;
 
+        } else if (env.is_solid(x_bounds, base_height) &&
+                   !env.is_solid(x_bounds, base_height - tile_dim)) {
+
+          //TODO sample more locations
+
+          //determine the height at this position
+          climbing = true;
+          for (int i=0; i<tile_dim; i++) {
+            if (!env.is_solid(x_bounds, base_height - i)) {
+              //set the climb height and the climb frames
+              climb_height = i + 2;
+              climb_counter = climb_height * 2;
+              break;
+            }
+          }
+        }
+
+        //if the player is now climbing
+        if (climbing) {
+          state = CLIMB;
           //reset the climb animation
           anims.at(state)->reset();
           anims.at(state)->set_once(true);
-          return;
         }
       }
     }

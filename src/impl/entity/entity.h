@@ -150,9 +150,11 @@ namespace entity {
 
     /**
      * Called when entity collides in the x direction
-     * @param layer used to determine if the entity can step up
+     * @param map used to determine if the entity can climb
+     * @param env used to determine if the entity can climb
      */
-    void step_back_x(const tilemap::tilemap_t& map);
+    void step_back_x(const tilemap::tilemap_t& map,
+                     const environment::environment_t& env);
 
     /**
      * Restore the position of the entity (y dir)
