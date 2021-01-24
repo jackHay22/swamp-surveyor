@@ -91,10 +91,10 @@ namespace entity {
      /**
       * Update the entity (after directional updates)
       * @param map the tilemap
-      * @param env_elements environmental elements that can be interacted
+      * @param env environmental elements that can be interacted
       */
      void update(const tilemap::tilemap_t& map,
-                 std::vector<std::shared_ptr<environment::renderable_t>>& env_elements);
+                 environment::environment_t& env);
 
     /**
      * Render the entity

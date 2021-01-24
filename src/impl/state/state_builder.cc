@@ -19,6 +19,7 @@
 #include "../exceptions.h"
 #include "../environment/renderable.h"
 #include "../environment/environment_builder.h"
+#include "../environment/environment.h"
 #include "../items/item_builder.h"
 #include "../items/item.h"
 #include "../misc/map_fork.h"
@@ -157,6 +158,10 @@ namespace state {
                                 base_path,
                                 debug);
 
+    //make environment from elements
+    std::shared_ptr<environment::environment_t> env =
+      std::make_shared<environment::environment_t>(env_renderable);
+
     //load items
     std::vector<std::shared_ptr<items::item_t>> level_items;
     items::load_items(level_items,
@@ -181,7 +186,7 @@ namespace state {
     state_manager.add_state(std::make_unique<state::tilemap_state_t>(tilemap,
                                                                      entities,
                                                                      insects,
-                                                                     env_renderable,
+                                                                     env,
                                                                      level_items,
                                                                      tblocks,
                                                                      forks,

@@ -125,12 +125,12 @@ namespace entity {
   /**
    * Update the entity (after directional updates)
    * @param map the tilemap
-   * @param env_elements environmental elements that can be interacted
+   * @param env environmental elements that can be interacted
    */
   void player_t::update(const tilemap::tilemap_t& map,
-              std::vector<std::shared_ptr<environment::renderable_t>>& env_elements) {
+                        environment::environment_t& env) {
     //call entity update
-    entity_t::update(map,env_elements);
+    entity_t::update(map,env);
 
     //if there is a limit on the action
     if ((state == ACTION) && (move_tick_counter > 0)) {
@@ -165,7 +165,7 @@ namespace entity {
     //update all actions
     for (size_t i=0; i<actions.size(); i++) {
       //perform the action
-      actions.at(i)->update(map,env_elements,emit_x,emit_y,dir);
+      actions.at(i)->update(map,env,emit_x,emit_y,dir);
     }
   }
 

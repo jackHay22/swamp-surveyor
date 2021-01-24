@@ -28,14 +28,14 @@ namespace actions {
   /**
    * Update the action
    * @param map the tilemap
-   * @param env_elements environmental elements that this action
+   * @param env environmental elements that this action
    *  can interact with
    *  @param x  the position where spray should emit from x
    *  @param y  the position where spray should emit from y
    *  @param dir the direction (either 1 or -1)
    */
   void foam_spray_t::update(const tilemap::tilemap_t& map,
-                            std::vector<std::shared_ptr<environment::renderable_t>>& env_elements,
+                            environment::environment_t& env,
                             int x, int y, int dir) {
     //if inactive and invisible, no update
     if (!active && !visible) {
@@ -60,19 +60,15 @@ namespace actions {
       bool remove = map.is_collided(curr_x,curr_y) ||
                     map.is_liquid(curr_x,curr_y);
 
-      //check for environment element collision
-      for (size_t j=0; j<env_elements.size(); j++) {
-        //dynamic cast to checmical foam
-        std::shared_ptr<environment::chemical_foam_t> foam =
-          std::dynamic_pointer_cast<environment::chemical_foam_t>(env_elements.at(j));
-
-        //if the particles collide, disperse some of the foam
-        if (foam && foam->is_collided(curr_x,curr_y)) {
-          foam->disperse_foam();
-          //remove the current particle
+      //for each foam element
+      env.for_each<environment::chemical_foam_t>([curr_x,curr_y, &remove]
+        (environment::chemical_foam_t& f){
+        if (f.is_collided(curr_x, curr_y)) {
+          //disperse the foam
+          f.disperse_foam();
           remove = true;
         }
-      }
+      });
 
       if (remove) {
         //remove the particle

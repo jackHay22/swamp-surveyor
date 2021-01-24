@@ -14,7 +14,7 @@
 #include <string>
 #include "anim_set.h"
 #include "../tilemap/tilemap.h"
-#include "../environment/renderable.h"
+#include "../environment/environment.h"
 
 namespace impl {
 namespace entity {
@@ -45,6 +45,8 @@ namespace entity {
 
     //the counter during a climb cycle
     int climb_counter;
+    //the height the player needs to climb
+    int climb_height;
 
     //the counter for skipping ticks in water
     int water_counter;
@@ -131,10 +133,10 @@ namespace entity {
     /**
      * Update the entity (after directional updates)
      * @param map the tilemap
-     * @param env_elements environmental elements that can be interacted
+     * @param env the environment
      */
     virtual void update(const tilemap::tilemap_t& map,
-                        std::vector<std::shared_ptr<environment::renderable_t>>& env_elements);
+                        environment::environment_t& env);
 
     /**
      * Update this entity at the tick in the x direction

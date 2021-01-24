@@ -16,7 +16,7 @@ namespace state {
    * @param tilemap    the tilemap this state uses
    * @param entities   the entities in this state
    * @param insects    the insects in the map
-   * @param env_renderable environmental elements that can be rendered
+   * @param env        environmental elements in the state
    * @param level_items the items in this level
    * @param trans_blocks transparent blocks in the level
    * @param forks      forks in the map
@@ -25,19 +25,19 @@ namespace state {
    * @param camera     the level camera
    */
   tilemap_state_t::tilemap_state_t(std::shared_ptr<tilemap::tilemap_t> tilemap,
-                                    std::vector<std::shared_ptr<entity::entity_t>>& entities,
-                                    std::shared_ptr<entity::insects_t> insects,
-                                    std::vector<std::shared_ptr<environment::renderable_t>>& env_renderable,
-                                    std::vector<std::shared_ptr<items::item_t>>& level_items,
-                                    std::vector<std::shared_ptr<tilemap::transparent_block_t>>& trans_blocks,
-                                    std::vector<std::shared_ptr<misc::map_fork_t>>& forks,
-                                    int player_idx, state_manager_t& manager,
-                                    SDL_Rect& camera)
+                                   std::vector<std::shared_ptr<entity::entity_t>>& entities,
+                                   std::shared_ptr<entity::insects_t> insects,
+                                   std::shared_ptr<environment::environment_t> env,
+                                   std::vector<std::shared_ptr<items::item_t>>& level_items,
+                                   std::vector<std::shared_ptr<tilemap::transparent_block_t>>& trans_blocks,
+                                   std::vector<std::shared_ptr<misc::map_fork_t>>& forks,
+                                   int player_idx, state_manager_t& manager,
+                                   SDL_Rect& camera)
     : state_t(manager, camera),
       tilemap(tilemap),
       entities(entities),
       insects(insects),
-      env_renderable(env_renderable),
+      env(env),
       level_items(level_items),
       trans_blocks(trans_blocks),
       forks(forks),
@@ -76,48 +76,13 @@ namespace state {
    * @return        whether the box is against a solid component
    */
   bool tilemap_state_t::on_solid_ground(const SDL_Rect& bounds) const {
-    //check the tilemap
-    if (tilemap->is_solid(bounds.x - 1,
-                          bounds.y + bounds.h + 1) ||
-        tilemap->is_solid(bounds.x + bounds.w + 1,
-                          bounds.y + bounds.h + 1) ||
-        tilemap->is_solid(bounds.x + (bounds.w / 2),
-                          bounds.y + bounds.h + 1)) {
-      return true;
-    }
-
-    //check if the entity intersects with a renderable env component
-    for (size_t i=0; i<env_renderable.size(); i++) {
-      if (env_renderable.at(i)->is_solid()) {
-        if (env_renderable.at(i)->is_collided(bounds.x - 1,
-                                              bounds.y + bounds.h + 1) ||
-            env_renderable.at(i)->is_collided(bounds.x + bounds.w + 1,
-                                              bounds.y + bounds.h + 1) ||
-            env_renderable.at(i)->is_collided(bounds.x + (bounds.w / 2),
-                                              bounds.y + bounds.h + 1)) {
-          return true;
-        }
-      }
-    }
-
-    //no intersections
-    return false;
-  }
-
-  /**
-   * Check if an entity has collided with a solid environmental object
-   * @param  bounds the bounds of the entity
-   * @return        whether the entity collided with the env object
-   */
-  bool tilemap_state_t::is_collided_solid_env(const SDL_Rect& bounds) const {
-    //check each environmental element for a collision
-    for (size_t i=0; i<env_renderable.size(); i++) {
-      if (env_renderable.at(i)->is_solid() &&
-          env_renderable.at(i)->is_collided(bounds,false)) {
-        return true;
-      }
-    }
-    return false;
+    //check the tilemap and environment
+    return tilemap->is_solid(bounds.x - 1, bounds.y + bounds.h + 1) ||
+           tilemap->is_solid(bounds.x + bounds.w + 1, bounds.y + bounds.h + 1) ||
+           tilemap->is_solid(bounds.x + (bounds.w / 2), bounds.y + bounds.h + 1) ||
+           env->is_solid(bounds.x - 1, bounds.y + bounds.h + 1) ||
+           env->is_solid(bounds.x + bounds.w + 1, bounds.y + bounds.h + 1) ||
+           env->is_solid(bounds.x + (bounds.w / 2), bounds.y + bounds.h + 1);
   }
 
   /**
@@ -165,18 +130,8 @@ namespace state {
       }
     }
 
-    SDL_Rect player_bounds = player->get_bounds();
-    int px = player_bounds.x + (player_bounds.w / 2);
-    int py = player_bounds.y + (player_bounds.h / 2);
-
-    //perform any interactions
-    for (size_t i=0; i<env_renderable.size(); i++) {
-      if (env_renderable.at(i)->is_collided(player_bounds,true) &&
-          env_renderable.at(i)->is_interactive()) {
-        //interact with the environmental element
-        env_renderable.at(i)->interact(action,px,py);
-      }
-    }
+    //interact with the environment
+    env->interact(action,player->get_bounds());
   }
 
   /**
@@ -193,7 +148,7 @@ namespace state {
 
       //check for a collision with tilemap or env elements
       if (tilemap->is_collided(entities.at(i)->get_bounds()) ||
-          this->is_collided_solid_env(entities.at(i)->get_bounds())) {
+          env->is_collided(entities.at(i)->get_bounds())) {
         entities.at(i)->step_back_y();
       }
 
@@ -204,13 +159,14 @@ namespace state {
 
         //check for a collision with tilemap or env elements
         if (tilemap->is_collided(entities.at(i)->get_bounds()) ||
-            this->is_collided_solid_env(entities.at(i)->get_bounds())) {
+            env->is_collided(entities.at(i)->get_bounds())) {
+          //TODO allow entity to climb env elements
           entities.at(i)->step_back_x(*tilemap);
         }
       }
 
       //update entity
-      entities.at(i)->update(*tilemap,env_renderable);
+      entities.at(i)->update(*tilemap,*env);
     }
 
     //get the updated player bounds
@@ -250,16 +206,8 @@ namespace state {
     //update the insects
     insects->update();
 
-    //update each renderable environment element
-    for (size_t i=0; i<env_renderable.size(); i++) {
-      //check for player/environment interaction
-      if (env_renderable.at(i)->is_collided(player_bounds,true)) {
-        player->do_damage(env_renderable.at(i)->get_damage());
-      }
-
-      //update the environment element
-      env_renderable.at(i)->update();
-    }
+    //update the environment and apply any damage
+    player->do_damage(env->update(player_bounds));
 
     //set the player health bar level
     player_health_bar.set_val(player->get_health());
@@ -308,10 +256,8 @@ namespace state {
     //render insect swarm
     insects->render(renderer,this->camera);
 
-    //render environmental elements
-    for (size_t i=0; i<env_renderable.size(); i++) {
-      env_renderable.at(i)->render(renderer,this->camera);
-    }
+    //render the environment
+    env->render(renderer,this->camera);
 
     //render items
     for (size_t i=0; i<level_items.size(); i++) {

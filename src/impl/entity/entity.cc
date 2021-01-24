@@ -45,6 +45,7 @@ namespace entity {
       tile_dim(tile_dim),
       facing_left(false),
       climb_counter(CLIMB_FRAMES),
+      climb_height(0),
       water_counter(WATER_FRAMES),
       anims(), debug(debug) {
 
@@ -92,7 +93,7 @@ namespace entity {
     //the player's bounds are static
     if (state == CLIMB) {
       //the progress through the climb cycle
-      int prog = tile_dim - (tile_dim * ((float) climb_counter / (float) CLIMB_FRAMES));
+      int prog = climb_height - (climb_height * ((float) climb_counter / (float) CLIMB_FRAMES));
       x = this->x + prog - (2 * prog * facing_left);
       y = this->y - prog;
     } else {
@@ -104,10 +105,10 @@ namespace entity {
   /**
    * Update the entity (after directional updates)
    * @param map the tilemap
-   * @param env_elements environmental elements that can be interacted
+   * @param env environmental elements that can be interacted
    */
   void entity_t::update(const tilemap::tilemap_t& /*map*/,
-                        std::vector<std::shared_ptr<environment::renderable_t>>& /*env_elements*/) {
+                        environment::environment_t& /*env*/) {
 
     if (state != ACTION) {
       //update the current animation
@@ -157,7 +158,7 @@ namespace entity {
       if (climb_counter == 0) {
         //move the player up the surface
         this->x += tile_dim - (2 * tile_dim * facing_left);
-        this->y -= tile_dim;
+        this->y -= climb_height;
         state = MOVE;
 
       } else {
@@ -203,6 +204,7 @@ namespace entity {
           //climb mode
           state = CLIMB;
           climb_counter = CLIMB_FRAMES;
+          climb_height = tile_dim;
 
           //reset the climb animation
           anims.at(state)->reset();
@@ -219,6 +221,7 @@ namespace entity {
           //climb mode
           state = CLIMB;
           climb_counter = CLIMB_FRAMES;
+          climb_height = tile_dim;
 
           //reset the climb animation
           anims.at(state)->reset();

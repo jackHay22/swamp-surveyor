@@ -19,7 +19,7 @@
 #include "../entity/player.h"
 #include "../entity/insects.h"
 #include "../entity/indicator_bar.h"
-#include "../environment/renderable.h"
+#include "../environment/environment.h"
 #include "../items/item.h"
 #include "../misc/map_fork.h"
 
@@ -45,8 +45,8 @@ namespace state {
     //insects in the map
     std::shared_ptr<entity::insects_t> insects;
 
-    //renderable environment components
-    std::vector<std::shared_ptr<environment::renderable_t>> env_renderable;
+    //the environment in the tilemap
+    std::shared_ptr<environment::environment_t> env;
 
     //items in the level
     std::vector<std::shared_ptr<items::item_t>> level_items;
@@ -69,20 +69,13 @@ namespace state {
      */
     bool on_solid_ground(const SDL_Rect& bounds) const;
 
-    /**
-     * Check if an entity has collided with a solid environmental object
-     * @param  bounds the bounds of the entity
-     * @return        whether the entity collided with the env object
-     */
-    bool is_collided_solid_env(const SDL_Rect& bounds) const;
-
   public:
     /**
      * Constructor
      * @param tilemap    the tilemap this state uses
      * @param entities   the entities in this state
      * @param insects    the insects in the map
-     * @param env_renderable environmental elements that can be rendered
+     * @param env        environmental elements in the state
      * @param level_items the items in this level
      * @param trans_blocks transparent blocks in the level
      * @param forks      forks in the map
@@ -93,7 +86,7 @@ namespace state {
     tilemap_state_t(std::shared_ptr<tilemap::tilemap_t> tilemap,
                     std::vector<std::shared_ptr<entity::entity_t>>& entities,
                     std::shared_ptr<entity::insects_t> insects,
-                    std::vector<std::shared_ptr<environment::renderable_t>>& env_renderable,
+                    std::shared_ptr<environment::environment_t> env,
                     std::vector<std::shared_ptr<items::item_t>>& level_items,
                     std::vector<std::shared_ptr<tilemap::transparent_block_t>>& trans_blocks,
                     std::vector<std::shared_ptr<misc::map_fork_t>>& forks,

@@ -37,14 +37,14 @@ namespace actions {
     /**
      * Update the action
      * @param map the tilemap
-     * @param env_elements environmental elements that this action
+     * @param env environmental elements that this action
      *  can interact with
      *  @param x  the position where spray should emit from x
      *  @param y  the position where spray should emit from y
      *  @param dir the direction (either 1 or -1)
      */
     void update(const tilemap::tilemap_t& map,
-                std::vector<std::shared_ptr<environment::renderable_t>>& env_elements,
+                environment::environment_t& env,
                 int x, int y, int dir);
 
     /**
