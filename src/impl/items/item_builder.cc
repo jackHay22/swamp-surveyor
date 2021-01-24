@@ -47,13 +47,11 @@ namespace items {
    * @param cfg_path the path to the items configuration
    * @param renderer the sdl renderer
    * @param base_path the resource directory base path
-   * @param debug    whether debug mode is enabled
    */
   void load_items(std::vector<std::shared_ptr<item_t>>& items,
                     const std::string& cfg_path,
                     SDL_Renderer& renderer,
-                    const std::string& base_path,
-                    bool debug) {
+                    const std::string& base_path) {
     nlohmann::json config;
 
     try {
@@ -70,14 +68,12 @@ namespace items {
           items.push_back(std::make_shared<chemical_label_t>(cfg.x,
                                                              cfg.y,
                                                              base_path + cfg.texture_path,
-                                                             renderer,
-                                                             debug));
+                                                             renderer));
         } else if (cfg.type == FOAM_SPRAYER_TYPE) {
           items.push_back(std::make_shared<sprayer_t>(cfg.x,
                                                       cfg.y,
                                                       base_path + cfg.texture_path,
-                                                      renderer,
-                                                      debug));
+                                                      renderer));
         }
       }
 

@@ -6,7 +6,7 @@
 
 #include "utils.h"
 #include "exceptions.h"
-#include <SDL2/SDL_ttf.h>
+#include "logger.h"
 
 namespace impl {
 namespace utils {
@@ -97,5 +97,44 @@ namespace utils {
     SDL_FreeSurface(text_surface);
 
     return text_texture;
+  }
+
+  /**
+   * Render some text to the screen
+   * @param renderer the sdl renderer
+   * @param text     the text to render
+   * @param x        the position x
+   * @param y        the position y
+   * @param font     the loaded ttf font
+   */
+  void render_text(SDL_Renderer& renderer,
+                   const std::string& text,
+                   int x, int y,
+                   TTF_Font& font) {
+
+     SDL_Surface* text_s;
+     SDL_Color color = {255,255,255};
+
+     //create text for debug
+     text_s = TTF_RenderText_Solid(&font,text.c_str(),color);
+
+     if (!text_s) {
+       logger::log_err("failed to render text: " + std::string(TTF_GetError()));
+
+     } else {
+       //create a texture
+       SDL_Texture* text_texture = SDL_CreateTextureFromSurface(&renderer,text_s);
+
+       SDL_Rect sample = {0,0,text_s->w,text_s->h};
+       //the position on screen
+       SDL_Rect dest = {x,y,text_s->w,text_s->h};
+
+       //render the text
+       SDL_RenderCopy(&renderer,text_texture,&sample,&dest);
+
+       //free
+       SDL_DestroyTexture(text_texture);
+       SDL_FreeSurface(text_s);
+     }
   }
 }}

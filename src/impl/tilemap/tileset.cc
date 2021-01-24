@@ -20,9 +20,8 @@ namespace tilemap {
    */
   tileset_t::tileset_t(const std::string& rsrc_path,
                        int tile_dim,
-                       SDL_Renderer& renderer,
-                       bool debug)
-    : tile_dim(tile_dim), debug(debug) {
+                       SDL_Renderer& renderer)
+    : tile_dim(tile_dim) {
     //load resource
     load(rsrc_path, renderer);
   }

@@ -9,6 +9,7 @@
 
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <memory>
 #include <vector>
 #include <shared_mutex>
@@ -71,12 +72,10 @@ namespace state {
      * @param renderer the renderer for loading images
      * @param camera   the default camera
      * @param tile_dim the tile dimension
-     * @param debug    whether debug mode enabled
      */
     state_manager_t(SDL_Renderer& renderer,
                     SDL_Rect& camera,
-                    int tile_dim,
-                    bool debug);
+                    int tile_dim);
     state_manager_t(const state_manager_t&) = delete;
     state_manager_t& operator=(const state_manager_t&) = delete;
 
@@ -136,8 +135,16 @@ namespace state {
     /**
      * Render the current gamestate
      * @param renderer the renderer
+     * @param debug    whether debug enabled
      */
-    void render(SDL_Renderer& renderer);
+    void render(SDL_Renderer& renderer, bool debug);
+
+    /**
+     * Render any debug info
+     * @param renderer sdl renderer
+     * @param font     loaded ttf font
+     */
+    void render_debug_info(SDL_Renderer& renderer, TTF_Font& font);
   };
 }}
 

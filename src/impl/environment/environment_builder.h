@@ -23,13 +23,11 @@ namespace environment {
    * @param cfg_path the path to the environment configuration
    * @param renderer the sdl renderer
    * @param base_path the resource folder base path
-   * @param debug    whether debug mode is enabled
    */
   void load_env_elems(std::vector<std::shared_ptr<environment::renderable_t>>& elems,
                       const std::string& cfg_path,
                       SDL_Renderer& renderer,
-                      const std::string& base_path,
-                      bool debug);
+                      const std::string& base_path);
 }}
 
 #endif /*_IO_JACKHAY_SWAMP_ENVIRONMENT_ENVIRONMENT_BUILDER_H*/

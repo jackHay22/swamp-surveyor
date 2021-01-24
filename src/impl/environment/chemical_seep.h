@@ -25,9 +25,6 @@ namespace environment {
     //drips
     std::vector<std::pair<int,int>> drips;
 
-    //whether debug mode enabled
-    bool debug;
-
   public:
     /**
      * Chemical seep constructor
@@ -35,11 +32,8 @@ namespace environment {
      * @param y     position y
      * @param w     width
      * @param h     height
-     * @param debug whether debug mode enabled
      */
-    chemical_seep_t(int x,int y,
-                    int w, int h,
-                    bool debug);
+    chemical_seep_t(int x,int y, int w, int h);
     chemical_seep_t(const chemical_seep_t&) = delete;
     chemical_seep_t& operator=(const chemical_seep_t&) = delete;
 
@@ -60,8 +54,11 @@ namespace environment {
      * Render the seep
      * @param renderer the renderer to use
      * @param camera   the camera
+     * @param debug    whether debug mode enabled
      */
-    void render(SDL_Renderer& renderer, const SDL_Rect& camera) const;
+    void render(SDL_Renderer& renderer,
+                const SDL_Rect& camera,
+                bool debug) const;
   };
 }}
 

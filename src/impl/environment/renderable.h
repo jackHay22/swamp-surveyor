@@ -100,8 +100,11 @@ namespace environment {
      * Render the component
      * @param renderer the renderer to use
      * @param camera   the camera
+     * @param debug    whether debug mode enabled
      */
-    virtual void render(SDL_Renderer& renderer, const SDL_Rect& camera) const {}
+    virtual void render(SDL_Renderer& renderer,
+                        const SDL_Rect& camera,
+                        bool debug) const {}
   };
 }}
 

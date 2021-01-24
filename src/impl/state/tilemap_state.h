@@ -120,8 +120,16 @@ namespace state {
     /**
      * Render the current gamestate
      * @param renderer the renderer
+     * @param debug    whether debug mode enabled
      */
-    void render(SDL_Renderer& renderer) const;
+    void render(SDL_Renderer& renderer, bool debug) const;
+
+    /**
+     * Render any debug info
+     * @param renderer sdl renderer
+     * @param font     loaded ttf font
+     */
+    void render_debug_info(SDL_Renderer& renderer, TTF_Font& font) const;
   };
 }}
 

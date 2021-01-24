@@ -9,6 +9,7 @@
 
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <string>
 
 namespace impl {
@@ -44,6 +45,19 @@ namespace utils {
                          SDL_Renderer& renderer,
                          int size, int& w, int& h,
                          SDL_Color color = {0,0,0});
+
+  /**
+   * Render some text to the screen
+   * @param renderer the sdl renderer
+   * @param text     the text to render
+   * @param x        the position x
+   * @param y        the position y
+   * @param font     the loaded ttf font
+   */
+  void render_text(SDL_Renderer& renderer,
+                   const std::string& text,
+                   int x, int y,
+                   TTF_Font& font);
 }}
 
 #endif /*_IO_JACKHAY_SWAMP_UTILS_H*/

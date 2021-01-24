@@ -61,9 +61,6 @@ namespace entity {
     //whether the entity is facing left (vs right)
     bool facing_left;
 
-    //whether debug mode enabled
-    bool debug;
-
     //the current state of the entity, can be set by subclasses
     //previous state used for restoring last state
     enum {
@@ -91,8 +88,7 @@ namespace entity {
              const std::vector<std::string>& anim_cfg_paths,
              SDL_Renderer& renderer,
              int tile_dim,
-             const std::string& base_path,
-             bool debug);
+             const std::string& base_path);
     entity_t(const entity_t&) = delete;
     entity_t& operator=(const entity_t&) = delete;
 
@@ -165,8 +161,11 @@ namespace entity {
      * Render the entity
      * @param renderer the renderer to use
      * @param camera   the camera
+     * @param debug    whether debug mode enabled
      */
-    virtual void render(SDL_Renderer& renderer, const SDL_Rect& camera) const;
+    virtual void render(SDL_Renderer& renderer,
+                        const SDL_Rect& camera,
+                        bool debug) const;
   };
 }}
 

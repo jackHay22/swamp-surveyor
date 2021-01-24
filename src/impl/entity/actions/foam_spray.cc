@@ -84,9 +84,11 @@ namespace actions {
    * Render the entity
    * @param renderer the renderer to use
    * @param camera the camera
+   * @param debug    whether debug mode enabled
    */
   void foam_spray_t::render(SDL_Renderer& renderer,
-                            const SDL_Rect& camera) const {
+                            const SDL_Rect& camera,
+                            bool /*debug*/) const {
     //(if active we assume in view since locked to player)
     if (active || visible) {
       //temp foam color

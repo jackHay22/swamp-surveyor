@@ -28,12 +28,10 @@ namespace environment {
                  int w, int h,
                  const std::string& texture_path,
                  SDL_Renderer& renderer,
-                 int total_frames,
-                 bool debug)
+                 int total_frames)
     : renderable_t({x,y,w,h}, true,true),
       opened(false),
-      left(false),
-      debug(debug) {
+      left(false) {
     //load the animation
     anim = std::make_unique<single_seq_anim_t>(texture_path,
                                                renderer,
@@ -98,9 +96,13 @@ namespace environment {
    * Render the tree
    * @param renderer the renderer to use
    * @param camera   the camera
+   * @param debug    whether debug mode enabled
    */
-  void door_t::render(SDL_Renderer& renderer, const SDL_Rect& camera) const {
+  void door_t::render(SDL_Renderer& renderer,
+                      const SDL_Rect& camera,
+                      bool debug) const {
     if (this->is_collided(camera,false)) {
+
       int texture_x = bounds.x + (DEFAULT_DOOR_W * (opened && left));
       //render animation
       anim->render(renderer,

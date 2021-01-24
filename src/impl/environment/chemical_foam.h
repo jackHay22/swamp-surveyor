@@ -32,9 +32,6 @@ namespace environment {
     //whether the foam has been dispersed
     bool dispersed;
 
-    //whether debug mode enabled
-    bool debug;
-
     /**
      * Create a random bubble
      */
@@ -48,12 +45,10 @@ namespace environment {
      * @param w     width
      * @param h     height
      * @param density the density of the foam
-     * @param debug whether debug mode enabled
      */
     chemical_foam_t(int x,int y,
                     int w, int h,
-                    float density,
-                    bool debug);
+                    float density);
     chemical_foam_t(const chemical_foam_t&) = delete;
     chemical_foam_t& operator=(const chemical_foam_t&) = delete;
 
@@ -94,8 +89,11 @@ namespace environment {
      * Render the component
      * @param renderer the renderer to use
      * @param camera   the camera
+     * @param debug    whether debug mode enabled
      */
-    void render(SDL_Renderer& renderer, const SDL_Rect& camera) const;
+    void render(SDL_Renderer& renderer,
+                const SDL_Rect& camera,
+                bool debug) const;
   };
 }}
 

@@ -94,11 +94,14 @@ namespace environment {
    * Render environmental elements
    * @param renderer the sdl renderer
    * @param camera   the camera
+   * @param debug    whether debug mode enabled
    */
-  void environment_t::render(SDL_Renderer& renderer, const SDL_Rect& camera) const {
+  void environment_t::render(SDL_Renderer& renderer,
+                             const SDL_Rect& camera,
+                             bool debug) const {
     //render each element
     for (size_t i=0; i<env_renderable.size(); i++) {
-      env_renderable.at(i)->render(renderer,camera);
+      env_renderable.at(i)->render(renderer,camera,debug);
     }
   }
 

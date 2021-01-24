@@ -71,8 +71,7 @@ namespace entity {
              const std::vector<std::string>& anim_cfg_paths,
              SDL_Renderer& renderer,
              int tile_dim,
-             const std::string& base_path,
-             bool debug);
+             const std::string& base_path);
     player_t(const player_t&) = delete;
     player_t& operator=(const player_t&) = delete;
 
@@ -100,8 +99,11 @@ namespace entity {
      * Render the entity
      * @param renderer the renderer to use
      * @param camera the camera
+     * @param debug    whether debug mode enabled
      */
-    void render(SDL_Renderer& renderer, const SDL_Rect& camera) const;
+    void render(SDL_Renderer& renderer,
+                const SDL_Rect& camera,
+                bool debug) const;
   };
 }}
 

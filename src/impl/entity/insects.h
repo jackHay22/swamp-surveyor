@@ -59,8 +59,11 @@ namespace entity {
      * Render the insects
      * @param renderer the renderer to use
      * @param camera   the camera
+     * @param debug    whether debug mode enabled
      */
-    void render(SDL_Renderer& renderer, const SDL_Rect& camera) const;
+    void render(SDL_Renderer& renderer,
+                const SDL_Rect& camera,
+                bool debug) const;
   };
 }}
 

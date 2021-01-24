@@ -50,9 +50,6 @@ namespace items {
     //the texture
     SDL_Texture* texture = NULL;
 
-    //whether debug mode enabled
-    bool debug;
-
   public:
     /**
      * Constructor
@@ -60,12 +57,10 @@ namespace items {
      * @param y            position of the item y
      * @param texture_path the path to the texture
      * @param renderer     the renderer for loading the texture
-     * @param debug        whether debug mode enabled
      */
     item_t(int x, int y,
            const std::string& texture_path,
-           SDL_Renderer& renderer,
-           bool debug);
+           SDL_Renderer& renderer);
     item_t(const item_t&) = delete;
     item_t& operator=(const item_t&) = delete;
 
@@ -124,8 +119,11 @@ namespace items {
      * Render the item
      * @param renderer the renderer to use
      * @param camera   the camera
+     * @param debug    whether debug mode enabled
      */
-    virtual void render(SDL_Renderer& renderer, const SDL_Rect& camera) const;
+    virtual void render(SDL_Renderer& renderer,
+                        const SDL_Rect& camera,
+                        bool debug) const;
   };
 }}
 

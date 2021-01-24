@@ -36,9 +36,6 @@ namespace environment {
     int texture_w;
     int texture_h;
 
-    //whether debug mode enabled
-    bool debug;
-
   public:
     /**
      * Constructor
@@ -47,14 +44,12 @@ namespace environment {
      * @param range_x      the distance that this object can be moved in the x dir
      * @param texture_path path to texture
      * @param renderer     renderer for loading texture
-     * @param debug        whether debug mode enabled
      */
     pushable_t(SDL_Rect& interact_bounds,
                SDL_Rect& solid_bounds,
                int range_x,
                const std::string& texture_path,
-               SDL_Renderer& renderer,
-               bool debug);
+               SDL_Renderer& renderer);
     pushable_t(const pushable_t&) = delete;
     pushable_t& operator=(const pushable_t&) = delete;
 
@@ -90,8 +85,11 @@ namespace environment {
      * Render the element
      * @param renderer the renderer to use
      * @param camera   the camera
+     * @param debug    whether debug mode enabled
      */
-    void render(SDL_Renderer& renderer, const SDL_Rect& camera) const;
+    void render(SDL_Renderer& renderer,
+                const SDL_Rect& camera,
+                bool debug) const;
 
   };
 }}

@@ -33,10 +33,9 @@ namespace environment {
    */
   chemical_foam_t::chemical_foam_t(int x,int y,
                                    int w, int h,
-                                   float density,
-                                   bool debug)
+                                   float density)
     : renderable_t({x,y,w,h}, false, false),
-      bubbles(), foam(), dispersed(false), debug(debug) {
+      bubbles(), foam(), dispersed(false) {
 
     //init random seed
     srand(time(NULL));
@@ -175,9 +174,11 @@ namespace environment {
    * Render the component
    * @param renderer the renderer to use
    * @param camera   the camera
+   * @param debug    whether debug mode enabled
    */
   void chemical_foam_t::render(SDL_Renderer& renderer,
-                               const SDL_Rect& camera) const {
+                               const SDL_Rect& camera,
+                               bool debug) const {
     //check if this element is in view
     if (this->is_collided(camera,false) && !this->dispersed) {
       //temp foam color

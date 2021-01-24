@@ -25,19 +25,16 @@ namespace environment {
    * @param texture_path the path to the tree texture
    * @param renderer the renderer for loading the texture
    * @param total_frames the number of animation frames
-   * @param debug whether debug mode enabled
    */
   dead_tree_t::dead_tree_t(int x,int y,
                            int w, int h,
                            const std::string& texture_path,
                            SDL_Renderer& renderer,
-                           int total_frames,
-                           bool debug)
+                           int total_frames)
     : renderable_t({x,y,w,h}, true, false),
       felled(false),
       felled_bounds({x, y + h - w, h, w}),
-      left(false),
-      debug(debug) {
+      left(false) {
 
     //load the animation
     anim = std::make_unique<single_seq_anim_t>(texture_path,
@@ -131,8 +128,11 @@ namespace environment {
    * Render the tree
    * @param renderer the renderer to use
    * @param camera   the camera
+   * @param debug    whether debug mode enabled
    */
-  void dead_tree_t::render(SDL_Renderer& renderer, const SDL_Rect& camera) const {
+  void dead_tree_t::render(SDL_Renderer& renderer,
+                           const SDL_Rect& camera,
+                           bool debug) const {
     if (this->is_collided(camera,false)) {
       //render the animation
       anim->render(renderer,

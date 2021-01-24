@@ -6,6 +6,7 @@
 
 #include "tilemap_state.h"
 #include "../exceptions.h"
+#include "../utils.h"
 #include <iostream>
 
 namespace impl {
@@ -43,7 +44,7 @@ namespace state {
       forks(forks),
       player_idx(player_idx),
       show_bars(false),
-      player_health_bar(5,120,50,1000,255,0,0) {
+      player_health_bar(5,120,50,1000,255,0,0)  {
     //sanity check
     if (player_idx >= entities.size()) {
       throw exceptions::rsrc_exception_t("not enough entities found in list");
@@ -243,43 +244,60 @@ namespace state {
   /**
    * Render the current gamestate
    * @param renderer the renderer
+   * @param debug    whether debug mode enabled
    */
-  void tilemap_state_t::render(SDL_Renderer& renderer) const {
+  void tilemap_state_t::render(SDL_Renderer& renderer, bool debug) const {
     //render background layer
-    tilemap->render_bg(renderer, this->camera);
+    tilemap->render_bg(renderer, this->camera,debug);
 
     //render entities
     for (size_t i=0; i<entities.size(); i++) {
-      entities.at(i)->render(renderer,this->camera);
+      entities.at(i)->render(renderer,this->camera,debug);
     }
 
     //render insect swarm
-    insects->render(renderer,this->camera);
+    insects->render(renderer,this->camera,debug);
 
     //render the environment
-    env->render(renderer,this->camera);
+    env->render(renderer,this->camera,debug);
 
     //render items
     for (size_t i=0; i<level_items.size(); i++) {
-      level_items.at(i)->render(renderer,this->camera);
+      level_items.at(i)->render(renderer,this->camera,debug);
     }
 
     //render foreground layer
-    tilemap->render_fg(renderer, this->camera);
+    tilemap->render_fg(renderer, this->camera,debug);
 
     //render transparent blocks
     for (size_t i=0; i<trans_blocks.size(); i++) {
-      trans_blocks.at(i)->render(renderer,this->camera);
+      trans_blocks.at(i)->render(renderer,this->camera,debug);
     }
 
     //render map forks
     for (size_t i=0; i<forks.size(); i++) {
-      forks.at(i)->render(renderer, this->camera);
+      forks.at(i)->render(renderer, this->camera,debug);
     }
 
     //render indicator bars on screen
     if (show_bars) {
       player_health_bar.render(renderer);
     }
+  }
+
+  /**
+   * Render any debug info
+   * @param renderer sdl renderer
+   * @param font     loaded ttf font
+   */
+  void tilemap_state_t::render_debug_info(SDL_Renderer& renderer, TTF_Font& font) const {
+    int center_x, center_y;
+    player->get_center(center_x,center_y);
+
+    //the player position
+    const std::string player_position = std::to_string(center_x) + "," + std::to_string(center_y);
+
+    //render text
+    utils::render_text(renderer,player_position,0,12,font);
   }
 }}

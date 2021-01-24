@@ -39,9 +39,6 @@ namespace tilemap {
     int width_p;
     int height_p;
 
-    //if debug mode enabled
-    bool debug;
-
   public:
     /**
      * Constructor
@@ -59,8 +56,7 @@ namespace tilemap {
               int dim,
               const std::vector<int>& entity_layer_solid,
               const std::vector<int>& entity_layer_water,
-              bool bg_stationary,
-              bool debug);
+              bool bg_stationary);
     tilemap_t(const tilemap_t&) = delete;
     tilemap_t& operator=(const tilemap_t&) = delete;
 
@@ -117,16 +113,18 @@ namespace tilemap {
      * Note: this includes the entity layer
      * @param renderer the sdl renderer
      * @param camera   the camera
+     * @param debug    whether debug mode enabled
      */
-    void render_bg(SDL_Renderer& renderer, const SDL_Rect& camera) const;
+    void render_bg(SDL_Renderer& renderer, const SDL_Rect& camera, bool debug) const;
 
 
     /**
      * Render the foreground tilemap elements
      * @param renderer the sdl renderer
      * @param camera   the camera
+     * @param debug    whether debug mode enabled
      */
-    void render_fg(SDL_Renderer& renderer, const SDL_Rect& camera) const;
+    void render_fg(SDL_Renderer& renderer, const SDL_Rect& camera, bool debug) const;
   };
 }}
 

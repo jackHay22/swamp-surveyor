@@ -22,12 +22,10 @@ namespace items {
    * @param y            position of the item y
    * @param texture_path the path to the texture
    * @param renderer     the renderer for loading the texture
-   * @param debug        whether debug mode enabled
    */
   item_t::item_t(int x, int y,
                  const std::string& texture_path,
-                 SDL_Renderer& renderer,
-                 bool debug)
+                 SDL_Renderer& renderer)
     : x(x), y(y),
       position_ticks(0),
       position_up(false),
@@ -36,8 +34,7 @@ namespace items {
       target_y(y),
       displayable(false),
       display_x(-8),
-      display_y(-8),
-      debug(debug) {
+      display_y(-8) {
 
     //load the texture
     texture = utils::load_texture(texture_path,
@@ -175,8 +172,9 @@ namespace items {
    * Render the item
    * @param renderer the renderer to use
    * @param camera   the camera
+   * @param debug    whether debug mode enabled
    */
-  void item_t::render(SDL_Renderer& renderer, const SDL_Rect& camera) const {
+  void item_t::render(SDL_Renderer& renderer, const SDL_Rect& camera, bool debug) const {
     if (!picked_up || (position_ticks < PICKUP_TICKS)) {
       //create a clip for the current frame
       SDL_Rect sample_bounds = {0,0,texture_w,texture_h};

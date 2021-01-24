@@ -31,9 +31,8 @@ namespace entity {
                      const std::vector<std::string>& anim_cfg_paths,
                      SDL_Renderer& renderer,
                      int tile_dim,
-                     const std::string& base_path,
-                     bool debug)
-    : entity_t(x,y,w,h,anim_cfg_paths,renderer,tile_dim,base_path,debug),
+                     const std::string& base_path)
+    : entity_t(x,y,w,h,anim_cfg_paths,renderer,tile_dim,base_path),
       performing_action(false),
       actions(),
       held_items(),
@@ -173,15 +172,18 @@ namespace entity {
    * Render the entity
    * @param renderer the renderer to use
    * @param camera the camera
+   * @param debug    whether debug mode enabled
    */
-  void player_t::render(SDL_Renderer& renderer, const SDL_Rect& camera) const {
+  void player_t::render(SDL_Renderer& renderer,
+                        const SDL_Rect& camera,
+                        bool debug) const {
     //entity render
-    entity_t::render(renderer,camera);
+    entity_t::render(renderer,camera,debug);
 
     //render all actions
     for (size_t i=0; i<actions.size(); i++) {
       //render the action
-      actions.at(i)->render(renderer,camera);
+      actions.at(i)->render(renderer,camera,debug);
     }
 
     //if the player is performing an action use a supplementary animation

@@ -91,13 +91,11 @@ namespace environment {
    * @param cfg_path the path to the environment configuration
    * @param renderer the sdl renderer
    * @param base_path the resource folder base path
-   * @param debug    whether debug mode is enabled
    */
   void load_env_elems(std::vector<std::shared_ptr<environment::renderable_t>>& elems,
                       const std::string& cfg_path,
                       SDL_Renderer& renderer,
-                      const std::string& base_path,
-                      bool debug) {
+                      const std::string& base_path) {
     nlohmann::json config;
 
     try {
@@ -116,8 +114,7 @@ namespace environment {
                                                                          cfg.y,
                                                                          cfg.w,
                                                                          cfg.h,
-                                                                         cfg.density,
-                                                                         debug));
+                                                                         cfg.density));
         } else if (cfg.type == DEAD_TREE_TYPE) {
           //add a dead tree to the environment
           elems.push_back(std::make_shared<environment::dead_tree_t>(cfg.x,
@@ -126,15 +123,13 @@ namespace environment {
                                                                      cfg.h,
                                                                      base_path + cfg.animation_path,
                                                                      renderer,
-                                                                     cfg.animation_frames,
-                                                                     debug));
+                                                                     cfg.animation_frames));
         } else if (cfg.type == CHEMICAL_SEEP_TYPE) {
           //add a chemical seep to the environment
           elems.push_back(std::make_shared<environment::chemical_seep_t>(cfg.x,
                                                                          cfg.y,
                                                                          cfg.w,
-                                                                         cfg.h,
-                                                                         debug));
+                                                                         cfg.h));
         } else if (cfg.type == DOOR_TYPE) {
           //add a door to the environment
           elems.push_back(std::make_shared<environment::door_t>(cfg.x,
@@ -143,8 +138,7 @@ namespace environment {
                                                                 cfg.h,
                                                                 base_path + cfg.animation_path,
                                                                 renderer,
-                                                                cfg.animation_frames,
-                                                                debug));
+                                                                cfg.animation_frames));
         } else if (cfg.type == PUSHABLE_TYPE) {
           SDL_Rect interact_bounds = {cfg.interact_x, cfg.interact_y,
                                       cfg.interact_w, cfg.interact_h};
@@ -154,8 +148,7 @@ namespace environment {
                                                                     solid_bounds,
                                                                     cfg.range,
                                                                     base_path + cfg.animation_path,
-                                                                    renderer,
-                                                                    debug));
+                                                                    renderer));
         }
       }
 

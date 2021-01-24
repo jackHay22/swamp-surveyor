@@ -50,13 +50,11 @@ namespace tilemap {
    * @param path     the path to the configuration file
    * @param renderer the renderer for loading textures
    * @param base_path the resource directory base path
-   * @param debug    whether debug mode enabled
    */
   void mk_transparent_blocks(std::vector<std::shared_ptr<transparent_block_t>>& blocks,
                              const std::string& path,
                              SDL_Renderer& renderer,
-                             const std::string& base_path,
-                             bool debug) {
+                             const std::string& base_path) {
     try {
       nlohmann::json config;
       std::ifstream in_stream(base_path + path);
@@ -74,8 +72,7 @@ namespace tilemap {
                                                                  cfg.w,
                                                                  cfg.h,
                                                                  base_path + cfg.texture_path,
-                                                                 renderer,
-                                                                 debug));
+                                                                 renderer));
         } else {
           blocks.push_back(std::make_shared<transparent_block_t>(cfg.x,
                                                                  cfg.y,
@@ -83,8 +80,7 @@ namespace tilemap {
                                                                  cfg.h,
                                                                  DEFAULT_R,
                                                                  DEFAULT_G,
-                                                                 DEFAULT_B,
-                                                                 debug));
+                                                                 DEFAULT_B));
         }
       }
 
@@ -103,15 +99,12 @@ namespace tilemap {
    * @param h            height
    * @param texture_path path to texture
    * @param renderer     renderer for loading texture
-   * @param debug        debug mode enabled
    */
   transparent_block_t::transparent_block_t(int x, int y, int w, int h,
                                            const std::string& texture_path,
-                                           SDL_Renderer& renderer,
-                                           bool debug)
+                                           SDL_Renderer& renderer)
     : bounds({x,y,w,h}),
       r(0), g(0), b(0),
-      debug(debug),
       transparent(false) {
     //load the texture
     texture = utils::load_texture(texture_path,
@@ -129,16 +122,13 @@ namespace tilemap {
    * @param r     color r
    * @param g     color g
    * @param b     color b
-   * @param debug debug mode enabled
    */
   transparent_block_t::transparent_block_t(int x, int y, int w, int h,
-                                           int r, int g, int b,
-                                           bool debug)
+                                           int r, int g, int b)
     : bounds({x,y,w,h}),
       texture_w(0),
       texture_h(0),
       r(r), g(g), b(b),
-      debug(debug),
       transparent(false) {}
 
   /**
@@ -190,9 +180,11 @@ namespace tilemap {
    * Render this block
    * @param renderer the sdl renderer
    * @param camera the camera
+   * @param debug    whether debug mode enabled
    */
   void transparent_block_t::render(SDL_Renderer& renderer,
-                                  const SDL_Rect& camera) const {
+                                  const SDL_Rect& camera,
+                                  bool debug) const {
     if (this->is_collided(camera,true) && !transparent) {
 
       if (texture != NULL) {

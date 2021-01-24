@@ -36,9 +36,6 @@ namespace tilemap {
     //the tile dimension
     int dim;
 
-    //if debug mode enabled
-    bool debug;
-
     //whether this layer is stationary (serving as a backdrop)
     bool stationary;
 
@@ -63,8 +60,7 @@ namespace tilemap {
     layer_t(const std::string& rsrc_path,
             int dim,
             std::shared_ptr<tilemap::tileset_t> tileset,
-            bool stationary,
-            bool debug);
+            bool stationary);
     layer_t(const layer_t&) = delete;
     layer_t& operator=(const layer_t&) = delete;
 
@@ -130,8 +126,9 @@ namespace tilemap {
      * Render this layer
      * @param renderer the sdl renderer
      * @param camera the current position of the camera
+     * @param debug    whether debug mode enabled
      */
-    void render(SDL_Renderer& renderer, const SDL_Rect& camera) const;
+    void render(SDL_Renderer& renderer, const SDL_Rect& camera, bool debug) const;
   };
 }}
 

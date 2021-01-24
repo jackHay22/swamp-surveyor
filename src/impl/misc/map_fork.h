@@ -117,9 +117,11 @@ namespace misc {
      * Render the message about this fork
      * @param renderer the renderer to use
      * @param camera   the camera
+     * @param debug    whether debug mode enabled
      */
     void render(SDL_Renderer& renderer,
-                const SDL_Rect& camera) const;
+                const SDL_Rect& camera,
+                bool debug) const;
 
   };
 }}

@@ -11,6 +11,7 @@
 #include <chrono>
 #include <thread>
 #include "logger.h"
+#include "utils.h"
 
 namespace impl {
 namespace engine {
@@ -19,38 +20,6 @@ namespace engine {
   const int TICK_SLEEP = 50;
   const int FRAMES_PER_FPS = 10;
   const float MS_PER_SECOND = 1000.0;
-
-  /**
-   * Render debug info to the screen
-   * @param renderer the renderer
-   * @param fps      the frames per second value
-   * @param font     the font for debug output
-   */
-  void render_debug_info(SDL_Renderer& renderer, int fps, TTF_Font *font) {
-    SDL_Surface* debug_text;
-    SDL_Color color = {255,255,255};
-
-    //create text for debug
-    debug_text = TTF_RenderText_Solid(font,std::to_string(fps).c_str(),color);
-
-    if (!debug_text) {
-      logger::log_err("failed to render debug text: " + std::string(TTF_GetError()));
-
-    } else {
-      //create a texture
-      SDL_Texture* text_texture = SDL_CreateTextureFromSurface(&renderer,debug_text);
-
-      //the position on screen
-      SDL_Rect dest = {0,0,debug_text->w,debug_text->h};
-
-      //render the text
-      SDL_RenderCopy(&renderer,text_texture,&dest,&dest);
-
-      //free
-      SDL_DestroyTexture(text_texture);
-      SDL_FreeSurface(debug_text);
-    }
-  }
 
   /**
    * Take the max value of two numbers
@@ -169,11 +138,17 @@ namespace engine {
       SDL_RenderClear(&renderer);
 
       //render the current state
-      manager->render(renderer);
+      manager->render(renderer,debug);
 
       //render debug info
       if (debug) {
-        render_debug_info(renderer,fps,debug_font);
+        //render the fps
+        utils::render_text(renderer,
+                           std::to_string(fps),
+                           0,0,*debug_font);
+
+        //render debug info
+        manager->render_debug_info(renderer,*debug_font);
       }
 
       //Update screen

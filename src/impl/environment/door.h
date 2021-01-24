@@ -30,9 +30,6 @@ namespace environment {
     //whether the door opened left
     bool left;
 
-    //whether debug mode enabled
-    bool debug;
-
   public:
     /**
      * Door constructor
@@ -43,14 +40,12 @@ namespace environment {
      * @param texture_path the path to the door anim texture
      * @param renderer the renderer for loading the texture
      * @param total_frames the number of animation frames
-     * @param debug whether debug mode enabled
      */
     door_t(int x,int y,
            int w, int h,
            const std::string& texture_path,
            SDL_Renderer& renderer,
-           int total_frames,
-           bool debug);
+           int total_frames);
     door_t(const door_t&) = delete;
     door_t& operator=(const door_t&) = delete;
 
@@ -93,8 +88,11 @@ namespace environment {
      * Render the door
      * @param renderer the renderer to use
      * @param camera   the camera
+     * @param debug    whether debug mode enabled
      */
-    void render(SDL_Renderer& renderer, const SDL_Rect& camera) const;
+    void render(SDL_Renderer& renderer,
+                const SDL_Rect& camera,
+                bool debug) const;
 
   };
 }}

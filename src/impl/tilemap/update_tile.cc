@@ -20,7 +20,7 @@ namespace tilemap {
   update_tile_t::update_tile_t(int x, int y,
                                int dim, int range_start,
                                int range_end)
-    : tile_t(x,y,dim,range_start,false),
+    : tile_t(x,y,dim,range_start),
       range_start(range_start),
       range_end(range_end) {}
 

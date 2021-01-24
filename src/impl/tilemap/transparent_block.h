@@ -39,9 +39,6 @@ namespace tilemap {
     int g;
     int b;
 
-    //whether debug mode enabled
-    bool debug;
-
     //whether the block is currently transparent
     bool transparent;
 
@@ -59,12 +56,10 @@ namespace tilemap {
     //constructor for texture
     transparent_block_t(int x, int y, int w, int h,
                         const std::string& texture_path,
-                        SDL_Renderer& renderer,
-                        bool debug);
+                        SDL_Renderer& renderer);
     //constructor for color
     transparent_block_t(int x, int y, int w, int h,
-                        int r, int g, int b,
-                        bool debug);
+                        int r, int g, int b);
     transparent_block_t(const transparent_block_t&) = delete;
     transparent_block_t& operator=(const transparent_block_t&) = delete;
 
@@ -84,9 +79,11 @@ namespace tilemap {
      * Render this block
      * @param renderer the sdl renderer
      * @param camera the camera
+     * @param debug    whether debug mode enabled
      */
     void render(SDL_Renderer& renderer,
-                const SDL_Rect& camera) const;
+                const SDL_Rect& camera,
+                bool debug) const;
   };
 
   /**
@@ -95,13 +92,11 @@ namespace tilemap {
    * @param path     the path to the configuration file
    * @param renderer the renderer for loading textures
    * @param base_path the resource directory base path
-   * @param debug    whether debug mode enabled
    */
   void mk_transparent_blocks(std::vector<std::shared_ptr<transparent_block_t>>& blocks,
                              const std::string& path,
                              SDL_Renderer& renderer,
-                             const std::string& base_path,
-                             bool debug);
+                             const std::string& base_path);
 }}
 
 #endif /*_IO_JACKHAY_SWAMP_TRANSPARENT_BLOCK_H*/

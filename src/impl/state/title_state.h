@@ -112,8 +112,9 @@ namespace state {
     /**
      * Render the current gamestate
      * @param renderer the renderer
+     * @param debug    whether debug mode enabled
      */
-    void render(SDL_Renderer& renderer) const;
+    void render(SDL_Renderer& renderer, bool debug) const;
   };
 }}
 

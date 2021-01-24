@@ -26,7 +26,6 @@ namespace state {
    * @param  tile_dim the dimensions of tiles
    * @param  base_path resource directory base path
    * @param  font_path the path to the font to use
-   * @param  debug    whether debug mode enabled
    */
   void load_tm_state(state::state_manager_t& state_manager,
                      const std::string& path,
@@ -34,8 +33,7 @@ namespace state {
                      SDL_Rect& camera,
                      int tile_dim,
                      const std::string& base_path,
-                     const std::string& font_path,
-                     bool debug);
+                     const std::string& font_path);
 }}
 
 #endif /*_IO_JACKHAY_SWAMP_STATE_BUILDER_H*/

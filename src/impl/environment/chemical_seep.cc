@@ -27,11 +27,9 @@ namespace environment {
    * @param debug whether debug mode enabled
    */
   chemical_seep_t::chemical_seep_t(int x,int y,
-                                   int w, int h,
-                                   bool debug)
+                                   int w, int h)
     : renderable_t({x,y,w,h},true,false),
-      drips(),
-      debug(debug) {}
+      drips() {}
 
   /**
    * Interact with the seep (collecting sample)
@@ -39,9 +37,7 @@ namespace environment {
    * @param x the player position x
    * @param y the player position y
    */
-  void chemical_seep_t::interact(player_action a, int x, int y) {
-
-  }
+  void chemical_seep_t::interact(player_action a, int x, int y) {}
 
   /**
    * Update the seep
@@ -72,9 +68,11 @@ namespace environment {
    * Render the seep
    * @param renderer the renderer to use
    * @param camera   the camera
+   * @param debug    whether debug mode enabled
    */
   void chemical_seep_t::render(SDL_Renderer& renderer,
-                               const SDL_Rect& camera) const {
+                               const SDL_Rect& camera,
+                               bool debug) const {
 
     if (this->is_collided(camera,false)) {
       //set the color

@@ -81,8 +81,9 @@ namespace environment {
      * Render environmental elements
      * @param renderer the sdl renderer
      * @param camera   the camera
+     * @param debug    whether debug mode enabled
      */
-    void render(SDL_Renderer& renderer, const SDL_Rect& camera) const;
+    void render(SDL_Renderer& renderer, const SDL_Rect& camera, bool debug) const;
 
   };
 }}

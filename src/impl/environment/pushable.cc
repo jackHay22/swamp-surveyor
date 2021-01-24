@@ -26,15 +26,13 @@ namespace environment {
                          SDL_Rect& solid_bounds,
                          int range_x,
                          const std::string& texture_path,
-                         SDL_Renderer& renderer,
-                         bool debug)
+                         SDL_Renderer& renderer)
     : renderable_t(solid_bounds,true,true),
       min_x(solid_bounds.x - range_x),
       max_x(solid_bounds.x + solid_bounds.w + range_x),
       left(false),
       moving_frames(0),
-      interact_bounds(interact_bounds),
-      debug(debug) {
+      interact_bounds(interact_bounds) {
     //load the texture
     texture = utils::load_texture(texture_path,
                                   renderer,
@@ -107,14 +105,20 @@ namespace environment {
    * Render the element
    * @param renderer the renderer to use
    * @param camera   the camera
+   * @param debug    whether debug mode enabled
    */
-  void pushable_t::render(SDL_Renderer& renderer, const SDL_Rect& camera) const {
+  void pushable_t::render(SDL_Renderer& renderer,
+                          const SDL_Rect& camera,
+                          bool debug) const {
     //check if visible
     if (this->is_collided(camera,true)) {
+      //center the texture on the interactive bounds
+      int texture_x = (interact_bounds.x + (interact_bounds.w / 2)) - (texture_w / 2);
+      int texture_y = (interact_bounds.y + (interact_bounds.h / 2)) - (texture_h / 2);
       //bounds
       SDL_Rect sample_bounds = {0,0,texture_w,texture_h};
-      SDL_Rect image_bounds = {bounds.x - camera.x,
-                               bounds.y - camera.y,
+      SDL_Rect image_bounds = {texture_x - camera.x,
+                               texture_y - camera.y,
                                texture_w,texture_h};
 
       //render the texture
@@ -129,7 +133,7 @@ namespace environment {
                                  bounds.y - camera.y,
                                  bounds.w, bounds.h};
         //set the draw color
-        SDL_SetRenderDrawColor(&renderer,255,102,0,255);
+        SDL_SetRenderDrawColor(&renderer,255,0,0,255);
 
         //render the bounds
         SDL_RenderDrawRect(&renderer,&solid_bounds);
@@ -140,7 +144,7 @@ namespace environment {
                                     interact_bounds.w, interact_bounds.h};
 
         //set the draw color
-        SDL_SetRenderDrawColor(&renderer,255,0,0,255);
+        SDL_SetRenderDrawColor(&renderer,255,102,0,255);
 
         //render the bounds
         SDL_RenderDrawRect(&renderer,&interact_bounds);

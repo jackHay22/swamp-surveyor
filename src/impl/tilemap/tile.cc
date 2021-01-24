@@ -18,13 +18,12 @@ namespace tilemap {
      * @param dim  the dimension of the tile
      * @param type the type of the tile (idx into tileset)
      */
-    tile_t::tile_t(int x, int y, int dim, int type,bool debug)
+    tile_t::tile_t(int x, int y, int dim, int type)
       : type(type),
         solid(false),
         liquid(false),
         x(x), y(y),
-        dim(dim),
-        debug(debug) {}
+        dim(dim) {}
 
     /**
      * Check if a bounding box collides with this tile
@@ -65,11 +64,13 @@ namespace tilemap {
      * @param camera the camera
      * @param tileset the tileset to sample
      * @param stationary whether this tile is stationary in the camera or not
+     * @param debug    whether debug mode enabled
      */
     void tile_t::render(SDL_Renderer& renderer,
                         const SDL_Rect& camera,
                         const std::shared_ptr<tileset_t> tileset,
-                        bool stationary) const {
+                        bool stationary,
+                        bool debug) const {
       //check the collision
       if (this->is_collided(camera) || stationary) {
         int rel_x = (x * dim);

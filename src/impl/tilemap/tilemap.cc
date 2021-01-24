@@ -26,12 +26,10 @@ namespace tilemap {
                        int dim,
                        const std::vector<int>& entity_layer_solid,
                        const std::vector<int>& entity_layer_water,
-                       bool bg_stationary,
-                       bool debug)
+                       bool bg_stationary)
     : bg_layers(), fg_layers(),
       entity_layer_solid(entity_layer_solid),
-      entity_layer_water(entity_layer_water),
-      debug(debug) {
+      entity_layer_water(entity_layer_water) {
 
     //sanity check
     if ((entity_layer_idx >= rsrc_paths.size()) || (entity_layer_idx < 0)) {
@@ -45,8 +43,7 @@ namespace tilemap {
           std::make_unique<tilemap::layer_t>(rsrc_paths.at(entity_layer_idx),
                                              dim,
                                              tileset,
-                                             false,
-                                             debug);
+                                             false);
 
         //set solid/liquid tiles for this layer
         this->entity_layer->set_natured_tiles(entity_layer_solid,
@@ -57,15 +54,13 @@ namespace tilemap {
         this->bg_layers.push_back(std::make_unique<tilemap::layer_t>(rsrc_paths.at(i),
                                                                      dim,
                                                                      tileset,
-                                                                     bg_stationary && (i == 0),
-                                                                     debug));
+                                                                     bg_stationary && (i == 0)));
       } else {
         //load as a foreground layer
         this->fg_layers.push_back(std::make_unique<tilemap::layer_t>(rsrc_paths.at(i),
                                                                      dim,
                                                                      tileset,
-                                                                     false,
-                                                                     debug));
+                                                                     false));
       }
     }
 
@@ -152,15 +147,17 @@ namespace tilemap {
    * Note: this includes the entity layer
    * @param renderer the sdl renderer
    * @param camera   the camera
+   * @param debug    whether debug mode enabled
    */
   void tilemap_t::render_bg(SDL_Renderer& renderer,
-                            const SDL_Rect& camera) const {
+                            const SDL_Rect& camera,
+                            bool debug) const {
     //render the background
     for (size_t i=0; i<bg_layers.size(); i++) {
-      bg_layers.at(i)->render(renderer,camera);
+      bg_layers.at(i)->render(renderer,camera,debug);
     }
     //render the entity layer
-    entity_layer->render(renderer,camera);
+    entity_layer->render(renderer,camera,debug);
   }
 
 
@@ -168,12 +165,14 @@ namespace tilemap {
    * Render the foreground tilemap elements
    * @param renderer the sdl renderer
    * @param camera   the camera
+   * @param debug    whether debug mode enabled
    */
   void tilemap_t::render_fg(SDL_Renderer& renderer,
-                            const SDL_Rect& camera) const {
+                            const SDL_Rect& camera,
+                            bool debug) const {
     //render the foreground
     for (size_t i=0; i<fg_layers.size(); i++) {
-      fg_layers.at(i)->render(renderer,camera);
+      fg_layers.at(i)->render(renderer,camera,debug);
     }
   }
 }}

@@ -28,13 +28,11 @@ namespace items {
      * @param y            position of the item y
      * @param texture_path the path to the texture
      * @param renderer     the renderer for loading the texture
-     * @param debug        whether debug mode enabled
      */
     sprayer_t(int x, int y,
-                     const std::string& texture_path,
-                     SDL_Renderer& renderer,
-                     bool debug)
-       : item_t(x,y,texture_path,renderer,debug) {}
+               const std::string& texture_path,
+               SDL_Renderer& renderer)
+       : item_t(x,y,texture_path,renderer) {}
     sprayer_t(const sprayer_t&) = delete;
     sprayer_t& operator=(const sprayer_t&) = delete;
 

@@ -17,12 +17,10 @@ namespace state {
    * @param renderer the renderer for loading images
    * @param camera   the default camera
    * @param tile_dim the tile dimension
-   * @param debug    whether debug mode enabled
    */
   state_manager_t::state_manager_t(SDL_Renderer& renderer,
                                    SDL_Rect& camera,
-                                   int tile_dim,
-                                   bool debug)
+                                   int tile_dim)
     : states(),
       deferred_cfgs(),
       last_loaded(-1),
@@ -32,7 +30,6 @@ namespace state {
       tile_dim(tile_dim),
       base_path("resources/"),
       font_path("/usr/share/fonts/noto/NotoSans-Light.ttf"),
-      debug(debug),
       current_state(TITLE),
       last_state(TITLE) {}
 
@@ -73,8 +70,7 @@ namespace state {
                       camera,
                       tile_dim,
                       base_path,
-                      font_path,
-                      debug);
+                      font_path);
       } else {
         logger::log_err("no cfg provided for next level");
         return;
@@ -159,12 +155,28 @@ namespace state {
   /**
    * Render the current gamestate
    * @param renderer the renderer
+   * @param debug    whether debug mode enabled
    */
-  void state_manager_t::render(SDL_Renderer& renderer) {
-    //attempt to lock the state
+  void state_manager_t::render(SDL_Renderer& renderer,
+                               bool debug) {
+    //lock the state
     std::unique_lock<std::shared_mutex> state_lock(lock);
 
     //render the state
-    states.at(current_state)->render(renderer);
+    states.at(current_state)->render(renderer, debug);
+  }
+
+  /**
+   * Render any debug info
+   * @param renderer sdl renderer
+   * @param font     loaded ttf font
+   */
+  void state_manager_t::render_debug_info(SDL_Renderer& renderer,
+                                           TTF_Font& font) {
+
+    //lock the state
+    std::unique_lock<std::shared_mutex> state_lock(lock);
+
+    states.at(current_state)->render_debug_info(renderer,font);
   }
 }}

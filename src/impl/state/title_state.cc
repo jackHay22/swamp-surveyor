@@ -161,8 +161,9 @@ namespace state {
   /**
    * Render the current gamestate
    * @param renderer the renderer
+   * @param debug    whether debug mode enabled
    */
-  void title_state_t::render(SDL_Renderer& renderer) const {
+  void title_state_t::render(SDL_Renderer& renderer, bool debug) const {
     //bounds
     SDL_Rect image_bounds = {0,0,this->width, this->height};
 

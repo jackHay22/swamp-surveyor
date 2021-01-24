@@ -25,16 +25,15 @@ namespace tilemap {
   layer_t::layer_t(const std::string& rsrc_path,
                    int dim,
                    std::shared_ptr<tilemap::tileset_t> tileset,
-                   bool stationary,
-                   bool debug)
-    : tileset(tileset), dim(dim), stationary(stationary), debug(debug)  {
+                   bool stationary)
+    : tileset(tileset), dim(dim), stationary(stationary)  {
 
     try {
       //read from the file
       std::ifstream layer_file(rsrc_path);
       int y = 0;
 
-      std::shared_ptr<tile_t> blank = std::make_shared<tile_t>(-1,-1,dim,-1,debug);
+      std::shared_ptr<tile_t> blank = std::make_shared<tile_t>(-1,-1,dim,-1);
 
       //read each line of tiles
       std::string line;
@@ -55,7 +54,7 @@ namespace tilemap {
 
              if (type != -1) {
                //add the tile to the map contents
-               this->contents.back().push_back(std::make_shared<tile_t>(x,y,dim,type,debug));
+               this->contents.back().push_back(std::make_shared<tile_t>(x,y,dim,type));
              } else {
                this->contents.back().push_back(blank);
              }
@@ -233,13 +232,15 @@ namespace tilemap {
    * Render this layer
    * @param renderer the sdl renderer
    * @param camera the current position of the camera
+   * @param debug    whether debug mode enabled
    */
   void layer_t::render(SDL_Renderer& renderer,
-                       const SDL_Rect& camera) const {
+                       const SDL_Rect& camera,
+                       bool debug) const {
     //render each tile
-    this->for_each_const([&renderer,&camera,this](tile_t& t){
+    this->for_each_const([&renderer,&camera,this, debug](tile_t& t){
       //render the tile
-      t.render(renderer,camera,this->tileset, this->stationary);
+      t.render(renderer,camera,this->tileset, this->stationary, debug);
     });
   }
 }}

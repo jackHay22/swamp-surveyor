@@ -28,13 +28,11 @@ namespace items {
      * @param y            position of the item y
      * @param texture_path the path to the texture
      * @param renderer     the renderer for loading the texture
-     * @param debug        whether debug mode enabled
      */
     chemical_label_t(int x, int y,
                      const std::string& texture_path,
-                     SDL_Renderer& renderer,
-                     bool debug)
-      :  item_t(x,y,texture_path,renderer,debug) {}
+                     SDL_Renderer& renderer)
+      :  item_t(x,y,texture_path,renderer) {}
     chemical_label_t(const chemical_label_t&) = delete;
     chemical_label_t& operator=(const chemical_label_t&) = delete;
 

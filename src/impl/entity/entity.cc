@@ -34,8 +34,7 @@ namespace entity {
                      const std::vector<std::string>& anim_cfg_paths,
                      SDL_Renderer& renderer,
                      int tile_dim,
-                     const std::string& base_path,
-                     bool debug)
+                     const std::string& base_path)
     : x(x), y(y),
       w(w), h(h),
       health(STARTING_HEALTH),
@@ -47,7 +46,7 @@ namespace entity {
       climb_counter(CLIMB_FRAMES),
       climb_height(0),
       water_counter(WATER_FRAMES),
-      anims(), debug(debug) {
+      anims() {
 
     if (anim_cfg_paths.size() < ENTITY_STATES) {
       throw exceptions::rsrc_exception_t("not enough entity animation paths provided");
@@ -261,8 +260,11 @@ namespace entity {
    * Render the entity
    * @param renderer the renderer to use
    * @param camera   the camera
+   * @param debug    whether debug mode enabled
    */
-  void entity_t::render(SDL_Renderer& renderer, const SDL_Rect& camera) const {
+  void entity_t::render(SDL_Renderer& renderer,
+                        const SDL_Rect& camera,
+                        bool debug) const {
     if (state != ACTION) {
       //render the current animation
       anims.at(state)->render(renderer,

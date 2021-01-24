@@ -52,14 +52,12 @@ namespace entity {
    * @param  renderer the renderer for loading textures
    * @param  tile_dim the dimension of tiles
    * @param  base_path the resource dir base path
-   * @param  debug    whether debug mode enabled
    * @return      the entity
    */
   std::shared_ptr<entity_t> load_entity(const std::string& path,
                                         SDL_Renderer& renderer,
                                         int tile_dim,
-                                        const std::string& base_path,
-                                        bool debug) {
+                                        const std::string& base_path) {
 
     try {
       //load the config file
@@ -78,8 +76,7 @@ namespace entity {
                                                   cfg.anim_paths,
                                                   renderer,
                                                   tile_dim,
-                                                  base_path,
-                                                  debug);
+                                                  base_path);
       }
 
       //unknown entity type

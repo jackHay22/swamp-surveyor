@@ -29,9 +29,6 @@ namespace tilemap {
     //whether this tile is liquid
     bool liquid;
 
-    //whether debug mode enabled
-    bool debug;
-
     //this tile's position
     int x;
     int y;
@@ -39,7 +36,7 @@ namespace tilemap {
 
   public:
     //constructor
-    tile_t(int x, int y, int dim, int type, bool debug);
+    tile_t(int x, int y, int dim, int type);
     tile_t(const tile_t&) = delete;
     tile_t& operator=(const tile_t&) = delete;
 
@@ -96,11 +93,13 @@ namespace tilemap {
      * @param camera the camera
      * @param tileset the tileset to sample
      * @param stationary whether this tile is stationary in the camera or not
+     * @param debug    whether debug mode enabled
      */
     void render(SDL_Renderer& renderer,
                 const SDL_Rect& camera,
                 const std::shared_ptr<tileset_t> tileset,
-                bool stationary) const;
+                bool stationary,
+                bool debug) const;
   };
 }}
 

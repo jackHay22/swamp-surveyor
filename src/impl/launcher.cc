@@ -115,8 +115,7 @@ namespace launcher {
     std::shared_ptr<state::state_manager_t> state_manager =
       std::make_shared<state::state_manager_t>(*renderer,
                                                camera,
-                                               cfg.tile_dim,
-                                               cfg.debug);
+                                               cfg.tile_dim);
 
     //add the title state
     state_manager->add_state(std::make_unique<state::title_state_t>(cfg.window_width_p,

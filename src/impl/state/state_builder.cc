@@ -90,7 +90,6 @@ namespace state {
    * @param  tile_dim the dimensions of tiles
    * @param  base_path resource directory base path
    * @param  font_path the path to the font to use
-   * @param  debug    whether debug mode enabled
    */
   void load_tm_state(state::state_manager_t& state_manager,
                      const std::string& path,
@@ -98,8 +97,7 @@ namespace state {
                      SDL_Rect& camera,
                      int tile_dim,
                      const std::string& base_path,
-                     const std::string& font_path,
-                     bool debug) {
+                     const std::string& font_path) {
 
     //load the file
     state_cfg_t cfg;
@@ -119,8 +117,7 @@ namespace state {
     std::shared_ptr<tilemap::tileset_t> tileset =
       std::make_shared<tilemap::tileset_t>(base_path + cfg.tileset_path,
                                            tile_dim,
-                                           renderer,
-                                           debug);
+                                           renderer);
 
     //add base path to map layer paths
     for (size_t i=0; i<cfg.map_layer_paths.size(); i++) {
@@ -135,15 +132,14 @@ namespace state {
                                            tile_dim,
                                            cfg.entity_layer_solid,
                                            cfg.entity_layer_water,
-                                           cfg.bg_stationary,
-                                           debug);
+                                           cfg.bg_stationary);
 
     //entities list
     std::vector<std::shared_ptr<entity::entity_t>> entities;
 
     //load entities
     for (const std::string& epath : cfg.entity_cfg_paths) {
-      entities.push_back(entity::load_entity(epath,renderer,tile_dim,base_path,debug));
+      entities.push_back(entity::load_entity(epath,renderer,tile_dim,base_path));
     }
 
     //load insects
@@ -155,8 +151,7 @@ namespace state {
     environment::load_env_elems(env_renderable,
                                 cfg.env_elems_path,
                                 renderer,
-                                base_path,
-                                debug);
+                                base_path);
 
     //make environment from elements
     std::shared_ptr<environment::environment_t> env =
@@ -167,16 +162,14 @@ namespace state {
     items::load_items(level_items,
                       cfg.items_path,
                       renderer,
-                      base_path,
-                      debug);
+                      base_path);
 
     //load transparent blocks
     std::vector<std::shared_ptr<tilemap::transparent_block_t>> tblocks;
     tilemap::mk_transparent_blocks(tblocks,
                                    cfg.transparent_blocks_path,
                                    renderer,
-                                   base_path,
-                                   debug);
+                                   base_path);
 
     //load map forks
     std::vector<std::shared_ptr<misc::map_fork_t>> forks;

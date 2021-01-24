@@ -165,8 +165,11 @@ namespace entity {
    * Render the insects
    * @param renderer the renderer to use
    * @param camera   the camera
+   * @param debug    whether debug mode enabled
    */
-  void insects_t::render(SDL_Renderer& renderer, const SDL_Rect& camera) const {
+  void insects_t::render(SDL_Renderer& renderer,
+                         const SDL_Rect& camera,
+                         bool /*debug*/) const {
     //set the insect color
     SDL_SetRenderDrawColor(&renderer,this->r,this->g,this->b,225);
 
