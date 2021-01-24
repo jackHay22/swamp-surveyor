@@ -15,29 +15,25 @@ namespace environment {
 
   /**
    * Constructor
-   * @param x            starting position (x)
-   * @param y            starting position (y)
-   * @param w            dimension (w)
-   * @param h            dimension (h)
-   * @param range_x      the range that this object can be moved in the x dir
-   * @param solid_y      the y index where the element is solid
+   * @param interact_bounds the interactive bounds
+   * @param solid_bounds the bounds of the solid component
+   * @param range_x      the distance that this object can be moved in the x dir
    * @param texture_path path to texture
    * @param renderer     renderer for loading texture
    * @param debug        whether debug mode enabled
    */
-  pushable_t::pushable_t(int x,int y,
-                         int w, int h,
+  pushable_t::pushable_t(SDL_Rect& interact_bounds,
+                         SDL_Rect& solid_bounds,
                          int range_x,
-                         int solid_y,
                          const std::string& texture_path,
                          SDL_Renderer& renderer,
                          bool debug)
-    : renderable_t({x,y,w,h},true,true),
-      min_x(x - range_x),
-      max_x(x + range_x),
+    : renderable_t(solid_bounds,true,true),
+      min_x(solid_bounds.x - range_x),
+      max_x(solid_bounds.x + solid_bounds.w + range_x),
       left(false),
       moving_frames(0),
-      solid_y(solid_y),
+      interact_bounds(interact_bounds),
       debug(debug) {
     //load the texture
     texture = utils::load_texture(texture_path,
@@ -65,17 +61,14 @@ namespace environment {
   bool pushable_t::is_collided(const SDL_Rect& rect,
                                bool interaction) const {
     if (interaction) {
-      //bounds collision
-      return renderable_t::is_collided(rect,interaction);
-
-    } else {
-      int solid_h = bounds.h - (solid_y - bounds.y);
-      //calculate collision based on solid portion of element
-      return ((bounds.x < (rect.x + rect.w)) &&
-              ((bounds.x + bounds.w) > rect.x) &&
-              (solid_y < (rect.y + rect.h)) &&
-              ((solid_y + solid_h) > rect.y));
+      //interaction collision
+      return ((interact_bounds.x < (rect.x + rect.w)) &&
+              ((interact_bounds.x + interact_bounds.w) > rect.x) &&
+              (interact_bounds.y < (rect.y + rect.h)) &&
+              ((interact_bounds.y + interact_bounds.h) > rect.y));
     }
+    //physics collision
+    return renderable_t::is_collided(rect,interaction);
   }
 
   /**
@@ -88,7 +81,7 @@ namespace environment {
     if (a == PUSH) {
       //determine the side the player is on and flip animation
       //if necessary
-      left = x > (bounds.x + (bounds.w / 2));
+      left = x > (interact_bounds.x + (interact_bounds.w / 2));
       moving_frames = MOVING_FRAMES_PER_PUSH;
     }
   }
@@ -100,8 +93,10 @@ namespace environment {
     if (moving_frames > 0) {
       if (left && (bounds.x > min_x)) {
         bounds.x--;
+        interact_bounds.x--;
       } else if (!left && (bounds.x < max_x)) {
         bounds.x++;
+        interact_bounds.x++;
       }
       //update the moving frames
       moving_frames--;
@@ -131,16 +126,24 @@ namespace environment {
       if (debug) {
         //render the solid portion
         SDL_Rect solid_bounds = {bounds.x - camera.x,
-                                 solid_y - camera.y,
-                                 bounds.w,
-                                 bounds.h - (solid_y - bounds.y)};
-
-        //std::cout << bounds.y << ", " << solid_y << "," << solid_bounds.h << std::endl;
+                                 bounds.y - camera.y,
+                                 bounds.w, bounds.h};
         //set the draw color
         SDL_SetRenderDrawColor(&renderer,255,102,0,255);
 
         //render the bounds
         SDL_RenderDrawRect(&renderer,&solid_bounds);
+
+        //render the interactive portion
+        SDL_Rect interact_bounds = {interact_bounds.x - camera.x,
+                                    interact_bounds.y - camera.y,
+                                    interact_bounds.w, interact_bounds.h};
+
+        //set the draw color
+        SDL_SetRenderDrawColor(&renderer,255,0,0,255);
+
+        //render the bounds
+        SDL_RenderDrawRect(&renderer,&interact_bounds);
       }
     }
   }

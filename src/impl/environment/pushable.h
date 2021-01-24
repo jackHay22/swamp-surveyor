@@ -28,10 +28,10 @@ namespace environment {
     //whether the element is moving
     int moving_frames;
 
-    //the y position (and above) where the element is solid
-    int solid_y;
+    //interactive bounds
+    SDL_Rect interact_bounds;
 
-    //the texture
+    //the texture (centered on interactive bounds)
     SDL_Texture* texture = NULL;
     int texture_w;
     int texture_h;
@@ -42,20 +42,16 @@ namespace environment {
   public:
     /**
      * Constructor
-     * @param x            starting position (x)
-     * @param y            starting position (y)
-     * @param w            dimension (w)
-     * @param h            dimension (h)
+     * @param interact_bounds the interactive bounds
+     * @param solid_bounds the bounds of the solid component
      * @param range_x      the distance that this object can be moved in the x dir
-     * @param solid_y      the y index where the element is solid
      * @param texture_path path to texture
      * @param renderer     renderer for loading texture
      * @param debug        whether debug mode enabled
      */
-    pushable_t(int x,int y,
-               int w, int h,
+    pushable_t(SDL_Rect& interact_bounds,
+               SDL_Rect& solid_bounds,
                int range_x,
-               int solid_y,
                const std::string& texture_path,
                SDL_Renderer& renderer,
                bool debug);

@@ -213,19 +213,28 @@ namespace entity {
           climb_counter = CLIMB_FRAMES;
           climb_height = tile_dim;
 
-        } else if (env.is_solid(x_bounds, base_height) &&
-                   !env.is_solid(x_bounds, base_height - tile_dim)) {
+        } else {
+          //modify base height
+          base_height = current_bounds.y + current_bounds.h;
+          bool open_above = true;
 
-          //TODO sample more locations
-
-          //determine the height at this position
-          climbing = true;
-          for (int i=0; i<tile_dim; i++) {
-            if (!env.is_solid(x_bounds, base_height - i)) {
-              //set the climb height and the climb frames
-              climb_height = i + 2;
-              climb_counter = climb_height * 2;
+          //check if there is open space to step onto above
+          for (int i=1; i<=tile_dim; i++) {
+            if (env.is_solid(x_bounds,base_height - tile_dim - i)) {
+              open_above = false;
               break;
+            }
+          }
+
+          if (open_above) {
+            //check if there is solid ground to stand on
+            for (int i=0; i<tile_dim; i++) {
+              if (env.is_solid(x_bounds, base_height - tile_dim + i)) {
+                climbing = true;
+                climb_height = tile_dim - i;
+                climb_counter = climb_height * 2.5;
+                break;
+              }
             }
           }
         }
