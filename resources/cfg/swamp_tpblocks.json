@@ -14,5 +14,13 @@
     "h" : 56,
     "texture" : true,
     "texture_path" : "tilesets/swamp_house_front.png"
+  },
+  {
+    "x" : 1228,
+    "y" : 74,
+    "w" : 100,
+    "h" : 44,
+    "texture" : true,
+    "texture_path" : "tilesets/swamp_sawmill_front.png"
   }
 ]
