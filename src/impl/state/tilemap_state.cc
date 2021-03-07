@@ -44,7 +44,8 @@ namespace state {
       forks(forks),
       player_idx(player_idx),
       show_bars(false),
-      player_health_bar(5,120,50,1000,255,0,0)  {
+      player_health_bar(5,120,50,1000,255,0,0),
+      reticle(std::make_unique<entity::reticle_t>(manager.get_window_scale()))  {
     //sanity check
     if (player_idx >= entities.size()) {
       throw exceptions::rsrc_exception_t("not enough entities found in list");
@@ -93,6 +94,9 @@ namespace state {
   void tilemap_state_t::handle_event(const SDL_Event& e) {
     //check for interaction keys
     player->handle_event(e);
+
+    //update the reticle (if mouse move)
+    reticle->handle_event(e);
 
     //the action
     environment::player_action action = environment::NONE;
@@ -285,6 +289,9 @@ namespace state {
     if (show_bars) {
       player_health_bar.render(renderer);
     }
+
+    //render the mouse position
+    reticle->render(renderer);
   }
 
   /**

@@ -20,7 +20,8 @@ namespace state {
    */
   state_manager_t::state_manager_t(SDL_Renderer& renderer,
                                    SDL_Rect& camera,
-                                   int tile_dim)
+                                   int tile_dim,
+                                   int window_scale)
     : states(),
       deferred_cfgs(),
       last_loaded(-1),
@@ -31,7 +32,8 @@ namespace state {
       base_path("resources/"),
       font_path("/usr/share/fonts/noto/NotoSans-Light.ttf"),
       current_state(TITLE),
-      last_state(TITLE) {}
+      last_state(TITLE),
+      window_scale(window_scale) {}
 
   /**
    * Set the state to pause or unpause to previous

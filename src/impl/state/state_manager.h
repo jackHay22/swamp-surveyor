@@ -66,18 +66,29 @@ namespace state {
     state_type current_state;
     state_type last_state;
 
+    //the window scale
+    int window_scale;
+
   public:
     /**
      * Constructor
      * @param renderer the renderer for loading images
      * @param camera   the default camera
      * @param tile_dim the tile dimension
+     * @param window_scale the scale of the window
      */
     state_manager_t(SDL_Renderer& renderer,
                     SDL_Rect& camera,
-                    int tile_dim);
+                    int tile_dim,
+                    int window_scale);
     state_manager_t(const state_manager_t&) = delete;
     state_manager_t& operator=(const state_manager_t&) = delete;
+
+    /**
+     * Get the window scale
+     * @return the scale of the window
+     */
+    int get_window_scale() const { return window_scale; }
 
     /**
      * Set the state to pause or unpause to previous

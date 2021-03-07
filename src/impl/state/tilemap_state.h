@@ -22,6 +22,7 @@
 #include "../environment/environment.h"
 #include "../items/item.h"
 #include "../misc/map_fork.h"
+#include "../entity/reticle.h"
 
 namespace impl {
 namespace state {
@@ -62,6 +63,9 @@ namespace state {
     //the indicator bar showing player health
     entity::indicator_bar_t player_health_bar;
 
+    //the mouse position
+    std::unique_ptr<entity::reticle_t> reticle;
+    
     /**
      * Check if a given bounding box is on solid ground
      * @param  bounds the bounding box

@@ -108,6 +108,9 @@ namespace launcher {
       return false;
     }
 
+    //disable the cursor
+    SDL_ShowCursor(SDL_DISABLE);
+
     //create the camera
     SDL_Rect camera = {0,0,cfg.window_width_p,cfg.window_height_p};
 
@@ -115,7 +118,8 @@ namespace launcher {
     std::shared_ptr<state::state_manager_t> state_manager =
       std::make_shared<state::state_manager_t>(*renderer,
                                                camera,
-                                               cfg.tile_dim);
+                                               cfg.tile_dim,
+                                               cfg.window_scale);
 
     //add the title state
     state_manager->add_state(std::make_unique<state::title_state_t>(cfg.window_width_p,
