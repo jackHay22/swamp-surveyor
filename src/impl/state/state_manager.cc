@@ -8,6 +8,7 @@
 #include "state_builder.h"
 #include "../logger.h"
 #include "tilemap_state.h"
+#include "pause_state.h"
 
 namespace impl {
 namespace state {
@@ -23,9 +24,11 @@ namespace state {
                                    int tile_dim,
                                    int window_scale)
     : states(),
+      pause_state(std::make_unique<pause_state_t>(camera.w, camera.h, window_scale, *this)),
       deferred_cfgs(),
       last_loaded(-1),
       running(true),
+      paused(false),
       renderer(renderer),
       camera(camera),
       tile_dim(tile_dim),
@@ -34,19 +37,6 @@ namespace state {
       current_state(TITLE),
       last_state(TITLE),
       window_scale(window_scale) {}
-
-  /**
-   * Set the state to pause or unpause to previous
-   * @param pause whether to pause (true) or unpause (false)
-   */
-  void state_manager_t::set_pause(bool pause) {
-    // if (pause) {
-    //   last_state = current_state;
-    //   current_state = PAUSE;
-    // } else if (current_state == PAUSE) {
-    //   current_state = last_state;
-    // }
-  }
 
   /**
    * Set the current level state
@@ -98,7 +88,19 @@ namespace state {
    */
   void state_manager_t::handle_event(const SDL_Event& e) {
     std::unique_lock<std::shared_mutex> state_lock(lock);
-    states.at(current_state)->handle_event(e);
+
+    if (this->paused) {
+      pause_state->handle_event(e);
+    } else {
+      states.at(current_state)->handle_event(e);
+    }
+
+    //check for pause button
+    if ((e.type == SDL_KEYDOWN) &&
+        (e.key.keysym.sym == SDLK_ESCAPE) &&
+        (current_state != TITLE)) {
+      this->paused = !this->paused;
+    }
   }
 
   /**
@@ -150,8 +152,10 @@ namespace state {
     //get a blocking lock on the state
     std::unique_lock<std::shared_mutex> state_lock(lock);
 
-    //update the state
-    states.at(current_state)->update();
+    if (!this->paused) {
+      //update the state
+      states.at(current_state)->update();
+    }
   }
 
   /**
@@ -166,6 +170,10 @@ namespace state {
 
     //render the state
     states.at(current_state)->render(renderer, debug);
+
+    if (this->paused) {
+      pause_state->render(renderer,debug);
+    }
   }
 
   /**
@@ -179,6 +187,8 @@ namespace state {
     //lock the state
     std::unique_lock<std::shared_mutex> state_lock(lock);
 
-    states.at(current_state)->render_debug_info(renderer,font);
+    if (!this->paused) {
+      states.at(current_state)->render_debug_info(renderer,font);
+    }
   }
 }}

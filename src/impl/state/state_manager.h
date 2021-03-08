@@ -34,6 +34,9 @@ namespace state {
     //the game states
     std::vector<std::unique_ptr<state_t>> states;
 
+    //the pause state
+    std::unique_ptr<state_t> pause_state;
+
     //configuration paths for lazy loading
     std::vector<std::string> deferred_cfgs;
 
@@ -44,6 +47,7 @@ namespace state {
     std::shared_mutex lock;
 
     bool running;
+    bool paused;
 
     //the sdl renderer
     SDL_Renderer& renderer;
@@ -89,12 +93,6 @@ namespace state {
      * @return the scale of the window
      */
     int get_window_scale() const { return window_scale; }
-
-    /**
-     * Set the state to pause or unpause to previous
-     * @param pause whether to pause (true) or unpause (false)
-     */
-    void set_pause(bool pause);
 
     /**
      * Set the current level state
