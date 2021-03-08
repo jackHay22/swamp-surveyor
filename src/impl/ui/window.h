@@ -74,12 +74,12 @@ namespace ui {
     /**
      * Called when a component is clicked
      */
-    void clicked(state::state_manager_t&) override {}
+    void clicked() override {}
 
     /**
      * Once the component is unclicked
      */
-    void unclicked() override {}
+    void unclicked(state::state_manager_t&) override {}
 
     /**
      * Whether a given x y position is in bounds

@@ -144,6 +144,13 @@ namespace state {
   }
 
   /**
+   * Unpause the state (if paused)
+   */
+  void state_manager_t::unpause() {
+    this->paused = false;
+  }
+
+  /**
    * Set the running state
    * @param running the state to set
    */

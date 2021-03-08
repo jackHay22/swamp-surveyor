@@ -132,6 +132,11 @@ namespace state {
     bool is_running();
 
     /**
+     * Unpause the state (if paused)
+     */
+    void unpause();
+
+    /**
      * Set the running state
      * @param running the state to set
      */

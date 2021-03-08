@@ -50,16 +50,19 @@ namespace ui {
   /**
    * Called when a component is clicked
    */
-  void button_t::clicked(state::state_manager_t& manager) {
-    handler(manager);
+  void button_t::clicked() {
     was_clicked = true;
   }
 
   /**
    * Called when the component is unclicked
    */
-  void button_t::unclicked() {
-    was_clicked = false;
+  void button_t::unclicked(state::state_manager_t& manager) {
+    if (was_clicked) {
+      //we invoke the handler
+      handler(manager);
+      was_clicked = false;
+    }
   }
 
   /**

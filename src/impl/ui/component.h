@@ -45,9 +45,14 @@ namespace ui {
     /**
      * Called when a component is clicked
      */
-    virtual void clicked(state::state_manager_t& manager) = 0;
+    virtual void clicked() = 0;
 
-    virtual void unclicked() = 0;
+    /**
+     * Called when the function is unclicked
+     * (This is when the handler should execute)
+     * @param manager the state manager
+     */
+    virtual void unclicked(state::state_manager_t& manager) = 0;
 
     /**
      * Get the bounds of this component

@@ -127,20 +127,15 @@ namespace ui {
         //click any components under cursor
         for (size_t i=0; i<subcomponents.size(); i++) {
           if (subcomponents.at(i)->in_bounds(cursor_x, cursor_y)) {
-            subcomponents.at(i)->clicked(state_manager);
+            subcomponents.at(i)->clicked();
           }
         }
       }
     } else if ((e.type == SDL_MOUSEBUTTONUP) &&
               (e.button.button == SDL_BUTTON_LEFT)) {
-      //check if the cursor is currently in the window
-      if (in_bounds(cursor_x,cursor_y)) {
-        //click any components under cursor
-        for (size_t i=0; i<subcomponents.size(); i++) {
-          if (subcomponents.at(i)->in_bounds(cursor_x, cursor_y)) {
-            subcomponents.at(i)->unclicked();
-          }
-        }
+      //buttons can be unclicked even if the cursor isn't over them
+      for (size_t i=0; i<subcomponents.size(); i++) {
+        subcomponents.at(i)->unclicked(state_manager);
       }
     }
   }

@@ -48,7 +48,7 @@ namespace state {
     this->window->add_component(
       std::make_unique<ui::button_t>("Unpause",
         [](state_manager_t& m){
-
+          m.unpause();
         },
         font_path,renderer)
     );
