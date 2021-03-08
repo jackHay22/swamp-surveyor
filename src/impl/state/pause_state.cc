@@ -6,6 +6,7 @@
 
 #include "pause_state.h"
 #include "../ui/button.h"
+#include "../ui/map.h"
 
 namespace impl {
 namespace state {
@@ -25,7 +26,7 @@ namespace state {
     : state_t(manager, SDL_Rect {0,0,width,height}) {
     //initialize the pause window
     this->window = std::make_unique<ui::window_t>(
-      80,25,(width - 160), (height - 50),
+      50,25,(width - 100), (height - 50),
       window_scale,
       manager
     );
@@ -36,21 +37,30 @@ namespace state {
         [](state_manager_t& m){
 
         },
-        font_path,renderer)
+        font_path,renderer),
+        0
     );
     this->window->add_component(
       std::make_unique<ui::button_t>("Map",
         [](state_manager_t& m){
 
         },
-        font_path,renderer)
+        font_path,renderer),
+        0
     );
     this->window->add_component(
       std::make_unique<ui::button_t>("Unpause",
         [](state_manager_t& m){
           m.unpause();
         },
-        font_path,renderer)
+        font_path,renderer),
+        0
+    );
+
+    //add the map (TEMP PATH)
+    this->window->add_component(
+      std::make_unique<ui::map_t>("resources/animations/surveyor_spray.png",renderer),
+      1
     );
   }
 

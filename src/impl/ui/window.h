@@ -35,7 +35,7 @@ namespace ui {
     int window_scale;
 
     //And components in this window
-    std::vector<std::unique_ptr<component_t>> subcomponents;
+    std::vector<std::vector<std::unique_ptr<component_t>>> subcomponents;
 
     //the state manager
     state::state_manager_t& state_manager;
@@ -59,8 +59,9 @@ namespace ui {
     /**
      * Add a component to the window
      * @param c the component
+     * @param col the window column to put the component in
      */
-    void add_component(std::unique_ptr<component_t> c);
+    void add_component(std::unique_ptr<component_t> c, size_t col);
 
     /**
      * Set the component attributes
@@ -69,7 +70,7 @@ namespace ui {
      * @param w dimension w
      * @param h dimension h
      */
-    void set_attributes(int x, int y, int w, int h);
+    void set_attributes(int x, int y, int w, int h) override;
 
     /**
      * Called when a component is clicked

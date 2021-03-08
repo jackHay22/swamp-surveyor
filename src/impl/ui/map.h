@@ -4,8 +4,8 @@
  * Untitled Swamp game
  */
 
-#ifndef _IO_JACKHAY_UI_BUTTON_H
-#define _IO_JACKHAY_UI_BUTTON_H
+#ifndef _IO_JACKHAY_UI_MAP_H
+#define _IO_JACKHAY_UI_MAP_H
 
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
@@ -17,21 +17,16 @@
 namespace impl {
 namespace ui {
 
-  #define DEFAULT_BUTTON_HEIGHT 15
-
   /**
-   * A GUI button
+   * A GUI map
    */
-  struct button_t : component_t {
+  struct map_t : component_t {
   private:
     //the position in the screen
-    //and the dimensions
     int x;
     int y;
-    int w;
-    int h;
 
-    //the label texture
+    //the map texture
     SDL_Texture *texture;
     int texture_w;
     int texture_h;
@@ -39,34 +34,27 @@ namespace ui {
     //related to the click animation
     bool was_clicked;
 
-    //handler for button click
-    std::function<void(state::state_manager_t&)> handler;
-
   public:
     /**
      * Constructor
-     * @param text         the button text
-     * @param window_scale the scale of the window
-     * @param font_path the path to the font to use
+     * @param map_texture_path the path to the map texture
      * @param renderer the renderer to load the font
      */
-    button_t(const std::string& text,
-             std::function<void(state::state_manager_t& manager)> handler,
-             const std::string& font_path,
+    map_t(const std::string& map_texture_path,
              SDL_Renderer& renderer);
-    button_t(const button_t&) = delete;
-    button_t& operator=(const button_t&) = delete;
+    map_t(const map_t&) = delete;
+    map_t& operator=(const map_t&) = delete;
 
     /**
      * Destructor to free texture
      */
-    ~button_t();
+    ~map_t();
 
     /**
      * Get the default height of a component
      * @return the default height
      */
-    int get_default_height() const override { return DEFAULT_BUTTON_HEIGHT; };
+    int get_default_height() const override { return texture_h; };
 
     /**
      * Set the component attributes
@@ -114,4 +102,4 @@ namespace ui {
   };
 }}
 
-#endif /*_IO_JACKHAY_UI_BUTTON_H*/
+#endif /*_IO_JACKHAY_UI_MAP_H*/

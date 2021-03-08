@@ -77,7 +77,7 @@ int setup(bool debug,
     return EXIT_FAILURE;
 
   } catch (...) {
-    impl::logger::log_err("failed to load: " + base_path + cfg_name);
+    impl::logger::log_err("failed to load from: " + base_path + cfg_name);
 
     #ifdef JACKHAYIO__UPDATER__
     impl::logger::log_err("unknown exception, trying to fetch cfg from jackhay.io");

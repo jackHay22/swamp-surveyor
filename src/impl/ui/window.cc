@@ -37,37 +37,69 @@ namespace ui {
    * Add a component to the window
    * AUtomatically rearranges the other components
    * @param c the component
+   * @param col the column to put the component in
    */
-  void window_t::add_component(std::unique_ptr<component_t> c) {
+  void window_t::add_component(std::unique_ptr<component_t> c, size_t col) {
+
+    //resize as necessary
+    while (col >= subcomponents.size()) {
+      subcomponents.emplace_back();
+    }
+
+    int active_cols = 1;
+    for (size_t i=0; i<subcomponents.size(); i++) {
+      if (!subcomponents.at(i).empty()) {
+        active_cols++;
+      }
+    }
+
+    //give each column equal width
+    int col_width = (this->w - ((1 + active_cols) * HORIZ_BORDER)) / active_cols;
+
     //the number of components
-    int components = (int) subcomponents.size() + 1;
+    int components = (int) subcomponents.at(col).size() + 1;
     int component_space = c->get_default_height();
 
     //sum the height requirements
-    for (size_t i=0; i<subcomponents.size(); i++) {
-      component_space += subcomponents.at(i)->bounds().h;
+    for (size_t i=0; i<subcomponents.at(col).size(); i++) {
+      component_space += subcomponents.at(col).at(i)->bounds().h;
     }
+
+    //add the new component
+    subcomponents.at(col).push_back(std::move(c));
 
     //how big the border will be for each
     int border = (this->h - component_space) / (components + 1);
-
-    //add to list of subcomponents
-    subcomponents.push_back(std::move(c));
 
     int last_y = this->y;
 
     //adjust all
     for (size_t i=0; i<subcomponents.size(); i++) {
-      //position this component
-      subcomponents.at(i)->set_attributes(
-        x + HORIZ_BORDER,
-        last_y + border,
-        w - (2 * HORIZ_BORDER),
-        subcomponents.at(i)->get_default_height()
-      );
+      for (size_t j=0; j<subcomponents.at(i).size(); j++) {
+        //if this is the column of the new component
+        if (i == col) {
+          //position this component
+          subcomponents.at(i).at(j)->set_attributes(
+            x + HORIZ_BORDER + (i * (HORIZ_BORDER + col_width)),
+            last_y + border,
+            col_width,
+            subcomponents.at(i).at(j)->get_default_height()
+          );
 
-      //adjust by the border
-      last_y += (border + subcomponents.at(i)->get_default_height());
+          //adjust by the border
+          last_y += (border + subcomponents.at(i).at(j)->get_default_height());
+
+        } else {
+          //col already set, adjust width if necessary
+          SDL_Rect curr = subcomponents.at(i).at(j)->bounds();
+          subcomponents.at(i).at(j)->set_attributes(
+            curr.x,
+            curr.y,
+            col_width,
+            curr.h
+          );
+        }
+      }
     }
   }
 
@@ -126,8 +158,10 @@ namespace ui {
       if (in_bounds(cursor_x,cursor_y)) {
         //click any components under cursor
         for (size_t i=0; i<subcomponents.size(); i++) {
-          if (subcomponents.at(i)->in_bounds(cursor_x, cursor_y)) {
-            subcomponents.at(i)->clicked();
+          for (size_t j=0; j<subcomponents.at(i).size(); j++) {
+            if (subcomponents.at(i).at(j)->in_bounds(cursor_x, cursor_y)) {
+              subcomponents.at(i).at(j)->clicked();
+            }
           }
         }
       }
@@ -135,7 +169,9 @@ namespace ui {
               (e.button.button == SDL_BUTTON_LEFT)) {
       //buttons can be unclicked even if the cursor isn't over them
       for (size_t i=0; i<subcomponents.size(); i++) {
-        subcomponents.at(i)->unclicked(state_manager);
+        for (size_t j=0; j<subcomponents.at(i).size(); j++) {
+          subcomponents.at(i).at(j)->unclicked(state_manager);
+        }
       }
     }
   }
@@ -170,7 +206,9 @@ namespace ui {
     SDL_RenderDrawLine(&renderer,x,y,x,y + h - 1);
 
     for (size_t i=0; i<subcomponents.size(); i++) {
-      subcomponents.at(i)->render(renderer);
+      for (size_t j=0; j<subcomponents.at(i).size(); j++) {
+        subcomponents.at(i).at(j)->render(renderer);
+      }
     }
 
     // Render the cursor
