@@ -4,21 +4,25 @@
  * Untitled Swamp game
  */
 
-#ifndef _IO_JACKHAY_UI_WINDOW_H
-#define _IO_JACKHAY_UI_WINDOW_H
+#ifndef _IO_JACKHAY_UI_BUTTON_H
+#define _IO_JACKHAY_UI_BUTTON_H
 
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
-#include <vector>
+#include <functional>
+#include <string>
 #include "component.h"
+#include "../state/state_manager.h"
 
 namespace impl {
 namespace ui {
 
+  #define DEFAULT_BUTTON_HEIGHT 15
+
   /**
-   * A GUI window
+   * A GUI button
    */
-  struct window_t : component_t {
+  struct button_t : component_t {
   private:
     //the position in the screen
     //and the dimensions
@@ -27,40 +31,42 @@ namespace ui {
     int w;
     int h;
 
-    //the cursor position
-    int cursor_x;
-    int cursor_y;
+    //the label texture
+    SDL_Texture *texture;
+    int texture_w;
+    int texture_h;
 
-    //the scale of the surrounding window
-    int window_scale;
+    //related to the click animation
+    bool was_clicked;
 
-    //And components in this window
-    std::vector<std::unique_ptr<component_t>> subcomponents;
-
-    //the state manager
-    state::state_manager_t& state_manager;
+    //handler for button click
+    std::function<void(state::state_manager_t&)> handler;
 
   public:
     /**
      * Constructor
-     * @param x position x
-     * @param y position y
-     * @param w width
-     * @param h height
+     * @param text         the button text
      * @param window_scale the scale of the window
+     * @param font_path the path to the font to use
+     * @param renderer the renderer to load the font
      */
-    window_t(int x, int y,
-             int w, int h,
-             int window_scale,
-             state::state_manager_t& state_manager);
-    window_t(const window_t&) = delete;
-    window_t& operator=(const window_t&) = delete;
+    button_t(const std::string& text,
+             std::function<void(state::state_manager_t& manager)> handler,
+             const std::string& font_path,
+             SDL_Renderer& renderer);
+    button_t(const button_t&) = delete;
+    button_t& operator=(const button_t&) = delete;
 
     /**
-     * Add a component to the window
-     * @param c the component
+     * Destructor to free texture
      */
-    void add_component(std::unique_ptr<component_t> c);
+    ~button_t();
+
+    /**
+     * Get the default height of a component
+     * @return the default height
+     */
+    int get_default_height() const override { return DEFAULT_BUTTON_HEIGHT; };
 
     /**
      * Set the component attributes
@@ -74,12 +80,12 @@ namespace ui {
     /**
      * Called when a component is clicked
      */
-    void clicked(state::state_manager_t&) override {}
+    void clicked(state::state_manager_t& manager) override;
 
     /**
-     * Once the component is unclicked
+     * Called when the component is unclicked
      */
-    void unclicked() override {}
+    void unclicked() override;
 
     /**
      * Whether a given x y position is in bounds
@@ -108,4 +114,4 @@ namespace ui {
   };
 }}
 
-#endif /*_IO_JACKHAY_UI_WINDOW_H*/
+#endif /*_IO_JACKHAY_UI_BUTTON_H*/

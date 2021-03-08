@@ -9,6 +9,7 @@
 
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
+#include "../state/state_manager.h"
 
 namespace impl {
 namespace ui {
@@ -17,6 +18,21 @@ namespace ui {
    * A GUI component interface
    */
   struct component_t {
+
+    /**
+     * Get the default height of a component
+     * @return the default height
+     */
+    virtual int get_default_height() const { return 0; };
+
+    /**
+     * Set the component attributes
+     * @param x position x
+     * @param y position y
+     * @param w dimension w
+     * @param h dimension h
+     */
+    virtual void set_attributes(int x, int y, int w, int h) = 0;
 
     /**
      * Whether a given x y position is in bounds
@@ -29,7 +45,9 @@ namespace ui {
     /**
      * Called when a component is clicked
      */
-    virtual void clicked() = 0;
+    virtual void clicked(state::state_manager_t& manager) = 0;
+
+    virtual void unclicked() = 0;
 
     /**
      * Get the bounds of this component

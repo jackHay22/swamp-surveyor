@@ -32,11 +32,14 @@ namespace state {
      * @param width    the window width
      * @param height   the window height
      * @param manager  the state manager
+     * @param renderer the renderer for loading textures
      */
     pause_state_t(int width,
                   int height,
                   int window_scale,
-                  state_manager_t& manager);
+                  state_manager_t& manager,
+                  const std::string& font_path,
+                  SDL_Renderer& renderer);
     pause_state_t(const pause_state_t&) = delete;
     pause_state_t& operator=(const pause_state_t&) = delete;
 

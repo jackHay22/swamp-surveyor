@@ -140,6 +140,7 @@ namespace launcher {
       std::make_shared<state::state_manager_t>(*renderer,
                                                camera,
                                                cfg.tile_dim,
+                                               cfg.font,
                                                win_scale);
 
     //add the title state

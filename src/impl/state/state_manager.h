@@ -84,6 +84,7 @@ namespace state {
     state_manager_t(SDL_Renderer& renderer,
                     SDL_Rect& camera,
                     int tile_dim,
+                    const std::string& font_path,
                     int window_scale);
     state_manager_t(const state_manager_t&) = delete;
     state_manager_t& operator=(const state_manager_t&) = delete;

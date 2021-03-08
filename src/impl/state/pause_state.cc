@@ -5,6 +5,7 @@
  */
 
 #include "pause_state.h"
+#include "../ui/button.h"
 
 namespace impl {
 namespace state {
@@ -18,12 +19,38 @@ namespace state {
   pause_state_t::pause_state_t(int width,
                                int height,
                                int window_scale,
-                               state_manager_t& manager)
+                               state_manager_t& manager,
+                               const std::string& font_path,
+                               SDL_Renderer& renderer)
     : state_t(manager, SDL_Rect {0,0,width,height}) {
     //initialize the pause window
     this->window = std::make_unique<ui::window_t>(
-      50,25,(width - 100), (height - 50),
-      window_scale
+      80,25,(width - 160), (height - 50),
+      window_scale,
+      manager
+    );
+
+    //Add buttons to the window
+    this->window->add_component(
+      std::make_unique<ui::button_t>("Settings",
+        [](state_manager_t& m){
+
+        },
+        font_path,renderer)
+    );
+    this->window->add_component(
+      std::make_unique<ui::button_t>("Map",
+        [](state_manager_t& m){
+
+        },
+        font_path,renderer)
+    );
+    this->window->add_component(
+      std::make_unique<ui::button_t>("Unpause",
+        [](state_manager_t& m){
+
+        },
+        font_path,renderer)
     );
   }
 
