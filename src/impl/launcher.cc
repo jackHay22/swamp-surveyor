@@ -19,6 +19,7 @@ namespace impl {
 namespace launcher {
 
   #define WINDOW_TITLE "SwampSurveyor"
+  #define DEFAULT_SCALE false
 
   /**
    * Conversion to cfg from json
@@ -39,6 +40,19 @@ namespace launcher {
   }
 
   /**
+   * Try to maximize the window scale
+   * @param w pixel width
+   * @param h pixel height
+   * @return scale
+   */
+  [[nodiscard]] int try_rescale(int w, int h) {
+    //get the width and height of the display
+    SDL_DisplayMode disp_mode;
+    SDL_GetCurrentDisplayMode(0, &disp_mode);
+    return std::min(disp_mode.w / w, disp_mode.h / h);
+  }
+
+  /**
    * Launch the game from the launcher cfg
    * @param cfg_path the path to the configuration
    * @return success or failure
@@ -54,9 +68,16 @@ namespace launcher {
       return false;
     }
 
+    //probe the scale
+    int win_scale = try_rescale(cfg.window_width_p, cfg.window_height_p);
+
+    if (DEFAULT_SCALE) {
+      win_scale = cfg.window_scale;
+    }
+
     //get the scaled window dimensions
-    int actual_width = cfg.window_width_p * cfg.window_scale;
-    int actual_height = cfg.window_height_p * cfg.window_scale;
+    int actual_width = cfg.window_width_p * win_scale;
+    int actual_height = cfg.window_height_p * win_scale;
     std::string window_title = WINDOW_TITLE;
 
     if (cfg.debug) {
@@ -119,7 +140,7 @@ namespace launcher {
       std::make_shared<state::state_manager_t>(*renderer,
                                                camera,
                                                cfg.tile_dim,
-                                               cfg.window_scale);
+                                               win_scale);
 
     //add the title state
     state_manager->add_state(std::make_unique<state::title_state_t>(cfg.window_width_p,
