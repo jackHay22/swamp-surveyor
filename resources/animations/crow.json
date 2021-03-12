@@ -1,0 +1,7 @@
+{
+  "rsrc_path" : "animations/crow.png",
+  "frame_width" : 10,
+  "frame_height" : 8,
+  "anim_frames" : 4,
+  "duration" : 5
+}

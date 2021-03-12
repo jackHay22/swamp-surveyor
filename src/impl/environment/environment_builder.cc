@@ -13,6 +13,7 @@
 #include "chemical_seep.h"
 #include "door.h"
 #include "pushable.h"
+#include "crows.h"
 
 namespace impl {
 namespace environment {
@@ -24,6 +25,7 @@ namespace environment {
   #define CHEMICAL_SEEP_TYPE "chemical_seep"
   #define DOOR_TYPE "door"
   #define PUSHABLE_TYPE "pushable"
+  #define CROW_TYPE "crows"
 
   /**
    * Check if json has some int by key
@@ -149,6 +151,12 @@ namespace environment {
                                                                     cfg.range,
                                                                     base_path + cfg.animation_path,
                                                                     renderer));
+        } else if (cfg.type == CROW_TYPE) {
+          elems.push_back(std::make_shared<environment::crows_t>((int)cfg.density,
+                                                                 cfg.w,
+                                                                 cfg.animation_path,
+                                                                 base_path,
+                                                                 renderer));
         }
       }
 

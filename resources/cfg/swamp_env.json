@@ -83,5 +83,15 @@
     "animation_path" : "tilesets/stove.png",
     "animation_frames" : 0,
     "type" : "pushable"
+  },
+  {
+    "x" : 0,
+    "y" : 0,
+    "w" : 2080,
+    "h" : 0,
+    "density" : 3.0,
+    "animation_path" : "animations/crow.json",
+    "animation_frames" : 0,
+    "type" : "crows"
   }
 ]

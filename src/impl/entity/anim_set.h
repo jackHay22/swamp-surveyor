@@ -10,6 +10,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
 #include <string>
+#include <utility>
 
 namespace impl {
 namespace entity {
@@ -51,6 +52,12 @@ namespace entity {
                const std::string& base_path);
     anim_set_t(const anim_set_t&) = delete;
     anim_set_t& operator=(const anim_set_t&) = delete;
+
+    /**
+     * Get the size of a frame
+     * @return the frame size
+     */
+    std::pair<int,int> get_frame_size() const { return std::make_pair(frame_width,frame_height); }
 
     /**
      * Toggle the once setting
