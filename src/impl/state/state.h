@@ -21,20 +21,47 @@ namespace state {
    * A Virtual state
    */
   struct state_t {
+  private:
+    //the current camera
+    SDL_Rect _camera;
+    //the debug camera
+    SDL_Rect _debug_camera;
   protected:
     //the state state manager (used for state changes)
     state_manager_t& manager;
-    //the current camera
-    SDL_Rect camera;
+    //whether the debug camera is being used
+    bool using_debug;
+
+    /**
+     * Get the debug camera
+     * @return the debug camera
+     */
+    SDL_Rect& get_debug_camera();
+
+    /**
+     * Make a copy of the current camera
+     * @return the camera
+     */
+    const SDL_Rect& get_active_camera() const;
+
+    /**
+     * Get the active camera
+     * @return the camera
+     */
+    SDL_Rect& get_player_camera();
 
   public:
     //constructor
     state_t(state_manager_t& manager,
-            SDL_Rect camera)
-      : manager(manager), camera(camera) {}
+            SDL_Rect camera);
     state_t(const state_t&) = delete;
     state_t& operator=(const state_t&) = delete;
     virtual ~state_t() {}
+
+    /**
+     * Toggle the debug camera
+     */
+    void toggle_debug_camera();
 
     /**
      * Handle some key event

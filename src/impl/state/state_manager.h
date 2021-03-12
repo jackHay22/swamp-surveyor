@@ -66,6 +66,9 @@ namespace state {
     //debug mode
     bool debug;
 
+    //whether the free camera is enabled
+    bool debug_camera_on;
+
     //the current state
     state_type current_state;
     state_type last_state;
@@ -90,6 +93,18 @@ namespace state {
     state_manager_t& operator=(const state_manager_t&) = delete;
 
     /**
+     * Reload the resources from configuration for the current map
+     * Note: this should be called by the pause menu
+     * (Note: this keeps the player in the same place)
+     */
+    void rsrc_reload();
+
+    /**
+     * Toggle the debug camera (if applicable)
+     */
+    void toggle_debug_camera();
+
+    /**
      * Get the window scale
      * @return the scale of the window
      */
@@ -110,8 +125,11 @@ namespace state {
     /**
      * Add a state to the manager
      * @param s the state
+     * @param idx_override whether to place the state in a specific position
+     *        if not, -1
      */
-    void add_state(std::unique_ptr<state_t> s);
+    void add_state(std::unique_ptr<state_t> s,
+                   int idx_override=-1);
 
     /**
      * Set the state paths in the manager but don't

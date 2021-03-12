@@ -65,7 +65,10 @@ namespace state {
 
     //the mouse position
     std::unique_ptr<entity::reticle_t> reticle;
-    
+
+    //the name of the cfg file for this state
+    std::string cfg_name;
+
     /**
      * Check if a given bounding box is on solid ground
      * @param  bounds the bounding box
@@ -86,6 +89,7 @@ namespace state {
      * @param player_idx the index of the player in the entity list
      * @param manager    the state manager
      * @param camera     the level camera
+     * @param cfg_name   the local path (in resources dir) to the file that configures this state
      */
     tilemap_state_t(std::shared_ptr<tilemap::tilemap_t> tilemap,
                     std::vector<std::shared_ptr<entity::entity_t>>& entities,
@@ -95,9 +99,16 @@ namespace state {
                     std::vector<std::shared_ptr<tilemap::transparent_block_t>>& trans_blocks,
                     std::vector<std::shared_ptr<misc::map_fork_t>>& forks,
                     int player_idx, state_manager_t& manager,
-                    SDL_Rect& camera);
+                    SDL_Rect& camera,
+                    const std::string& cfg_name);
     tilemap_state_t(const tilemap_state_t&) = delete;
     tilemap_state_t& operator=(const tilemap_state_t&) = delete;
+
+    /**
+     * Get the local path (in resources dir) to the file that configures this state
+     * @return the cfg name
+     */
+    const std::string& get_cfg() const { return cfg_name; }
 
     /**
      * Set the player

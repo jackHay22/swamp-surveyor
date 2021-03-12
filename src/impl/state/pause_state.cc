@@ -33,17 +33,19 @@ namespace state {
 
     //Add buttons to the window
     this->window->add_component(
-      std::make_unique<ui::button_t>("Settings",
+      std::make_unique<ui::button_t>("Camera Lock",
         [](state_manager_t& m){
-
+          m.toggle_debug_camera();
+          m.unpause();
         },
         font_path,renderer),
         0
     );
     this->window->add_component(
-      std::make_unique<ui::button_t>("Map",
+      std::make_unique<ui::button_t>("Reload",
         [](state_manager_t& m){
-
+          m.rsrc_reload();
+          m.unpause();
         },
         font_path,renderer),
         0

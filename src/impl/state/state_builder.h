@@ -26,6 +26,7 @@ namespace state {
    * @param  tile_dim the dimensions of tiles
    * @param  base_path resource directory base path
    * @param  font_path the path to the font to use
+   * @param  idx_override put the state in a specific position
    */
   void load_tm_state(state::state_manager_t& state_manager,
                      const std::string& path,
@@ -33,7 +34,8 @@ namespace state {
                      SDL_Rect& camera,
                      int tile_dim,
                      const std::string& base_path,
-                     const std::string& font_path);
+                     const std::string& font_path,
+                     int idx_override=-1);
 }}
 
 #endif /*_IO_JACKHAY_SWAMP_STATE_BUILDER_H*/
