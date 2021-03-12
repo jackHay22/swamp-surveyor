@@ -58,10 +58,10 @@ namespace state {
     );
 
     //add the map (TEMP PATH)
-    this->window->add_component(
-      std::make_unique<ui::map_t>("resources/animations/surveyor_spray.png",renderer),
-      1
-    );
+    // this->window->add_component(
+    //   std::make_unique<ui::map_t>("resources/animations/surveyor_spray.png",renderer),
+    //   1
+    // );
   }
 
   /**
