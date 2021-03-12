@@ -35,10 +35,10 @@ namespace entity {
     reticle_t& operator=(const reticle_t&) = delete;
 
     /**
-     * Return x position of reticle
-     * @return position
+     * Get the reticle screen position
+     * @return   (x,y)
      */
-    int get_x() const {return x; };
+    std::pair<int,int> get_position() const { return std::make_pair(x,y); }
 
     /**
      * Get the target of the reticle in level space

@@ -103,7 +103,7 @@ namespace state {
       player->get_center(center_x,_center_y);
 
       //change player focus based on reticle move
-      player->change_focus(reticle->get_x() < (center_x - camera.x));
+      player->change_focus(reticle->get_position().first < (center_x - camera.x));
     }
 
     //the action
@@ -316,5 +316,14 @@ namespace state {
 
     //render text
     utils::render_text(renderer,player_position,0,12,font);
+
+    //the reticle position
+    std::pair<int,int> pos = reticle->get_position();
+
+    const std::string reticle_position = std::to_string(pos.first + camera.x) + "," +
+                                         std::to_string(pos.second + camera.y);
+
+    //render the reticle position
+    utils::render_text(renderer,reticle_position,0,24,font);
   }
 }}
