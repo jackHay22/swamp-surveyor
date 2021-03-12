@@ -98,7 +98,6 @@ namespace engine {
 
     //Event handler
 		SDL_Event e;
-    bool running = true;
 
     //track fps in debug mode
     int fps = 0;

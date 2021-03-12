@@ -22,5 +22,29 @@
     "h" : 44,
     "texture" : true,
     "texture_path" : "tilesets/swamp_sawmill_front.png"
+  },
+  {
+    "x" : 1688,
+    "y" : 59,
+    "w" : 144,
+    "h" : 91,
+    "texture" : true,
+    "texture_path" : "tilesets/swamp_warehouse_front.png"
+  },
+  {
+    "x" : 1819,
+    "y" : 56,
+    "w" : 123,
+    "h" : 25,
+    "texture" : true,
+    "texture_path" : "tilesets/swamp_warehouse_level2_front.png"
+  },
+  {
+    "x" : 1974,
+    "y" : 60,
+    "w" : 92,
+    "h" : 25,
+    "texture" : true,
+    "texture_path" : "tilesets/swamp_building_abandoned_front.png"
   }
 ]

@@ -24,6 +24,7 @@ namespace state {
    * @param player_idx the index of the player in the entity list
    * @param manager    the state manager
    * @param camera     the level camera
+   * @param cfg_name   the local path (in resources dir) to the file that configures this state
    */
   tilemap_state_t::tilemap_state_t(std::shared_ptr<tilemap::tilemap_t> tilemap,
                                    std::vector<std::shared_ptr<entity::entity_t>>& entities,
@@ -33,21 +34,23 @@ namespace state {
                                    std::vector<std::shared_ptr<tilemap::transparent_block_t>>& trans_blocks,
                                    std::vector<std::shared_ptr<misc::map_fork_t>>& forks,
                                    int player_idx, state_manager_t& manager,
-                                   SDL_Rect& camera)
+                                   SDL_Rect& camera,
+                                   const std::string& cfg_name)
     : state_t(manager, camera),
       tilemap(tilemap),
       entities(entities),
+      player_idx(player_idx),
       insects(insects),
       env(env),
       level_items(level_items),
       trans_blocks(trans_blocks),
       forks(forks),
-      player_idx(player_idx),
       show_bars(false),
       player_health_bar(5,120,50,1000,255,0,0),
-      reticle(std::make_unique<entity::reticle_t>(manager.get_window_scale()))  {
+      reticle(std::make_unique<entity::reticle_t>(manager.get_window_scale())),
+      cfg_name(cfg_name)  {
     //sanity check
-    if (player_idx >= entities.size()) {
+    if (player_idx >= (int) entities.size()) {
       throw exceptions::rsrc_exception_t("not enough entities found in list");
     }
 
@@ -99,11 +102,13 @@ namespace state {
     reticle->handle_event(e);
 
     if (e.type == SDL_MOUSEMOTION) {
-      int center_x, _center_y;
-      player->get_center(center_x,_center_y);
+      int px, _py;
+      player->get_center(px,_py);
+      int rx,_ry;
+      reticle->get_lvl_target(rx,_ry,this->get_player_camera());
 
       //change player focus based on reticle move
-      player->change_focus(reticle->get_position().first < (center_x - camera.x));
+      player->change_focus(rx < px);
     }
 
     //the action
@@ -147,6 +152,27 @@ namespace state {
     env->interact(action,
                   player->get_bounds(),
                   player->is_facing_left());
+
+    //check for debug camera move
+    if (using_debug && this->manager.is_debug()) {
+      if (e.type == SDL_KEYDOWN) {
+        //check key pressed
+        switch (e.key.keysym.sym) {
+          case SDLK_UP:
+            this->get_debug_camera().y-=4;
+            break;
+          case SDLK_DOWN:
+            this->get_debug_camera().y+=4;
+            break;
+          case SDLK_LEFT:
+            this->get_debug_camera().x-=4;
+            break;
+          case SDLK_RIGHT:
+            this->get_debug_camera().x+=4;
+            break;
+        }
+      }
+    }
   }
 
   /**
@@ -231,9 +257,12 @@ namespace state {
     int center_x, center_y;
     player->get_center(center_x,center_y);
 
+    //mutable ref to current camera
+    SDL_Rect& camera = this->get_player_camera();
+
     //set the x and y
-    this->camera.x = center_x - (this->camera.w / 2);
-    this->camera.y = center_y - (this->camera.h / 2);
+    camera.x = center_x - (camera.w / 2);
+    camera.y = center_y - (camera.h / 2);
 
     //bound the camera
     if (camera.x < 0) {
@@ -261,36 +290,40 @@ namespace state {
    * @param debug    whether debug mode enabled
    */
   void tilemap_state_t::render(SDL_Renderer& renderer, bool debug) const {
+
+    //determine which camera to use
+    const SDL_Rect& camera = this->get_active_camera();
+
     //render background layer
-    tilemap->render_bg(renderer, this->camera,debug);
+    tilemap->render_bg(renderer,camera,debug);
 
     //render entities
     for (size_t i=0; i<entities.size(); i++) {
-      entities.at(i)->render(renderer,this->camera,debug);
+      entities.at(i)->render(renderer,camera,debug);
     }
 
     //render insect swarm
-    insects->render(renderer,this->camera,debug);
+    insects->render(renderer,camera,debug);
 
     //render the environment
-    env->render(renderer,this->camera,debug);
+    env->render(renderer,camera,debug);
 
     //render items
     for (size_t i=0; i<level_items.size(); i++) {
-      level_items.at(i)->render(renderer,this->camera,debug);
+      level_items.at(i)->render(renderer,camera,debug);
     }
 
     //render foreground layer
-    tilemap->render_fg(renderer, this->camera,debug);
+    tilemap->render_fg(renderer,camera,debug);
 
     //render transparent blocks
     for (size_t i=0; i<trans_blocks.size(); i++) {
-      trans_blocks.at(i)->render(renderer,this->camera,debug);
+      trans_blocks.at(i)->render(renderer,camera,debug);
     }
 
     //render map forks
     for (size_t i=0; i<forks.size(); i++) {
-      forks.at(i)->render(renderer, this->camera,debug);
+      forks.at(i)->render(renderer,camera,debug);
     }
 
     //render indicator bars on screen
@@ -317,13 +350,21 @@ namespace state {
     //render text
     utils::render_text(renderer,player_position,0,12,font);
 
-    //the reticle position
-    std::pair<int,int> pos = reticle->get_position();
-
-    const std::string reticle_position = std::to_string(pos.first + camera.x) + "," +
-                                         std::to_string(pos.second + camera.y);
+    int rx,ry;
+    reticle->get_lvl_target(rx,ry,this->get_active_camera());
+    const std::string reticle_position = std::to_string(rx) + "," + std::to_string(ry);
 
     //render the reticle position
     utils::render_text(renderer,reticle_position,0,24,font);
+
+    std::string camera_state = "C L: ";
+
+    if (using_debug) {
+      camera_state += "off";
+    } else {
+      camera_state += "on";
+    }
+    //render the reticle position
+    utils::render_text(renderer,camera_state,0,36,font);
   }
 }}

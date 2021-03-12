@@ -18,12 +18,14 @@ namespace state {
    * @param renderer the renderer for loading images
    * @param camera   the default camera
    * @param tile_dim the tile dimension
+   * @param debug mode
    */
   state_manager_t::state_manager_t(SDL_Renderer& renderer,
                                    SDL_Rect& camera,
                                    int tile_dim,
                                    const std::string& font_path,
-                                   int window_scale)
+                                   int window_scale,
+                                   bool debug)
     : states(),
       pause_state(std::make_unique<pause_state_t>(camera.w,
                                                   camera.h,
@@ -40,9 +42,56 @@ namespace state {
       tile_dim(tile_dim),
       base_path("resources/"),
       font_path(font_path),
+      debug(debug),
       current_state(TITLE),
       last_state(TITLE),
       window_scale(window_scale) {}
+
+  /**
+   * Reload the resources from configuration for the current map
+   * Note: this should be called by the pause menu
+   * (Note: this keeps the player in the same place)
+   */
+  void state_manager_t::rsrc_reload() {
+    //keep the player
+    if (tilemap_state_t *curr_tilemap = dynamic_cast<tilemap_state_t*>(states.at(current_state).get())) {
+
+      //get the current player
+      std::shared_ptr<entity::player_t> player = curr_tilemap->get_player();
+
+      if (debug) {
+        logger::log_info("loading state " +
+                         deferred_cfgs.at(last_state));
+      }
+
+      //reload the state
+      load_tm_state(*this,
+                    curr_tilemap->get_cfg(),
+                    renderer,
+                    camera,
+                    tile_dim,
+                    base_path,
+                    font_path,
+                    current_state);
+
+      //add the player back into the reloaded state
+      if (tilemap_state_t *reloaded = dynamic_cast<tilemap_state_t*>(states.at(current_state).get())) {
+        //add the player back in
+        reloaded->set_player(player);
+      }
+    } else if (debug) {
+      logger::log_info("reload not implemented for non tilemap state " + std::to_string(last_state));
+    }
+  }
+
+  /**
+   * Toggle the debug camera (if applicable)
+   */
+  void state_manager_t::toggle_debug_camera() {
+    if (current_state != TITLE) {
+      states.at(current_state)->toggle_debug_camera();
+    }
+  }
 
   /**
    * Set the current level state
@@ -60,7 +109,7 @@ namespace state {
                          deferred_cfgs.at(last_loaded));
       }
 
-      if (last_loaded < deferred_cfgs.size()) {
+      if (last_loaded < (int)deferred_cfgs.size()) {
         //load a new state (state_builder.h)
         load_tm_state(*this,
                       deferred_cfgs.at(last_loaded),
@@ -69,6 +118,7 @@ namespace state {
                       tile_dim,
                       base_path,
                       font_path);
+
       } else {
         logger::log_err("no cfg provided for next level");
         return;
@@ -107,14 +157,35 @@ namespace state {
         (current_state != TITLE)) {
       this->paused = !this->paused;
     }
+
+    //check for the free camera key
+    if (debug &&
+        (e.type == SDL_KEYDOWN) &&
+        (e.key.keysym.sym == SDLK_v) &&
+        (current_state != TITLE)) {
+
+      //turn on the debug camera
+      states.at(current_state)->toggle_debug_camera();
+    }
   }
 
   /**
    * Add a state to the manager
    * @param s the state
+   * @param idx_override whether to override the index
    */
-  void state_manager_t::add_state(std::unique_ptr<state_t> s) {
-    states.push_back(std::move(s));
+  void state_manager_t::add_state(std::unique_ptr<state_t> s,
+                                  int idx_override) {
+
+    if ((idx_override >= 0) &&
+        (idx_override < (int)states.size())) {
+
+      //add at specific position
+      states.at(idx_override) = std::move(s);
+
+    } else {
+      states.push_back(std::move(s));
+    }
   }
 
   /**
