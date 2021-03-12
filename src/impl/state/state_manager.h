@@ -66,9 +66,6 @@ namespace state {
     //debug mode
     bool debug;
 
-    //whether the free camera is enabled
-    bool debug_camera_on;
-
     //the current state
     state_type current_state;
     state_type last_state;
@@ -88,9 +85,16 @@ namespace state {
                     SDL_Rect& camera,
                     int tile_dim,
                     const std::string& font_path,
-                    int window_scale);
+                    int window_scale,
+                    bool debug);
     state_manager_t(const state_manager_t&) = delete;
     state_manager_t& operator=(const state_manager_t&) = delete;
+
+    /**
+     * Whether debug mode enabled
+     * @return debug mode
+     */
+    bool is_debug() const { return debug; }
 
     /**
      * Reload the resources from configuration for the current map

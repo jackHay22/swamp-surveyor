@@ -82,8 +82,8 @@ namespace tilemap {
     int idx_y = y / dim;
 
     //check bounds and get the type of the tile
-    if ((idx_y < this->contents.size()) &&
-        (idx_x < this->contents.at(idx_y).size())) {
+    if ((idx_y < (int)this->contents.size()) &&
+        (idx_x < (int)this->contents.at(idx_y).size())) {
       return this->contents.at(idx_y).at(idx_x)->is_solid();
 
     } else {
@@ -102,8 +102,8 @@ namespace tilemap {
     int idx_y = y / dim;
 
     //check bounds and get the type of the tile
-    if ((idx_y < this->contents.size()) &&
-        (idx_x < this->contents.at(idx_y).size())) {
+    if ((idx_y < (int)this->contents.size()) &&
+        (idx_x < (int)this->contents.at(idx_y).size())) {
       return this->contents.at(idx_y).at(idx_x)->is_liquid();
 
     } else {

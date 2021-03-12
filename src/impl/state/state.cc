@@ -13,9 +13,9 @@ namespace state {
   //constructor
   state_t::state_t(state_manager_t& manager,
           SDL_Rect camera)
-    : manager(manager),
-      _camera(camera),
+    : _camera(camera),
       _debug_camera(camera),
+      manager(manager),
       using_debug(false) {}
 
   /**

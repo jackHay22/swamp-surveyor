@@ -39,18 +39,18 @@ namespace state {
     : state_t(manager, camera),
       tilemap(tilemap),
       entities(entities),
+      player_idx(player_idx),
       insects(insects),
       env(env),
       level_items(level_items),
       trans_blocks(trans_blocks),
       forks(forks),
-      player_idx(player_idx),
       show_bars(false),
       player_health_bar(5,120,50,1000,255,0,0),
       reticle(std::make_unique<entity::reticle_t>(manager.get_window_scale())),
       cfg_name(cfg_name)  {
     //sanity check
-    if (player_idx >= entities.size()) {
+    if (player_idx >= (int) entities.size()) {
       throw exceptions::rsrc_exception_t("not enough entities found in list");
     }
 
@@ -154,7 +154,7 @@ namespace state {
                   player->is_facing_left());
 
     //check for debug camera move
-    if (using_debug) {
+    if (using_debug && this->manager.is_debug()) {
       if (e.type == SDL_KEYDOWN) {
         //check key pressed
         switch (e.key.keysym.sym) {

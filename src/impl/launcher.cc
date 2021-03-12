@@ -141,7 +141,8 @@ namespace launcher {
                                                camera,
                                                cfg.tile_dim,
                                                cfg.font,
-                                               win_scale);
+                                               win_scale,
+                                               cfg.debug);
 
     //add the title state
     state_manager->add_state(std::make_unique<state::title_state_t>(cfg.window_width_p,

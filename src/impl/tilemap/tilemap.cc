@@ -32,13 +32,13 @@ namespace tilemap {
       entity_layer_water(entity_layer_water) {
 
     //sanity check
-    if ((entity_layer_idx >= rsrc_paths.size()) || (entity_layer_idx < 0)) {
+    if ((entity_layer_idx >= (int)rsrc_paths.size()) || (entity_layer_idx < 0)) {
       throw exceptions::rsrc_exception_t("tilemap entity layer index out of bounds");
     }
 
     //load the tilemap layers
     for(size_t i=0; i<rsrc_paths.size(); i++) {
-      if (i == entity_layer_idx) {
+      if ((int) i == entity_layer_idx) {
         this->entity_layer =
           std::make_unique<tilemap::layer_t>(rsrc_paths.at(entity_layer_idx),
                                              dim,
@@ -49,7 +49,7 @@ namespace tilemap {
         this->entity_layer->set_natured_tiles(entity_layer_solid,
                                               entity_layer_water);
 
-      } else if (i < entity_layer_idx) {
+      } else if ((int) i < entity_layer_idx) {
         //load as a background layer (first layer marked as stationary if configured)
         this->bg_layers.push_back(std::make_unique<tilemap::layer_t>(rsrc_paths.at(i),
                                                                      dim,

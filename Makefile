@@ -3,7 +3,7 @@ OBJECTS = $(SOURCES:.cc=.o)
 #compilation includes the updater
 SOURCES_UPDATER = $(wildcard src/*.cc) $(wildcard src/*/*.cc) $(wildcard src/*/*/*.cc) $(wildcard src/*/*/*/*.cc)
 OBJECTS_UPDATER = $(SOURCES_UPDATER:.cc=.o)
-CFLAGSO = -std=c++17 -O2 -Wall -Wextra
+CFLAGSO = -std=c++17 -O2 -Wall
 CFLAGS = -std=c++17 -g
 
 LDFLAGS := -lpthread -lSDL2 -lSDL2_image -lSDL2_ttf

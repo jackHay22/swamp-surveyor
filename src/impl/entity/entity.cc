@@ -41,12 +41,12 @@ namespace entity {
       damaged_ticks(0),
       last_x(x),
       last_y(y),
-      tile_dim(tile_dim),
-      facing_left(false),
       climb_counter(CLIMB_FRAMES),
       climb_height(0),
       water_counter(WATER_FRAMES),
-      anims() {
+      tile_dim(tile_dim),
+      anims(),
+      facing_left(false) {
 
     if (anim_cfg_paths.size() < ENTITY_STATES) {
       throw exceptions::rsrc_exception_t("not enough entity animation paths provided");

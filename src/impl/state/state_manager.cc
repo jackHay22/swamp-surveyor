@@ -18,12 +18,14 @@ namespace state {
    * @param renderer the renderer for loading images
    * @param camera   the default camera
    * @param tile_dim the tile dimension
+   * @param debug mode
    */
   state_manager_t::state_manager_t(SDL_Renderer& renderer,
                                    SDL_Rect& camera,
                                    int tile_dim,
                                    const std::string& font_path,
-                                   int window_scale)
+                                   int window_scale,
+                                   bool debug)
     : states(),
       pause_state(std::make_unique<pause_state_t>(camera.w,
                                                   camera.h,
@@ -40,6 +42,7 @@ namespace state {
       tile_dim(tile_dim),
       base_path("resources/"),
       font_path(font_path),
+      debug(debug),
       current_state(TITLE),
       last_state(TITLE),
       window_scale(window_scale) {}
@@ -106,7 +109,7 @@ namespace state {
                          deferred_cfgs.at(last_loaded));
       }
 
-      if (last_loaded < deferred_cfgs.size()) {
+      if (last_loaded < (int)deferred_cfgs.size()) {
         //load a new state (state_builder.h)
         load_tm_state(*this,
                       deferred_cfgs.at(last_loaded),
@@ -175,7 +178,7 @@ namespace state {
                                   int idx_override) {
 
     if ((idx_override >= 0) &&
-        (idx_override < states.size())) {
+        (idx_override < (int)states.size())) {
 
       //add at specific position
       states.at(idx_override) = std::move(s);
