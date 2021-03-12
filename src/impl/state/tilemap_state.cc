@@ -99,11 +99,13 @@ namespace state {
     reticle->handle_event(e);
 
     if (e.type == SDL_MOUSEMOTION) {
-      int center_x, _center_y;
-      player->get_center(center_x,_center_y);
+      int px, _py;
+      player->get_center(px,_py);
+      int rx,_ry;
+      reticle->get_lvl_target(rx,_ry,camera);
 
       //change player focus based on reticle move
-      player->change_focus(reticle->get_position().first < (center_x - camera.x));
+      player->change_focus(rx < px);
     }
 
     //the action
@@ -317,11 +319,9 @@ namespace state {
     //render text
     utils::render_text(renderer,player_position,0,12,font);
 
-    //the reticle position
-    std::pair<int,int> pos = reticle->get_position();
-
-    const std::string reticle_position = std::to_string(pos.first + camera.x) + "," +
-                                         std::to_string(pos.second + camera.y);
+    int rx,ry;
+    reticle->get_lvl_target(rx,ry,camera);
+    const std::string reticle_position = std::to_string(rx) + "," + std::to_string(ry);
 
     //render the reticle position
     utils::render_text(renderer,reticle_position,0,24,font);

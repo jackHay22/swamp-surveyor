@@ -33,13 +33,7 @@ namespace entity {
     reticle_t(int window_scale);
     reticle_t(const reticle_t&) = delete;
     reticle_t& operator=(const reticle_t&) = delete;
-
-    /**
-     * Get the reticle screen position
-     * @return   (x,y)
-     */
-    std::pair<int,int> get_position() const { return std::make_pair(x,y); }
-
+    
     /**
      * Get the target of the reticle in level space
      * Note: this is the inverse operation to the camera conversion
