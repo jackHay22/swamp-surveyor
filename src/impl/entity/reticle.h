@@ -35,6 +35,12 @@ namespace entity {
     reticle_t& operator=(const reticle_t&) = delete;
 
     /**
+     * Return x position of reticle
+     * @return position
+     */
+    int get_x() const {return x; };
+
+    /**
      * Get the target of the reticle in level space
      * Note: this is the inverse operation to the camera conversion
      * @param x the x position in the level set by the call

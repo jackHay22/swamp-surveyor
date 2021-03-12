@@ -53,6 +53,16 @@ namespace entity {
   }
 
   /**
+   * Change the player focus if standing based on reticle
+   * @param left whether the reticle is to the left of the player (right if false)
+   */
+  void player_t::change_focus(bool left) {
+    if (state == IDLE) {
+      facing_left = left;
+    }
+  }
+
+  /**
    * Add a new item to inventory
    * @param item the item to add
    */

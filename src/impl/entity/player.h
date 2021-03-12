@@ -76,6 +76,12 @@ namespace entity {
     player_t& operator=(const player_t&) = delete;
 
     /**
+     * Change the player focus if standing based on reticle
+     * @param left whether the reticle is to the left of the player (right if false)
+     */
+    void change_focus(bool left);
+
+    /**
      * Add a new item to inventory
      * @param item the item to add
      */

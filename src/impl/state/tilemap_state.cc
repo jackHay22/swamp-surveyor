@@ -98,6 +98,14 @@ namespace state {
     //update the reticle (if mouse move)
     reticle->handle_event(e);
 
+    if (e.type == SDL_MOUSEMOTION) {
+      int center_x, _center_y;
+      player->get_center(center_x,_center_y);
+
+      //change player focus based on reticle move
+      player->change_focus(reticle->get_x() < (center_x - camera.x));
+    }
+
     //the action
     environment::player_action action = environment::NONE;
     bool use_fork = false;
