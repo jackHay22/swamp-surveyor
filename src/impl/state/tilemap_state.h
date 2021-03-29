@@ -122,6 +122,19 @@ namespace state {
     std::shared_ptr<entity::player_t> get_player() { return player; }
 
     /**
+     * Set the camera (also enabled debug mode)
+     * @param camera the camera to use
+     */
+    void set_camera(const SDL_Rect& camera);
+
+    /**
+     * Get the current camera
+     * @param using_debug set by the call, whether we are currently in debug mode
+     * @return the current camera
+     */
+    SDL_Rect get_camera(bool& using_debug) const;
+
+    /**
      * Handle some key event
      * @param e the event
      */

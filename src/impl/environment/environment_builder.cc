@@ -14,6 +14,7 @@
 #include "door.h"
 #include "pushable.h"
 #include "crows.h"
+#include "procedural_trees.h"
 
 namespace impl {
 namespace environment {
@@ -26,6 +27,7 @@ namespace environment {
   #define DOOR_TYPE "door"
   #define PUSHABLE_TYPE "pushable"
   #define CROW_TYPE "crows"
+  #define PROC_TREES "procedural_trees"
 
   /**
    * Check if json has some int by key
@@ -157,6 +159,11 @@ namespace environment {
                                                                  cfg.animation_path,
                                                                  base_path,
                                                                  renderer));
+        } else if (cfg.type == PROC_TREES) {
+          SDL_Rect region = {cfg.x,cfg.y,cfg.w,cfg.h};
+          elems.push_back(std::make_shared<environment::procedural_trees_t>(region,
+                                                                            renderer,
+                                                                            cfg.animation_frames));
         }
       }
 

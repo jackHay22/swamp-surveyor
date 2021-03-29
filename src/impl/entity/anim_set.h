@@ -50,6 +50,7 @@ namespace entity {
     anim_set_t(const std::string& path,
                SDL_Renderer& renderer,
                const std::string& base_path);
+    anim_set_t(SDL_Texture *texture, int w, int h, int frames, int duration);
     anim_set_t(const anim_set_t&) = delete;
     anim_set_t& operator=(const anim_set_t&) = delete;
 

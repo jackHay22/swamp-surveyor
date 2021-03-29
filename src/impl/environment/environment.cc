@@ -5,6 +5,7 @@
  */
 
 #include "environment.h"
+#include "procedural_elem.h"
 
 namespace impl {
 namespace environment {
@@ -105,6 +106,27 @@ namespace environment {
     //render each element
     for (size_t i=0; i<env_renderable.size(); i++) {
       env_renderable.at(i)->render(renderer,camera,debug);
+    }
+  }
+
+  /**
+   * Render environmental elements in the background
+   * @param renderer the sdl renderer
+   * @param camera   the camera
+   * @param debug    whether debug mode enabled
+   */
+  void environment_t::render_bg(SDL_Renderer& renderer,
+                                const SDL_Rect& camera,
+                                bool debug) const {
+    //render any elements that have background components
+    for (size_t i=0; i<env_renderable.size(); i++) {
+      //check if this is a procedural element (may have background components)
+      std::shared_ptr<procedural_elem_t> proc
+        = std::dynamic_pointer_cast<procedural_elem_t>(env_renderable.at(i));
+
+      if (proc) {
+        proc->render_bg(renderer,camera,debug);
+      }
     }
   }
 

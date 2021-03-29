@@ -81,12 +81,24 @@ namespace environment {
     [[nodiscard]] int update(const SDL_Rect& player_bounds);
 
     /**
-     * Render environmental elements
+     * Render environmental elements in the foreground
      * @param renderer the sdl renderer
      * @param camera   the camera
      * @param debug    whether debug mode enabled
      */
-    void render(SDL_Renderer& renderer, const SDL_Rect& camera, bool debug) const;
+    void render(SDL_Renderer& renderer,
+                const SDL_Rect& camera,
+                bool debug) const;
+
+    /**
+     * Render environmental elements in the background
+     * @param renderer the sdl renderer
+     * @param camera   the camera
+     * @param debug    whether debug mode enabled
+     */
+    void render_bg(SDL_Renderer& renderer,
+                   const SDL_Rect& camera,
+                   bool debug) const;
 
   };
 }}

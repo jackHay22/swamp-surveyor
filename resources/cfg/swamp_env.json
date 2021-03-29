@@ -93,5 +93,15 @@
     "animation_path" : "animations/crow.json",
     "animation_frames" : 0,
     "type" : "crows"
+  },
+  {
+    "x" : 1070,
+    "y" : 35,
+    "w" : 110,
+    "h" : 65,
+    "density" : 0.0,
+    "animation_path" : "",
+    "animation_frames" : 8,
+    "type" : "procedural_trees"
   }
 ]

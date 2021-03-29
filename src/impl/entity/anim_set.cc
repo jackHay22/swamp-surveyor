@@ -83,6 +83,20 @@ namespace entity {
   }
 
   /**
+   * Construct from a loaded texture
+   * @param texture the loaded texture (anim set assumes ownership)
+   * @param w       the width of the texture
+   * @param h       the height of the texture
+   * @param frames  the number of frames
+   */
+  anim_set_t::anim_set_t(SDL_Texture *texture, int w, int h, int frames, int duration)
+    : anim_frames(frames),
+      frame_width(w / frames),
+      frame_height(h),
+      duration(duration),
+      texture(texture) {}
+
+  /**
   * Free texture
   */
   anim_set_t::~anim_set_t() {

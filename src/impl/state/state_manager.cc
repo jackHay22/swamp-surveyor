@@ -59,6 +59,11 @@ namespace state {
       //get the current player
       std::shared_ptr<entity::player_t> player = curr_tilemap->get_player();
 
+      bool using_debug = false;
+      SDL_Rect old_camera = curr_tilemap->get_camera(using_debug);
+
+      //get the current camera (applicable if the view is locked)
+
       if (debug) {
         logger::log_info("loading state " +
                          deferred_cfgs.at(last_state));
@@ -78,6 +83,11 @@ namespace state {
       if (tilemap_state_t *reloaded = dynamic_cast<tilemap_state_t*>(states.at(current_state).get())) {
         //add the player back in
         reloaded->set_player(player);
+
+        //if we were in debug mode keep the old debug camera location
+        if (using_debug) {
+          reloaded->set_camera(old_camera);
+        }
       }
     } else if (debug) {
       logger::log_info("reload not implemented for non tilemap state " + std::to_string(last_state));

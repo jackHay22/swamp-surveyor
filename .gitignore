@@ -8,3 +8,4 @@ swamp
 SwampSurveyor
 *.dSYM
 *.zip
+build/*

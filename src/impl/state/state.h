@@ -45,7 +45,7 @@ namespace state {
     const SDL_Rect& get_active_camera() const;
 
     /**
-     * Get the active camera
+     * Get the active player camera
      * @return the camera
      */
     SDL_Rect& get_player_camera();

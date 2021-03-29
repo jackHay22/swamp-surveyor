@@ -29,6 +29,9 @@ namespace entity {
     int y = 0;
     //the animation configurations for this entity
     std::vector<std::string> anim_paths;
+
+    //behavior type
+    std::string behavior = "none";
   };
 
   /**
@@ -43,6 +46,9 @@ namespace entity {
     j.at("x").get_to(c.x);
     j.at("y").get_to(c.y);
     j.at("anim_paths").get_to(c.anim_paths);
+
+    //optional
+    //c.behavior = get_string(j,"behavior");
   }
 
   /**

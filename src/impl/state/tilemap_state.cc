@@ -8,6 +8,7 @@
 #include "../exceptions.h"
 #include "../utils.h"
 #include <iostream>
+#include "../environment/procedural_elem.h"
 
 namespace impl {
 namespace state {
@@ -72,6 +73,26 @@ namespace state {
 
     //update the player in the entities list
     entities.at(player_idx) = player;
+  }
+
+  /**
+   * Set the camera
+   * @param camera the camera to use
+   */
+  void tilemap_state_t::set_camera(const SDL_Rect& camera) {
+    //set the debug camera
+    this->get_debug_camera() = camera;
+    this->using_debug = true;
+  }
+
+  /**
+   * Get the current camera
+   * @param using_debug set by the call, whether we are currently in debug mode
+   * @return the current camera
+   */
+  SDL_Rect tilemap_state_t::get_camera(bool& using_debug) const {
+    using_debug = this->using_debug;
+    return this->get_active_camera();
   }
 
   /**
@@ -297,6 +318,9 @@ namespace state {
     //render background layer
     tilemap->render_bg(renderer,camera,debug);
 
+    //render the environment (background layers)
+    env->render_bg(renderer,camera,debug);
+
     //render entities
     for (size_t i=0; i<entities.size(); i++) {
       entities.at(i)->render(renderer,camera,debug);
@@ -305,7 +329,7 @@ namespace state {
     //render insect swarm
     insects->render(renderer,camera,debug);
 
-    //render the environment
+    //render the environment (foreground layers)
     env->render(renderer,camera,debug);
 
     //render items
