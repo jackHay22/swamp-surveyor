@@ -1,0 +1,7 @@
+{
+  "rsrc_path" : "animations/surveyor2_walk.png",
+  "frame_width" : 12,
+  "frame_height" : 24,
+  "anim_frames" : 8,
+  "duration" : 3
+}

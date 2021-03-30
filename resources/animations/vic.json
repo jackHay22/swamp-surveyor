@@ -5,9 +5,9 @@
   "width" : 10,
   "height" : 24,
   "anim_paths" : [
-    "animations/player2_idle.json",
-    "animations/player2_walk.json",
-    "animations/player2_walk_up.json",
-    "animations/player2_walk.json",
+    "animations/vic_idle.json",
+    "animations/vic_walk.json",
+    "animations/vic_walk_up.json",
+    "animations/vic_walk.json"
   ]
 }
