@@ -16,6 +16,13 @@ namespace entity {
   #define MAX_PUSH_TICKS 6
 
   /**
+   * Empty behavior handler for player
+   */
+  void behavior_noop(const std::vector<entity_pos_t>&,
+                     const tilemap::tilemap_t&,int,int,
+                     entity_state&, bool&) {  }
+
+  /**
    * Constructor
    * @param x                  entity position x (center)
    * @param y                  entity position y (center)
@@ -32,7 +39,7 @@ namespace entity {
                      SDL_Renderer& renderer,
                      int tile_dim,
                      const std::string& base_path)
-    : entity_t(x,y,w,h,anim_cfg_paths,renderer,tile_dim,base_path),
+    : entity_t(x,y,w,h,anim_cfg_paths,renderer,tile_dim,base_path,behavior_noop,NON_NPC),
       performing_action(false),
       actions(),
       held_items(),

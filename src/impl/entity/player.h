@@ -101,6 +101,14 @@ namespace entity {
      void update(const tilemap::tilemap_t& map,
                  environment::environment_t& env);
 
+     /**
+      * (No update behavior)
+      * @param entity_pos the positions of all entities in the map
+      * @param map        the tilemap
+      */
+     void update_behavior(const std::vector<entity_pos_t>&,
+                          const tilemap::tilemap_t&) override {}
+
     /**
      * Render the entity
      * @param renderer the renderer to use

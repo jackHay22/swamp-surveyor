@@ -1,0 +1,15 @@
+{
+  "entity_type" : "surveyor",
+  "x" : 830,
+  "y" : 70,
+  "width" : 10,
+  "height" : 24,
+  "anim_paths" : [
+    "animations/player_idle.json",
+    "animations/player_walk.json",
+    "animations/player_walk_up.json",
+    "animations/player_walk.json",
+    "animations/player_spray.json",
+    "animations/player_push.json"
+  ]
+}

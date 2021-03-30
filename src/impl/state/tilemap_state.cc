@@ -203,8 +203,35 @@ namespace state {
     //update tilemap
     tilemap->update();
 
+    //generate the positions of all entities
+    std::vector<impl::entity::entity_pos_t> e_positions;
+    int e_pos_x,e_pos_y;
+    //generate entity position vector
+    for (size_t i=0; i<entities.size(); i++) {
+      //get the entity position
+      entities.at(i)->get_center(e_pos_x,e_pos_y);
+
+      //add the position
+      e_positions.push_back(
+        std::make_tuple(
+          e_pos_x,
+          e_pos_y,
+          ((int)i == player_idx),
+          false,
+          entities.at(i)->get_npc_type()
+        )
+      );
+    }
+
     //update entities
     for (size_t i=0; i<entities.size(); i++) {
+      //toggle the current entity in positions
+      std::get<EPOS_SELF>(e_positions.at(i)) = true;
+      //entity behavior
+      entities.at(i)->update_behavior(e_positions,*tilemap);
+      //un-toggle
+      std::get<EPOS_SELF>(e_positions.at(i)) = false;
+
       //update each entity in the y direction
       entities.at(i)->update_y();
 

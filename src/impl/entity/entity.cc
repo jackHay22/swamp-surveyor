@@ -34,7 +34,9 @@ namespace entity {
                      const std::vector<std::string>& anim_cfg_paths,
                      SDL_Renderer& renderer,
                      int tile_dim,
-                     const std::string& base_path)
+                     const std::string& base_path,
+                     behavior_handler_t on_behavior,
+                     npc_type entity_type)
     : x(x), y(y),
       w(w), h(h),
       health(STARTING_HEALTH),
@@ -46,6 +48,8 @@ namespace entity {
       water_counter(WATER_FRAMES),
       tile_dim(tile_dim),
       anims(),
+      on_behavior(on_behavior),
+      entity_type(entity_type),
       facing_left(false) {
 
     if (anim_cfg_paths.size() < ENTITY_STATES) {
@@ -260,6 +264,21 @@ namespace entity {
         }
       }
     }
+  }
+
+  /**
+   * Update the behavior of this entity given other entity positions
+   * and the tilemap
+   * @param entity_pos the positions of all entities in the map
+   * @param map        the tilemap
+   */
+  void entity_t::update_behavior(const std::vector<entity_pos_t>& entity_pos,
+                                 const tilemap::tilemap_t& map) {
+    int cx,cy;
+    this->get_center(cx,cy);
+
+    //call the behavior
+    on_behavior(entity_pos,map,cx,cy,state,facing_left);
   }
 
   /**

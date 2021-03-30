@@ -12,6 +12,7 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include <functional>
 #include "anim_set.h"
 #include "../tilemap/tilemap.h"
 #include "../environment/environment.h"
@@ -21,6 +22,49 @@ namespace entity {
 
   //the number of states the entity class controls
   #define ENTITY_STATES 4
+
+  /**
+   * Types of npcs
+   */
+  enum npc_type {
+    NON_NPC, // i.e. the player
+    SURVEYOR
+  };
+
+  /*
+   * The state of an entity
+   */
+  enum entity_state {
+    IDLE,
+    MOVE,
+    CLIMB,
+    DROP,
+    ACTION
+  };
+
+  /*
+   * The position of an entity. A vector of these is
+   * passed to an entity on update including some map information
+   * The integers correspond to position, the first boolean value is
+   * true iff the entity is the player
+   * The second boolean value is true iff this entity is self
+   * The final value is the type of the entity
+   */
+  typedef std::tuple<int,int,bool,bool,npc_type> entity_pos_t;
+  #define EPOS_X 0
+  #define EPOS_Y 1
+  #define EPOS_PLAYER 2
+  #define EPOS_SELF 3
+  #define EPOS_TYPE 4
+
+  /*
+   * A behavior handler
+   */
+  typedef std::function<void(const std::vector<entity_pos_t>&,
+                             const tilemap::tilemap_t&,
+                             int, int,
+                             entity_state&,
+                             bool&)> behavior_handler_t;
 
   /**
    * Positional entity with 4 animations
@@ -57,19 +101,19 @@ namespace entity {
     //texture animations (8 -- actions are covered by subclasses)
     std::vector<std::unique_ptr<anim_set_t>> anims;
 
+    //the update behavior of this entity (used for non-players)
+    behavior_handler_t on_behavior;
+
+    //the type of this entity (used for behavior)
+    npc_type entity_type;
+
   protected:
     //whether the entity is facing left (vs right)
     bool facing_left;
 
     //the current state of the entity, can be set by subclasses
     //previous state used for restoring last state
-    enum {
-      IDLE,
-      MOVE,
-      CLIMB,
-      DROP,
-      ACTION,
-    } state = IDLE, prev_state = IDLE;
+    entity_state state = IDLE, prev_state = IDLE;
 
   public:
     /**
@@ -82,17 +126,27 @@ namespace entity {
      * @param renderer           the renderer for loading textures
      * @param tile_dim           the dimensions of tiles
      * @param base_path          the resource directory base path
+     * @param on_behavior        the behavior handler
+     * @param entity_type        the type of this entity
      */
     entity_t(int x, int y,
              int w, int h,
              const std::vector<std::string>& anim_cfg_paths,
              SDL_Renderer& renderer,
              int tile_dim,
-             const std::string& base_path);
+             const std::string& base_path,
+             behavior_handler_t on_behavior,
+             npc_type entity_type);
     entity_t(const entity_t&) = delete;
     entity_t& operator=(const entity_t&) = delete;
 
     virtual ~entity_t() {}
+
+    /**
+     * Get the npc type
+     * @return the npc type of this entity
+     */
+    npc_type get_npc_type() const { return entity_type; }
 
     /**
      * Check whether the entity is facing left
@@ -149,6 +203,15 @@ namespace entity {
      * Update this entity at the tick in the y direction
      */
     void update_y();
+
+    /**
+     * Update the behavior of this entity given other entity positions
+     * and the tilemap
+     * @param entity_pos the positions of all entities in the map
+     * @param map        the tilemap
+     */
+    virtual void update_behavior(const std::vector<entity_pos_t>& entity_pos,
+                                 const tilemap::tilemap_t& map);
 
     /**
      * Called when entity collides in the x direction

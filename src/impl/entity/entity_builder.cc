@@ -9,10 +9,12 @@
 #include <fstream>
 #include <json/nlohmann_json.h>
 #include "player.h"
+#include "npc_behavior.h"
 
 namespace impl {
 namespace entity {
   const std::string PLAYER = "player";
+  const std::string SURVEYOR_TYPE = "surveyor";
 
   /**
    * Entity configuration values
@@ -83,6 +85,16 @@ namespace entity {
                                                   renderer,
                                                   tile_dim,
                                                   base_path);
+      } else if (cfg.entity_type == SURVEYOR_TYPE) {
+        return std::make_shared<entity::entity_t>(cfg.x,cfg.y,
+                                                  cfg.width,
+                                                  cfg.height,
+                                                  cfg.anim_paths,
+                                                  renderer,
+                                                  tile_dim,
+                                                  base_path,
+                                                  npc_behavior::surveyor,
+                                                  SURVEYOR);
       }
 
       //unknown entity type

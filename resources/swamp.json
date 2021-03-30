@@ -14,7 +14,8 @@
      2861,2862,2864,2872,2871,2869,2873,2874,2875,2877,2876],
   "entity_layer_water" : [12,13,14,19,20,21,2842,2843],
   "entity_cfg_paths" : [
-    "animations/player.json"
+    "animations/player.json",
+    "animations/vic.json"
   ],
   "player_idx" : 0,
   "bg_stationary" : false,
