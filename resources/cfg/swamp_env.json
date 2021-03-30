@@ -101,7 +101,17 @@
     "h" : 65,
     "density" : 0.0,
     "animation_path" : "",
-    "animation_frames" : 8,
+    "animation_frames" : 20,
     "type" : "procedural_trees"
+  },
+  {
+    "x" : 1092,
+    "y" : 89,
+    "w" : 110,
+    "h" : 10,
+    "density" : 0.0,
+    "animation_path" : "",
+    "animation_frames" : 10,
+    "type" : "procedural_groundcover"
   }
 ]

@@ -15,6 +15,7 @@
 #include "pushable.h"
 #include "crows.h"
 #include "procedural_trees.h"
+#include "procedural_groundcover.h"
 
 namespace impl {
 namespace environment {
@@ -28,6 +29,7 @@ namespace environment {
   #define PUSHABLE_TYPE "pushable"
   #define CROW_TYPE "crows"
   #define PROC_TREES "procedural_trees"
+  #define PROC_GCOVER "procedural_groundcover"
 
   /**
    * Check if json has some int by key
@@ -164,6 +166,11 @@ namespace environment {
           elems.push_back(std::make_shared<environment::procedural_trees_t>(region,
                                                                             renderer,
                                                                             cfg.animation_frames));
+        } else if (cfg.type == PROC_GCOVER) {
+          SDL_Rect region = {cfg.x,cfg.y,cfg.w,cfg.h};
+          elems.push_back(std::make_shared<environment::procedural_groundcover_t>(region,
+                                                                                  renderer,
+                                                                                  cfg.animation_frames));
         }
       }
 

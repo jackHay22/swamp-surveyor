@@ -14,6 +14,23 @@
 namespace impl {
 namespace environment {
 
+  //COLORS
+  #define LIGHT_GREEN_R 125
+  #define LIGHT_GREEN_G 174
+  #define LIGHT_GREEN_B 109
+  #define MED_LIGHT_GREEN_R 104
+  #define MED_LIGHT_GREEN_G 156
+  #define MED_LIGHT_GREEN_B 91
+  #define MED_DARK_GREEN_R 72
+  #define MED_DARK_GREEN_G 110
+  #define MED_DARK_GREEN_B 67
+  #define DARK_GREEN_R 41 //FG leaf
+  #define DARK_GREEN_G 58
+  #define DARK_GREEN_B 0
+  #define DARK_R 8 //FG trunk
+  #define DARK_G 17
+  #define DARK_B 0
+
   /**
    * A procedurally generated element in the environment
    */

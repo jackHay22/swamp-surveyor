@@ -6,27 +6,11 @@
 
 #include "procedural_trees.h"
 #include "proc_generation.h"
+#include "procedural_elem.h"
 #include <iostream>
 
 namespace impl {
 namespace environment {
-
-  //COLORS
-  #define LIGHT_GREEN_R 125
-  #define LIGHT_GREEN_G 174
-  #define LIGHT_GREEN_B 109
-  #define MED_LIGHT_GREEN_R 104
-  #define MED_LIGHT_GREEN_G 156
-  #define MED_LIGHT_GREEN_B 91
-  #define MED_DARK_GREEN_R 72
-  #define MED_DARK_GREEN_G 110
-  #define MED_DARK_GREEN_B 67
-  #define DARK_GREEN_R 41 //FG leaf
-  #define DARK_GREEN_G 58
-  #define DARK_GREEN_B 0
-  #define DARK_R 8 //FG trunk
-  #define DARK_G 17
-  #define DARK_B 0
 
   //tree construction values
   #define LEAF_COUNT 200
@@ -76,30 +60,6 @@ namespace environment {
       leaf_b = DARK_GREEN_B;
     }
 
-    /*
-     * Use an L-system to generate the trunk
-     */
-//#define L_SYSTEM
-#ifdef L_SYSTEM
-    proc_generation::fractal_tree_lsystem(constructor,
-                                         L_SYSTEM_DEPTH,
-                                         trunk_r,
-                                         trunk_g,
-                                         trunk_b,
-                                         x,y);
-
-    /*
-     * Generate random foliage
-     */
-    proc_generation::trunk_foliage(constructor,
-                                   LEAF_COUNT,
-                                   leaf_r,leaf_g,leaf_b,
-                                   !fg,
-                                   LIGHT_GREEN_R,
-                                   LIGHT_GREEN_G,
-                                   LIGHT_GREEN_B);
-
-#else
     proc_generation::branching_tree_growth(constructor,
                                            x,y,
                                            trunk_r,
@@ -113,7 +73,6 @@ namespace environment {
                                   LIGHT_GREEN_R,
                                   LIGHT_GREEN_G,
                                   LIGHT_GREEN_B);
-#endif
   }
 
   /**

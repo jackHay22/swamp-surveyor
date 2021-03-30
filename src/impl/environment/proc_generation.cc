@@ -139,14 +139,8 @@ namespace proc_generation {
             int new_x = curr_x + (move_dist * sin(curr_angle * PI / 180.0));
             int new_y = curr_y - (move_dist * cos(curr_angle * PI / 180.0));
 
-            //set thickness based on line length
-            int thickness = 1;
-            if (forward_count > 2) {
-              thickness = 2;
-            }
-
             //draw a line
-            constructor.set_line(curr_x,curr_y,new_x,new_y,thickness);
+            constructor.set_line(curr_x,curr_y,new_x,new_y,1);
 
             //update the current position
             curr_x = new_x;
@@ -238,7 +232,7 @@ namespace proc_generation {
     //expand the l system
     expand(state,x_expansion,iters);
 
-    int dist = 3;
+    int dist = 2;
     int angle = 0;
 
     //set the default color
