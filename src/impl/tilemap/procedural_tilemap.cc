@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <stdlib.h>
 #include <cmath>
+#include "../environment/texture_constructor.h"
 
 namespace impl {
 namespace tilemap {
@@ -39,7 +40,8 @@ namespace tilemap {
   procedural_tilemap_t::procedural_tilemap_t(int dim, int width_p, int height_p, SDL_Renderer& renderer)
     : dim(dim),
       width_p(width_p),
-      height_p(height_p) {
+      height_p(height_p),
+      tiles() {
     //generate terrain procedurally
     this->generate_terrain(renderer);
   }
@@ -50,11 +52,59 @@ namespace tilemap {
    */
   void procedural_tilemap_t::generate_terrain(SDL_Renderer& renderer) {
     //use tiles for the ground only, the rest done in other ways
-    int tiles_across = width_p / dim;
-    int tiles_down = height_p / dim;
+    size_t tiles_across = width_p / dim;
+    size_t tiles_down = height_p / dim;
+
+    tiles.reserve(tiles_down);
+
+    for (size_t r=0; r<tiles_down; r++) {
+      tiles.emplace_back();
+      tiles.back().reserve(tiles_across);
+
+      for (size_t c=0; c<tiles_across; c++) {
+        //all tiles start as empty
+        tiles.back().push_back(tile_t((int)c,(int)r,dim,-1));
+      }
+    }
 
     //start ground height roughly 1/3 of total height
-    int ground_lvl = (int) 2 * (tiles_down / 3);
+    int ground = (int) 2 * (tiles_down / 3);
+
+    //type 0 is the fully solid ground tile
+    environment::texture_constructor_t tileset_constructor;
+    //set to default ground cover
+    tileset_constructor.set_default_color(
+      DARK_GREEN_R,
+      DARK_GREEN_G,
+      DARK_GREEN_B);
+
+    //make tile 0
+    tileset_constructor.set_rect(0,0,dim,dim);
+
+    //walk around and generate a surface level
+    for (size_t i=0; i<tiles_across; i++) {
+      //add a wall
+      if ((i == 0) || (i == (tiles_across - 1))) {
+        tiles.at(ground-1).at(i).set_type(0);
+        tiles.at(ground-1).at(i).set_solid(true);
+        tiles.at(ground-2).at(i).set_type(0);
+        tiles.at(ground-2).at(i).set_solid(true);
+      }
+
+      //generate a new tile
+      tiles.at(ground).at(i).set_type(0);
+
+      //set solid
+      tiles.at(ground).at(i).set_solid(true);
+    }
+
+    //tileset texture dimensions
+    int tsw,tsh;
+    //generate the tileset
+    tileset = std::make_shared<tileset_t>(
+      tileset_constructor.generate(renderer,tsw,tsh),
+      tsw,tsh,dim
+    );
   }
 
   /**
@@ -191,6 +241,20 @@ namespace tilemap {
 
     //draw the hills
 
+
+    //draw tiles
+    for (size_t r=0; r<tiles.size(); r++) {
+      for (size_t c=0; c<tiles.at(r).size(); c++) {
+        //render the tile
+        tiles.at(r).at(c).render(
+          renderer,
+          camera,
+          tileset,
+          false,
+          debug
+        );
+      }
+    }
   }
 
 

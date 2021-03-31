@@ -20,11 +20,9 @@ namespace state {
 
   class state_t;
 
-  enum state_type {
-    TITLE,
-    SWAMP,
-    TRACKS
-  };
+  #define TITLE_STATE 0 // index of title state
+  #define SWAMP_STATE 1
+  #define TRACKS_STATE 2
 
   /**
    * Manages thhe current game state
@@ -67,8 +65,8 @@ namespace state {
     bool debug;
 
     //the current state
-    state_type current_state;
-    state_type last_state;
+    size_t current_state;
+    size_t last_state;
 
     //the window scale
     int window_scale;
@@ -104,6 +102,11 @@ namespace state {
     void rsrc_reload();
 
     /**
+     * Generate a new procedural map
+     */
+    void new_swamp();
+
+    /**
      * Toggle the debug camera (if applicable)
      */
     void toggle_debug_camera();
@@ -118,7 +121,7 @@ namespace state {
      * Set the current level state
      * @param name the state type
      */
-    void set_state(state_type type);
+    void set_state(size_t type);
 
     /**
      * Handle some keypress event

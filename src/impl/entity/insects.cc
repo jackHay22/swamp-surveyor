@@ -102,6 +102,14 @@ namespace entity {
     }
   }
 
+  //default, empty constructor
+  insects_t::insects_t()
+    : positions(),
+      bounds_top(0),
+      bounds_bot(0),
+      bounds_w(),
+      r(0), b(0), g(0) {}
+
   /**
    * Check if a given point lies within the rectangle provided
    * @param pt the point to check

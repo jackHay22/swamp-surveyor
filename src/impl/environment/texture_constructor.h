@@ -98,6 +98,11 @@ namespace environment {
     void set(int x, int y, int frame=-1);
 
     /**
+     * Set a rectangle, takes position, dimension and frame
+     */
+    void set_rect(int x, int y, int w, int h, int frame=-1);
+
+    /**
      * Render a line between two points
      */
     void set_line(int x1, int y1, int x2, int y2, int thickness, int frame=-1);

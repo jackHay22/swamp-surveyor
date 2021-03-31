@@ -31,6 +31,8 @@ namespace environment {
      * @param env_renderable the list of environment elements
      */
     environment_t(std::vector<std::shared_ptr<environment::renderable_t>>& env_renderable);
+    //default (empty constructor)
+    environment_t() : env_renderable() {}
     environment_t(const environment_t&) = delete;
     environment_t& operator=(const environment_t&) = delete;
 

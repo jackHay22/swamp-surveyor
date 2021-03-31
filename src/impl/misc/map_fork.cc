@@ -111,9 +111,9 @@ namespace misc {
 
     //determine the destination based on a name
     if (target_name == "swamp") {
-      dest = state::SWAMP;
+      dest = SWAMP_STATE;
     } else if (target_name == "tracks") {
-      dest = state::TRACKS;
+      dest = TRACKS_STATE;
     } else {
       throw exceptions::rsrc_exception_t("no such state: " + target_name);
     }

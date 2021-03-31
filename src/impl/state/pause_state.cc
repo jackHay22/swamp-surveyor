@@ -51,6 +51,15 @@ namespace state {
         0
     );
     this->window->add_component(
+      std::make_unique<ui::button_t>("New Swamp",
+        [](state_manager_t& m){
+          m.new_swamp();
+          m.unpause();
+        },
+        font_path,renderer),
+        0
+    );
+    this->window->add_component(
       std::make_unique<ui::button_t>("Unpause",
         [](state_manager_t& m){
           m.unpause();

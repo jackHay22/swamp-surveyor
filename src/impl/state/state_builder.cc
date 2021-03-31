@@ -11,6 +11,7 @@
 #include <fstream>
 #include <memory>
 #include "../tilemap/tilemap.h"
+#include "../tilemap/procedural_tilemap.h"
 #include "../tilemap/tileset.h"
 #include "../tilemap/transparent_block.h"
 #include "../entity/entity.h"
@@ -26,6 +27,10 @@
 
 namespace impl {
 namespace state {
+
+  //procedural map dimensions in tiles
+  #define PROC_WIDTH_T 300
+  #define PROC_HEIGHT_T 30
 
   typedef nlohmann::json json;
 
@@ -192,5 +197,58 @@ namespace state {
                             //whether or not specified
                             idx_override);
 
+  }
+
+  /**
+   * Load a new procedural tilemap state
+   * @param  player   the previous player
+   * @param  tile_dim the tile dimension
+   * @param  camera   the camera to use
+   * @param  renderer the renderer for creating textures
+   * @param  manager  the state manager
+   * @return          the new state
+   */
+  std::unique_ptr<state_t> load_procedural_state(std::shared_ptr<entity::player_t> player,
+                                                 int tile_dim,
+                                                 SDL_Rect& camera,
+                                                 SDL_Renderer& renderer,
+                                                 state_manager_t& manager) {
+
+    std::vector<std::shared_ptr<entity::entity_t>> entities;
+    entities.push_back(player);
+    player->set_position(16,16);
+
+    //TODO random insect generation
+    std::shared_ptr<entity::insects_t> insects = std::make_shared<entity::insects_t>();
+    std::shared_ptr<environment::environment_t> env = std::make_shared<environment::environment_t>();
+
+    //empty
+    std::vector<std::shared_ptr<items::item_t>> level_items;
+    std::vector<std::shared_ptr<tilemap::transparent_block_t>> trans_blocks;
+    std::vector<std::shared_ptr<misc::map_fork_t>> forks;
+
+    std::string name = "generated";
+
+    //create a new tilemap state
+    return std::make_unique<state::tilemap_state_t>(
+      //create a procedural tilemap
+      std::make_shared<tilemap::procedural_tilemap_t>(
+        tile_dim,
+        PROC_WIDTH_T * tile_dim,
+        PROC_HEIGHT_T * tile_dim,
+        renderer
+      ),
+      entities,
+      insects,
+      env,
+      level_items,
+      trans_blocks,
+      forks,
+      0,
+      manager,
+      camera,
+      name,
+      true //procedural
+    );
   }
 }}

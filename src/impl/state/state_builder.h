@@ -12,6 +12,8 @@
 #include <string>
 #include "state.h"
 #include "state_manager.h"
+#include "tilemap_state.h"
+#include "../entity/player.h"
 
 namespace impl {
 namespace state {
@@ -36,6 +38,21 @@ namespace state {
                      const std::string& base_path,
                      const std::string& font_path,
                      int idx_override=-1);
+
+  /**
+   * Load a new procedural tilemap state
+   * @param  player   the previous player
+   * @param  tile_dim the tile dimension
+   * @param  camera   the camera to use
+   * @param  renderer the renderer for creating textures
+   * @param  manager  the state manager
+   * @return          the new state
+   */
+  std::unique_ptr<state_t> load_procedural_state(std::shared_ptr<entity::player_t> player,
+                                                 int tile_dim,
+                                                 SDL_Rect& camera,
+                                                 SDL_Renderer& renderer,
+                                                 state_manager_t& manager);
 }}
 
 #endif /*_IO_JACKHAY_SWAMP_STATE_BUILDER_H*/

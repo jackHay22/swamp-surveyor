@@ -37,7 +37,7 @@ namespace tilemap {
   public:
     //constructor
     tile_t(int x, int y, int dim, int type);
-    tile_t(const tile_t&) = delete;
+    tile_t(const tile_t&);
     tile_t& operator=(const tile_t&) = delete;
 
     /**
@@ -45,6 +45,12 @@ namespace tilemap {
      * @return the type of this tile
      */
     int get_type() const { return type; }
+
+    /**
+     * Set the tyep of this tile
+     * @param  type the tile type
+     */
+    void set_type(int type) { this->type = type; }
 
     /**
      * Check if a bounding box collides with this tile

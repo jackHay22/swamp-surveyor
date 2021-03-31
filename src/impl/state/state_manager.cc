@@ -9,6 +9,7 @@
 #include "../logger.h"
 #include "tilemap_state.h"
 #include "pause_state.h"
+#include "../tilemap/procedural_tilemap.h"
 
 namespace impl {
 namespace state {
@@ -43,8 +44,8 @@ namespace state {
       base_path("resources/"),
       font_path(font_path),
       debug(debug),
-      current_state(TITLE),
-      last_state(TITLE),
+      current_state(TITLE_STATE),
+      last_state(TITLE_STATE),
       window_scale(window_scale) {}
 
   /**
@@ -56,37 +57,42 @@ namespace state {
     //keep the player
     if (tilemap_state_t *curr_tilemap = dynamic_cast<tilemap_state_t*>(states.at(current_state).get())) {
 
-      //get the current player
-      std::shared_ptr<entity::player_t> player = curr_tilemap->get_player();
+      if (curr_tilemap->is_procedural()) {
+        //regen
+        this->new_swamp();
+      } else {
+        //get the current player
+        std::shared_ptr<entity::player_t> player = curr_tilemap->get_player();
 
-      bool using_debug = false;
-      SDL_Rect old_camera = curr_tilemap->get_camera(using_debug);
+        bool using_debug = false;
+        SDL_Rect old_camera = curr_tilemap->get_camera(using_debug);
 
-      //get the current camera (applicable if the view is locked)
+        //get the current camera (applicable if the view is locked)
 
-      if (debug) {
-        logger::log_info("loading state " +
-                         deferred_cfgs.at(last_state));
-      }
+        if (debug) {
+          logger::log_info("loading state " +
+                           deferred_cfgs.at(last_state));
+        }
 
-      //reload the state
-      load_tm_state(*this,
-                    curr_tilemap->get_cfg(),
-                    renderer,
-                    camera,
-                    tile_dim,
-                    base_path,
-                    font_path,
-                    current_state);
+        //reload the state
+        load_tm_state(*this,
+                      curr_tilemap->get_cfg(),
+                      renderer,
+                      camera,
+                      tile_dim,
+                      base_path,
+                      font_path,
+                      current_state);
 
-      //add the player back into the reloaded state
-      if (tilemap_state_t *reloaded = dynamic_cast<tilemap_state_t*>(states.at(current_state).get())) {
-        //add the player back in
-        reloaded->set_player(player);
+        //add the player back into the reloaded state
+        if (tilemap_state_t *reloaded = dynamic_cast<tilemap_state_t*>(states.at(current_state).get())) {
+          //add the player back in
+          reloaded->set_player(player);
 
-        //if we were in debug mode keep the old debug camera location
-        if (using_debug) {
-          reloaded->set_camera(old_camera);
+          //if we were in debug mode keep the old debug camera location
+          if (using_debug) {
+            reloaded->set_camera(old_camera);
+          }
         }
       }
     } else if (debug) {
@@ -95,10 +101,40 @@ namespace state {
   }
 
   /**
+   * Generate a new procedural map
+   */
+  void state_manager_t::new_swamp() {
+
+    //player needed to have been loaded already
+    if (tilemap_state_t *prev_tilemap = dynamic_cast<tilemap_state_t*>(states.at(current_state).get())) {
+
+      if (prev_tilemap->is_procedural()) {
+        //reset the previous procedural state
+        states.at(current_state) = load_procedural_state(prev_tilemap->get_player(),
+                                                          tile_dim,
+                                                          camera,
+                                                          renderer,
+                                                          *this);
+      } else {
+        //add a new state
+        states.push_back(load_procedural_state(prev_tilemap->get_player(),
+                                              tile_dim,
+                                              camera,
+                                              renderer,
+                                              *this));
+        //update previous
+        last_state = current_state;
+        //update the current
+        current_state = states.size() - 1;
+      }
+    }
+  }
+
+  /**
    * Toggle the debug camera (if applicable)
    */
   void state_manager_t::toggle_debug_camera() {
-    if (current_state != TITLE) {
+    if (current_state != TITLE_STATE) {
       states.at(current_state)->toggle_debug_camera();
     }
   }
@@ -107,7 +143,7 @@ namespace state {
    * Set the current level state
    * @param name the state type
    */
-  void state_manager_t::set_state(state_type type) {
+  void state_manager_t::set_state(size_t type) {
     //check if the state is not yet loaded
     if (type >= states.size()) {
       //lazily load the next state
@@ -164,7 +200,7 @@ namespace state {
     //check for pause button
     if ((e.type == SDL_KEYDOWN) &&
         (e.key.keysym.sym == SDLK_ESCAPE) &&
-        (current_state != TITLE)) {
+        (current_state != TITLE_STATE)) {
       this->paused = !this->paused;
     }
 
@@ -172,7 +208,7 @@ namespace state {
     if (debug &&
         (e.type == SDL_KEYDOWN) &&
         (e.key.keysym.sym == SDLK_v) &&
-        (current_state != TITLE)) {
+        (current_state != TITLE_STATE)) {
 
       //turn on the debug camera
       states.at(current_state)->toggle_debug_camera();

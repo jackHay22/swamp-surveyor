@@ -86,6 +86,18 @@ namespace environment {
   }
 
   /**
+   * Set a rectangle, takes position, dimension and frame
+   */
+  void texture_constructor_t::set_rect(int x, int y, int w, int h, int frame) {
+    for (int i=x; i<(x + w); i++) {
+      for (int j=y; j<(y + h); j++) {
+        //set the pixel at this position
+        this->set(i,j,frame);
+      }
+    }
+  }
+
+  /**
    * Render a line between two points
    * https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
    * http://rosettacode.org/wiki/Bitmap/Bresenham%27s_line_algorithm#C.2B.2B

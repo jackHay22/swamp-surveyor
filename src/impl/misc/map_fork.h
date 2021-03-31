@@ -50,7 +50,7 @@ namespace misc {
     int texture_h;
 
     //destination
-    state::state_type dest;
+    size_t dest;
 
     //whether to display the message
     bool display;
@@ -105,7 +105,7 @@ namespace misc {
      * Get the destination
      * @return dest
      */
-    state::state_type get_dest() { return dest; };
+    size_t get_dest() { return dest; };
 
     /**
      * Update the fork message

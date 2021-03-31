@@ -36,7 +36,8 @@ namespace state {
                                    std::vector<std::shared_ptr<misc::map_fork_t>>& forks,
                                    int player_idx, state_manager_t& manager,
                                    SDL_Rect& camera,
-                                   const std::string& cfg_name)
+                                   const std::string& cfg_name,
+                                   bool procedural)
     : state_t(manager, camera),
       tilemap(tilemap),
       entities(entities),
@@ -49,7 +50,8 @@ namespace state {
       show_bars(false),
       player_health_bar(5,120,50,1000,255,0,0),
       reticle(std::make_unique<entity::reticle_t>(manager.get_window_scale())),
-      cfg_name(cfg_name)  {
+      cfg_name(cfg_name),
+      procedural(procedural)  {
     //sanity check
     if (player_idx >= (int) entities.size()) {
       throw exceptions::rsrc_exception_t("not enough entities found in list");

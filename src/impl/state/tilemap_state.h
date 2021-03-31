@@ -69,6 +69,9 @@ namespace state {
     //the name of the cfg file for this state
     std::string cfg_name;
 
+    //whether this map was generated procedurally
+    bool procedural;
+
     /**
      * Check if a given bounding box is on solid ground
      * @param  bounds the bounding box
@@ -100,9 +103,15 @@ namespace state {
                     std::vector<std::shared_ptr<misc::map_fork_t>>& forks,
                     int player_idx, state_manager_t& manager,
                     SDL_Rect& camera,
-                    const std::string& cfg_name);
+                    const std::string& cfg_name,
+                    bool procedural=false);
     tilemap_state_t(const tilemap_state_t&) = delete;
     tilemap_state_t& operator=(const tilemap_state_t&) = delete;
+
+    /**
+     * Whether this map was generated procedurally
+     */
+    bool is_procedural() const { return procedural; }
 
     /**
      * Get the local path (in resources dir) to the file that configures this state

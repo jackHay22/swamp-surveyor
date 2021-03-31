@@ -26,6 +26,18 @@ namespace tilemap {
         dim(dim) {}
 
     /**
+     * Copy constructor
+     * @param other the tile to copy from
+     */
+    tile_t::tile_t(const tile_t& other)
+      : type(other.type),
+        solid(other.solid),
+        liquid(other.liquid),
+        x(other.x),
+        y(other.y),
+        dim(other.dim) {}
+
+    /**
      * Check if a bounding box collides with this tile
      * @param  other the other bounding box
      * @return       whether the two boxes collide

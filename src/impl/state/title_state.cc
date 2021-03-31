@@ -140,7 +140,7 @@ namespace state {
         case SDLK_RETURN:
           if (selected_option == START) {
             //start the first level
-            manager.set_state(state::SWAMP);
+            manager.set_state(SWAMP_STATE);
           } else if (selected_option == QUIT) {
             //stop system
             manager.set_running(false);

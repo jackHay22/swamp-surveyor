@@ -47,6 +47,8 @@ namespace entity {
      * @param cfg_path the path to the insect configuration file
      */
     insects_t(const std::string& cfg_path);
+    //default, empty constructor
+    insects_t();
     insects_t(const insects_t&) = delete;
     insects_t& operator=(const insects_t&) = delete;
 
