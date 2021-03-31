@@ -37,7 +37,7 @@ namespace npc_behavior {
    * @param facing_left set by the call (updates entity facing direction)
    */
   void surveyor(const std::vector<entity_pos_t>& pos,
-                const tilemap::tilemap_t& map,
+                const tilemap::abstract_tilemap_t& map,
                 int x, int y,
                 entity_state& state,
                 bool& facing_left) {
@@ -55,14 +55,19 @@ namespace npc_behavior {
         //always face towards the player
         facing_left = (ox < x);
 
-        if (distance(x,y,ox,oy) > SURVEYOR_FOLLOW_DIST) {
-          //walk towards the player
-          if (state != CLIMB) {
-            state = MOVE;
+        //don't stop if midway through climbing
+        if (state != CLIMB) {
+          //check the close distance to the player
+          if (distance(x,y,ox,oy) > SURVEYOR_FOLLOW_DIST) {
+            //walk towards the player
+            if ((state != CLIMB) &&
+                (std::get<EPOS_STATE>(pos.at(i)) != CLIMB)) {
+              state = MOVE;
+            }
+          } else {
+            //idle
+            state = IDLE;
           }
-        } else {
-          //idle
-          state = IDLE;
         }
       }
     }

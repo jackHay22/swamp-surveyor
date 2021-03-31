@@ -14,7 +14,7 @@
 #include <string>
 #include <functional>
 #include "anim_set.h"
-#include "../tilemap/tilemap.h"
+#include "../tilemap/abstract_tilemap.h"
 #include "../environment/environment.h"
 
 namespace impl {
@@ -50,18 +50,19 @@ namespace entity {
    * The second boolean value is true iff this entity is self
    * The final value is the type of the entity
    */
-  typedef std::tuple<int,int,bool,bool,npc_type> entity_pos_t;
+  typedef std::tuple<int,int,bool,bool,npc_type,entity_state> entity_pos_t;
   #define EPOS_X 0
   #define EPOS_Y 1
   #define EPOS_PLAYER 2
   #define EPOS_SELF 3
   #define EPOS_TYPE 4
+  #define EPOS_STATE 5
 
   /*
    * A behavior handler
    */
   typedef std::function<void(const std::vector<entity_pos_t>&,
-                             const tilemap::tilemap_t&,
+                             const tilemap::abstract_tilemap_t&,
                              int, int,
                              entity_state&,
                              bool&)> behavior_handler_t;
@@ -143,6 +144,12 @@ namespace entity {
     virtual ~entity_t() {}
 
     /**
+     * Get the current entity state
+     * @return the entity state
+     */
+    entity_state get_entity_state() const { return state; }
+
+    /**
      * Get the npc type
      * @return the npc type of this entity
      */
@@ -191,13 +198,13 @@ namespace entity {
      * @param map the tilemap
      * @param env the environment
      */
-    virtual void update(const tilemap::tilemap_t& map,
+    virtual void update(const tilemap::abstract_tilemap_t& map,
                         environment::environment_t& env);
 
     /**
      * Update this entity at the tick in the x direction
      */
-    void update_x(const tilemap::tilemap_t& map);
+    void update_x(const tilemap::abstract_tilemap_t& map);
 
     /**
      * Update this entity at the tick in the y direction
@@ -211,14 +218,14 @@ namespace entity {
      * @param map        the tilemap
      */
     virtual void update_behavior(const std::vector<entity_pos_t>& entity_pos,
-                                 const tilemap::tilemap_t& map);
+                                 const tilemap::abstract_tilemap_t& map);
 
     /**
      * Called when entity collides in the x direction
      * @param map used to determine if the entity can climb
      * @param env used to determine if the entity can climb
      */
-    void step_back_x(const tilemap::tilemap_t& map,
+    void step_back_x(const tilemap::abstract_tilemap_t& map,
                      const environment::environment_t& env);
 
     /**

@@ -72,23 +72,37 @@ namespace tilemap {
   }
 
   /**
+   * Check that a position is in bounds
+   * @return   whether the position is in bounds
+   */
+  bool layer_t::in_bounds(int x, int y) const {
+    int idx_x = x / dim;
+    int idx_y = y / dim;
+
+    //check bounds and get the type of the tile
+    return (idx_x >= 0) && (idx_y >= 0) &&
+           (idx_y < (int)this->contents.size()) &&
+           (idx_x < (int)this->contents.at(idx_y).size());
+  }
+
+  /**
+   * Get a tile (PRECOND: in_bounds called)
+   * @return   the tile at that position
+   */
+  const tile_t& layer_t::get_tile(int x, int y) const {
+    return *this->contents.at(y / dim).at(x / dim);
+  }
+
+  /**
    * Check if the tile at a position is solid
    * @param  x the x coordinate
    * @param  y the y coordinate
    * @return   whether the tile at this position is solid
    */
   bool layer_t::is_solid(int x, int y) const {
-    int idx_x = x / dim;
-    int idx_y = y / dim;
-
-    //check bounds and get the type of the tile
-    if ((idx_y < (int)this->contents.size()) &&
-        (idx_x < (int)this->contents.at(idx_y).size())) {
-      return this->contents.at(idx_y).at(idx_x)->is_solid();
-
-    } else {
-      return false;
-    }
+    //check if position is in bounds and solid
+    return this->in_bounds(x,y) &&
+           this->get_tile(x,y).is_solid();
   }
 
   /**
@@ -98,17 +112,9 @@ namespace tilemap {
    * @return   whether the tile at this position is liquid
    */
   bool layer_t::is_liquid(int x, int y) const {
-    int idx_x = x / dim;
-    int idx_y = y / dim;
-
-    //check bounds and get the type of the tile
-    if ((idx_y < (int)this->contents.size()) &&
-        (idx_x < (int)this->contents.at(idx_y).size())) {
-      return this->contents.at(idx_y).at(idx_x)->is_liquid();
-
-    } else {
-      return false;
-    }
+    //check if position is in bounds and solid
+    return this->in_bounds(x,y) &&
+           this->get_tile(x,y).is_liquid();
   }
 
   /**
@@ -185,17 +191,22 @@ namespace tilemap {
    * @return       whether the bounding box collides
    */
   bool layer_t::is_collided(const SDL_Rect& other) const {
-    bool collided = false;
 
-    //check each tile
-    this->for_each_const([&collided,other](tile_t& tile){
-      //look for the first solid collided tile
-      if (!collided && tile.is_collided(other)) {
-        collided = tile.is_solid();
+    //get the tiles that might intersect
+    for (int i=(other.x - dim); i<(other.w + other.x + (2 * dim)); i+=(dim / 2)) {
+      for (int j=(other.y - dim); j<(other.h + other.y + (2 * dim)); j+=(dim / 2)) {
+        if (this->in_bounds(i,j)) {
+          //get the tile
+          const tile_t& curr = this->get_tile(i,j);
+
+          //check for a solid collision
+          if (curr.is_collided(other) && curr.is_solid()) {
+            return true;
+          }
+        }
       }
-    });
-
-    return collided;
+    }
+    return false;
   }
 
   /**
@@ -205,17 +216,21 @@ namespace tilemap {
    * @return   whether this position collides with a solid tile
    */
   bool layer_t::is_collided(int x, int y) const {
-    bool collided = false;
+    //generate positions that might intersect
+    for (int i=(x - dim); i<(x + dim); i+=(dim / 2)) {
+      for (int j=(y - dim); j<(y + dim); j+=(dim / 2)) {
+        //check if the current tile is collided and solid
+        if (this->in_bounds(i,j)) {
 
-    //check each tile
-    this->for_each_const([&collided,x,y](tile_t& tile){
-      //look for the first solid collided tile
-      if (!collided && tile.is_collided(x,y)) {
-        collided = tile.is_solid();
+          //get the tile
+          const tile_t& curr = this->get_tile(i,j);
+          if (curr.is_collided(x,y) && curr.is_solid()) {
+            return true;
+          }
+        }
       }
-    });
-
-    return collided;
+    }
+    return false;
   }
 
   /**

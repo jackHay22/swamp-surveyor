@@ -34,7 +34,7 @@ namespace actions {
    *  @param y  the position where spray should emit from y
    *  @param dir the direction (either 1 or -1)
    */
-  void foam_spray_t::update(const tilemap::tilemap_t& map,
+  void foam_spray_t::update(const tilemap::abstract_tilemap_t& map,
                             environment::environment_t& env,
                             int x, int y, int dir) {
     //if inactive and invisible, no update

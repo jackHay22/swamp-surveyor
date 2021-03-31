@@ -13,7 +13,7 @@
 #include "state_manager.h"
 #include <memory>
 #include <vector>
-#include "../tilemap/tilemap.h"
+#include "../tilemap/abstract_tilemap.h"
 #include "../tilemap/transparent_block.h"
 #include "../entity/entity.h"
 #include "../entity/player.h"
@@ -33,7 +33,7 @@ namespace state {
   struct tilemap_state_t : public state_t {
   private:
     //the game tilemap
-    std::shared_ptr<tilemap::tilemap_t> tilemap;
+    std::shared_ptr<tilemap::abstract_tilemap_t> tilemap;
 
     //the loaded entities
     std::vector<std::shared_ptr<entity::entity_t>> entities;
@@ -91,7 +91,7 @@ namespace state {
      * @param camera     the level camera
      * @param cfg_name   the local path (in resources dir) to the file that configures this state
      */
-    tilemap_state_t(std::shared_ptr<tilemap::tilemap_t> tilemap,
+    tilemap_state_t(std::shared_ptr<tilemap::abstract_tilemap_t> tilemap,
                     std::vector<std::shared_ptr<entity::entity_t>>& entities,
                     std::shared_ptr<entity::insects_t> insects,
                     std::shared_ptr<environment::environment_t> env,

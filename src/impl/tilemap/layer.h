@@ -49,6 +49,18 @@ namespace tilemap {
      */
     void for_each_const(std::function<void(tile_t&)> fn) const;
 
+    /**
+     * Check that a position is in bounds
+     * @return   whether the position is in bounds
+     */
+    bool in_bounds(int x, int y) const;
+
+    /**
+     * Get a tile (PRECOND: in_bounds called)
+     * @return   the tile at that index
+     */
+    const tile_t& get_tile(int x, int y) const;
+
   public:
     /**
      * Constructor

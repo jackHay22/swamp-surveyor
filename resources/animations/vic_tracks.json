@@ -1,7 +1,7 @@
 {
   "entity_type" : "surveyor",
-  "x" : 810,
-  "y" : 78,
+  "x" : 785,
+  "y" : 80,
   "width" : 10,
   "height" : 24,
   "anim_paths" : [

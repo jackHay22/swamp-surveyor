@@ -130,7 +130,7 @@ namespace items {
    * Update the item
    * @param map the tilemap
    */
-  void item_t::update(const tilemap::tilemap_t& map) {
+  void item_t::update(const tilemap::abstract_tilemap_t& map) {
     //check if the item is resting or being picked up
     if (!picked_up) {
       //check if need to update bounce

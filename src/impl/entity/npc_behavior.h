@@ -9,7 +9,7 @@
 
 #include "entity.h"
 #include <vector>
-#include "../tilemap/tilemap.h"
+#include "../tilemap/abstract_tilemap.h"
 
 namespace impl {
 namespace entity {
@@ -25,7 +25,7 @@ namespace npc_behavior {
    * @param facing_left set by the call (updates entity facing direction)
    */
   void surveyor(const std::vector<entity_pos_t>& pos,
-                const tilemap::tilemap_t& map,
+                const tilemap::abstract_tilemap_t& map,
                 int x, int y,
                 entity_state& state,
                 bool& facing_left);

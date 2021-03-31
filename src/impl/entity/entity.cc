@@ -110,7 +110,7 @@ namespace entity {
    * @param map the tilemap
    * @param env environmental elements that can be interacted
    */
-  void entity_t::update(const tilemap::tilemap_t& /*map*/,
+  void entity_t::update(const tilemap::abstract_tilemap_t& /*map*/,
                         environment::environment_t& /*env*/) {
 
     if (state != ACTION) {
@@ -127,7 +127,7 @@ namespace entity {
   /**
    * Update this entity at the tick
    */
-  void entity_t::update_x(const tilemap::tilemap_t& map) {
+  void entity_t::update_x(const tilemap::abstract_tilemap_t& map) {
     //store the previous position
     this->last_x = this->x;
 
@@ -186,7 +186,7 @@ namespace entity {
    * @param map used to determine if the entity can climb
    * @param env used to determine if the entity can climb
    */
-  void entity_t::step_back_x(const tilemap::tilemap_t& map,
+  void entity_t::step_back_x(const tilemap::abstract_tilemap_t& map,
                              const environment::environment_t& env) {
     //get the current player position
     SDL_Rect current_bounds = this->get_bounds();
@@ -273,7 +273,7 @@ namespace entity {
    * @param map        the tilemap
    */
   void entity_t::update_behavior(const std::vector<entity_pos_t>& entity_pos,
-                                 const tilemap::tilemap_t& map) {
+                                 const tilemap::abstract_tilemap_t& map) {
     int cx,cy;
     this->get_center(cx,cy);
 

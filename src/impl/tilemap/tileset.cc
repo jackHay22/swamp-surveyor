@@ -27,6 +27,20 @@ namespace tilemap {
   }
 
   /**
+   * Construct from a preloaded texture (assumes ownership)
+   * @param texture the preloaded texture
+   * @param w the width of the texture
+   * @param h the height of the texture
+   * @param tile_dim the dimension of the tiles
+   */
+  tileset_t::tileset_t(SDL_Texture* texture,
+                       int w, int h, int tile_dim)
+    : tile_dim(tile_dim),
+      tiles_wide(w / tile_dim),
+      tiles_high(h / tile_dim),
+      texture(texture) {}
+
+  /**
    * Destructor frees texture allocation
    */
   tileset_t::~tileset_t() {

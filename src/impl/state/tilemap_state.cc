@@ -27,7 +27,7 @@ namespace state {
    * @param camera     the level camera
    * @param cfg_name   the local path (in resources dir) to the file that configures this state
    */
-  tilemap_state_t::tilemap_state_t(std::shared_ptr<tilemap::tilemap_t> tilemap,
+  tilemap_state_t::tilemap_state_t(std::shared_ptr<tilemap::abstract_tilemap_t> tilemap,
                                    std::vector<std::shared_ptr<entity::entity_t>>& entities,
                                    std::shared_ptr<entity::insects_t> insects,
                                    std::shared_ptr<environment::environment_t> env,
@@ -218,7 +218,8 @@ namespace state {
           e_pos_y,
           ((int)i == player_idx),
           false,
-          entities.at(i)->get_npc_type()
+          entities.at(i)->get_npc_type(),
+          entities.at(i)->get_entity_state()
         )
       );
     }

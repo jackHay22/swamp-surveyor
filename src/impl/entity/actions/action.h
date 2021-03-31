@@ -12,7 +12,7 @@
 #include <memory>
 #include <vector>
 #include "../../environment/environment.h"
-#include "../../tilemap/tilemap.h"
+#include "../../tilemap/abstract_tilemap.h"
 
 namespace impl {
 namespace entity {
@@ -48,7 +48,7 @@ namespace actions {
      * @param y action position y
      * @param dir the direction
      */
-    virtual void update(const tilemap::tilemap_t& map,
+    virtual void update(const tilemap::abstract_tilemap_t& map,
                         environment::environment_t& env,
                         int x, int y, int dir) {}
 

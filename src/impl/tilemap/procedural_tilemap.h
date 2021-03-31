@@ -4,13 +4,16 @@
  * Untitled Swamp game
  */
 
-#ifndef _IO_JACKHAY_SWAMP_TILEMAP_H
-#define _IO_JACKHAY_SWAMP_TILEMAP_H
+#ifndef _IO_JACKHAY_SWAMP_PROCEDURAL_TILEMAP_H
+#define _IO_JACKHAY_SWAMP_PROCEDURAL_TILEMAP_H
 
 #include <vector>
 #include <string>
-#include "layer.h"
+#include <memory>
+#include "tileset.h"
 #include "abstract_tilemap.h"
+#include "tile.h"
+#include "tileset.h"
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
 
@@ -18,48 +21,52 @@ namespace impl {
 namespace tilemap {
 
   /**
-   * Defines a loaded tilemap
+   * Defines a procedurally generated tilemap
+   * (Uses the same interface as the regular tilemap)
    */
-  struct tilemap_t : public abstract_tilemap_t {
+  struct procedural_tilemap_t : public abstract_tilemap_t {
   private:
-    //the layers behind the entity layer
-    std::vector<std::unique_ptr<tilemap::layer_t>> bg_layers;
+    //dimension of tiles
+    int dim;
 
-    //the layer the entity interacts with
-    std::unique_ptr<tilemap::layer_t> entity_layer;
-
-    //the layers in front of the entity
-    std::vector<std::unique_ptr<tilemap::layer_t>> fg_layers;
-
-    //the indices of tiles that are solid ground
-    std::vector<int> entity_layer_solid;
-    //the indices of tiles that are water
-    std::vector<int> entity_layer_water;
-
-    //the dimensions of the map in pixels for camera
+    //dimensions of map in pixels
     int width_p;
     int height_p;
+
+    //the generated tileset
+    std::shared_ptr<tileset_t> tileset;
+
+    //ground tiles
+    std::vector<std::vector<tile_t>> tiles;
+
+    /**
+     * Called by the constructor to generate procedural terrain
+     * @param renderer the renderer for generating textures
+     */
+    void generate_terrain(SDL_Renderer& renderer);
+
+    /**
+     * Check that a position is in bounds
+     * @return   whether the position is in bounds
+     */
+    bool in_bounds(int x, int y) const;
+
+    /**
+     * Get a tile (PRECOND: in_bounds called)
+     * @return   the tile at that index
+     */
+    const tile_t& get_tile(int x, int y) const;
 
   public:
     /**
      * Constructor
-     * @param rsrc_paths         the path to each layer
-     * @param tileset            the tileset to use with this map
-     * @param entity_layer_idx   the index of the entity layer
-     * @param dim                the dimension of a tile
-     * @param entity_layer_solid the indices of solid tiles
-     * @param entity_layer_water the indices of liquid tiles
-     * @param bg_stationary      whether the background layer is stationary
+     * @param dim      tile dimension
+     * @param width_p  map width in pixels
+     * @param height_p map height in pixels
      */
-    tilemap_t(const std::vector<std::string>& rsrc_paths,
-              std::shared_ptr<tilemap::tileset_t> tileset,
-              int entity_layer_idx,
-              int dim,
-              const std::vector<int>& entity_layer_solid,
-              const std::vector<int>& entity_layer_water,
-              bool bg_stationary);
-    tilemap_t(const tilemap_t&) = delete;
-    tilemap_t& operator=(const tilemap_t&) = delete;
+    procedural_tilemap_t(int dim, int width_p, int height_p, SDL_Renderer& renderer);
+    procedural_tilemap_t(const procedural_tilemap_t&) = delete;
+    procedural_tilemap_t& operator=(const procedural_tilemap_t&) = delete;
 
     /**
      * Check if the tile at a position is solid
@@ -126,7 +133,8 @@ namespace tilemap {
      * @param debug    whether debug mode enabled
      */
     void render_fg(SDL_Renderer& renderer, const SDL_Rect& camera, bool debug) const override;
+
   };
 }}
 
-#endif /*_IO_JACKHAY_SWAMP_TILEMAP_H*/
+#endif /*_IO_JACKHAY_SWAMP_PROCEDURAL_TILEMAP_H*/

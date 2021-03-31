@@ -14,7 +14,7 @@
 #include <string>
 #include "entity.h"
 #include "actions/action.h"
-#include "../tilemap/tilemap.h"
+#include "../tilemap/abstract_tilemap.h"
 #include "../environment/renderable.h"
 #include "../items/item.h"
 #include "anim_set.h"
@@ -98,7 +98,7 @@ namespace entity {
       * @param map the tilemap
       * @param env environmental elements that can be interacted
       */
-     void update(const tilemap::tilemap_t& map,
+     void update(const tilemap::abstract_tilemap_t& map,
                  environment::environment_t& env);
 
      /**
@@ -107,7 +107,7 @@ namespace entity {
       * @param map        the tilemap
       */
      void update_behavior(const std::vector<entity_pos_t>&,
-                          const tilemap::tilemap_t&) override {}
+                          const tilemap::abstract_tilemap_t&) override {}
 
     /**
      * Render the entity

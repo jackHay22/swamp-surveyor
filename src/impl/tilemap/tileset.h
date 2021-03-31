@@ -48,6 +48,17 @@ namespace tilemap {
     tileset_t(const std::string& rsrc_path,
               int tile_dim,
               SDL_Renderer& renderer);
+
+    /**
+     * Construct from a preloaded texture (assumes ownership)
+     * @param texture the preloaded texture
+     * @param w the width of the texture
+     * @param h the height of the texture
+     * @param tile_dim the dimension of the tiles
+     */
+    tileset_t(SDL_Texture* texture,
+              int w, int h, int tile_dim);
+
     tileset_t(const tileset_t&) = delete;
     tileset_t& operator=(const tileset_t&) = delete;
 

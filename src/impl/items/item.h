@@ -10,7 +10,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
 #include <string>
-#include "../tilemap/tilemap.h"
+#include "../tilemap/abstract_tilemap.h"
 
 namespace impl {
 namespace items {
@@ -113,7 +113,7 @@ namespace items {
      * Update the item
      * @param map the tilemap
      */
-    virtual void update(const tilemap::tilemap_t& map);
+    virtual void update(const tilemap::abstract_tilemap_t& map);
 
     /**
      * Render the item

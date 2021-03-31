@@ -19,7 +19,7 @@ namespace entity {
    * Empty behavior handler for player
    */
   void behavior_noop(const std::vector<entity_pos_t>&,
-                     const tilemap::tilemap_t&,int,int,
+                     const tilemap::abstract_tilemap_t&,int,int,
                      entity_state&, bool&) {  }
 
   /**
@@ -143,7 +143,7 @@ namespace entity {
    * @param map the tilemap
    * @param env environmental elements that can be interacted
    */
-  void player_t::update(const tilemap::tilemap_t& map,
+  void player_t::update(const tilemap::abstract_tilemap_t& map,
                         environment::environment_t& env) {
     //call entity update
     entity_t::update(map,env);

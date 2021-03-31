@@ -11,7 +11,8 @@
     [3,730,573,729,728,726,727,731,724,660,663,725,722,721],
   "entity_layer_water" : [],
   "entity_cfg_paths" : [
-    "animations/player.json"
+    "animations/player.json",
+    "animations/vic_tracks.json"
   ],
   "player_idx" : 0,
   "bg_stationary" : false,
