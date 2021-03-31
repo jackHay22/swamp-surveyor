@@ -15,6 +15,7 @@
 #include "tile.h"
 #include "tileset.h"
 #include "../environment/texture_constructor.h"
+#include "static_hill_bg.h"
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
 
@@ -51,6 +52,15 @@ namespace tilemap {
 
     //ground tiles
     std::vector<std::vector<tile_t>> tiles;
+
+    //hills
+    std::vector<std::unique_ptr<static_hill_bg_t>> hills;
+
+    /**
+     * Called by the constructor _after_ generating ground layer
+     * @param renderer the renderer
+     */
+    void generate_bg(SDL_Renderer& renderer);
 
     /**
      * Called by the constructor to generate procedural terrain

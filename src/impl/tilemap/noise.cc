@@ -60,14 +60,13 @@ namespace noise {
    * Generate fractral brownian motion noise
    * UPenn CIS460 noise lecture
    */
-  float fractal_brownian_motion(float seed, float x) {
+  float fractal_brownian_motion(float seed, float x, float p) {
     float total = 0.f;
-    float persistence = 0.75f;
     int octaves = 8;
 
     for(int i = 1; i <= octaves; i++) {
       float freq = pow(2.f, i);
-      float amp = pow(persistence, i);
+      float amp = pow(p, i);
 
       total += interpolate_noise(seed,x * freq) * amp;
     }

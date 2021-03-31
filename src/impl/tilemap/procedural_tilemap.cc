@@ -36,6 +36,9 @@ namespace tilemap {
   #define TERRAIN_MIN_IDX 10
   #define MAX_TILESET_WIDTH 64
 
+  #define HILL_NOISE_AMP 65
+  #define HILL_NOISE_AMP2 55
+
   /**
    * Clamp a value
    * @param min  the min value (incl)
@@ -63,9 +66,38 @@ namespace tilemap {
     : dim(dim),
       width_p(width_p),
       height_p(height_p),
-      tiles() {
+      tiles(),
+      hills() {
     //generate terrain procedurally
     this->generate_terrain(renderer);
+    //generate background procedurally
+    this->generate_bg(renderer);
+  }
+
+  /**
+   * Called by the constructor _after_ generating ground layer
+   * @param renderer the renderer
+   */
+  void procedural_tilemap_t::generate_bg(SDL_Renderer& renderer) {
+    //add far hills
+    hills.push_back(std::make_unique<static_hill_bg_t>(
+      renderer,
+      MED_LIGHT_GREEN_R,MED_LIGHT_GREEN_G,MED_LIGHT_GREEN_B,
+      FBM_PERSISTENCE_0_66,
+      width_p,200,
+      HILL_NOISE_AMP,
+      100
+    ));
+
+    //add near hills
+    hills.push_back(std::make_unique<static_hill_bg_t>(
+      renderer,
+      MED_DARK_GREEN_R,MED_DARK_GREEN_G,MED_DARK_GREEN_B,
+      FBM_PERSISTENCE_0_66,
+      width_p,200,
+      HILL_NOISE_AMP2,
+      150
+    ));
   }
 
   /**
@@ -109,7 +141,9 @@ namespace tilemap {
     //walk around and generate a surface level
     for (size_t i=0; i<tiles_across; i++) {
       //create an fbm value
-      float noise_val = noise::fractal_brownian_motion(seed,(float)i/tiles_across);
+      float noise_val = noise::fractal_brownian_motion(seed,
+                                                       (float)i/tiles_across,
+                                                       FBM_PERSISTENCE_0_75);
 
       //get the height at this position
       size_t height = clamp(TERRAIN_MIN_IDX,
@@ -411,8 +445,10 @@ namespace tilemap {
                           LIGHT_GREEN_B,255);
     SDL_RenderFillRect(&renderer,&bounds);
 
-    //draw the hills
-
+    //render background hills
+    for (size_t i=0; i<hills.size(); i++) {
+      hills.at(i)->render(renderer,camera);
+    }
 
     //draw tiles
     for (size_t r=0; r<tiles.size(); r++) {

@@ -37,6 +37,7 @@ namespace environment {
   single_seq_anim_t::~single_seq_anim_t() {
     if (texture != NULL) {
       SDL_DestroyTexture(texture);
+      texture = NULL;
     }
   }
 
@@ -67,23 +68,25 @@ namespace environment {
     //the x y position to render at
     SDL_Rect image_bounds = {x,y,frame_width,texture_height};
 
-    if (flipped) {
-      image_bounds = {x - frame_width, y, frame_width, texture_height};
+    if (texture != NULL) {
+      if (flipped) {
+        image_bounds = {x - frame_width, y, frame_width, texture_height};
 
-      //render the texture and flip
-      SDL_RenderCopyEx(&renderer,
+        //render the texture and flip
+        SDL_RenderCopyEx(&renderer,
+                         texture,
+                         &sample_bounds,
+                         &image_bounds,
+                         0, NULL,
+                         SDL_FLIP_HORIZONTAL);
+
+      } else {
+        //render the texture
+        SDL_RenderCopy(&renderer,
                        texture,
                        &sample_bounds,
-                       &image_bounds,
-                       0, NULL,
-                       SDL_FLIP_HORIZONTAL);
-
-    } else {
-      //render the texture
-      SDL_RenderCopy(&renderer,
-                     texture,
-                     &sample_bounds,
-                     &image_bounds);
+                       &image_bounds);
+      }
     }
   }
 }}

@@ -102,6 +102,7 @@ namespace entity {
   anim_set_t::~anim_set_t() {
     if (texture != NULL) {
       SDL_DestroyTexture(texture);
+      texture = NULL;
     }
   }
 
@@ -161,20 +162,22 @@ namespace entity {
                              this->frame_width,
                              this->frame_height};
 
-    if (facing_left) {
-      //flip and render the current frame
-      SDL_RenderCopyEx(&renderer,
+    if (texture != NULL) {
+      if (facing_left) {
+        //flip and render the current frame
+        SDL_RenderCopyEx(&renderer,
+                         this->texture,
+                         &sample_bounds,
+                         &image_bounds,
+                         0, NULL,
+                         SDL_FLIP_HORIZONTAL);
+      } else {
+        //render the current animation frame
+        SDL_RenderCopy(&renderer,
                        this->texture,
                        &sample_bounds,
-                       &image_bounds,
-                       0, NULL,
-                       SDL_FLIP_HORIZONTAL);
-    } else {
-      //render the current animation frame
-      SDL_RenderCopy(&renderer,
-                     this->texture,
-                     &sample_bounds,
-                     &image_bounds);
+                       &image_bounds);
+      }
     }
   }
 }}

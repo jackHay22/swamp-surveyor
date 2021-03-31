@@ -49,6 +49,7 @@ namespace items {
   item_t::~item_t() {
     if (texture != NULL) {
       SDL_DestroyTexture(texture);
+      texture = NULL;
     }
   }
 
@@ -208,12 +209,13 @@ namespace items {
       SDL_Rect image_bounds = {display_x - (texture_w / 2),
                                display_y - (texture_h / 2),
                                texture_w,texture_h};
-
-      //render the texture
-      SDL_RenderCopy(&renderer,
-                     texture,
-                     &sample_bounds,
-                     &image_bounds);
+      if (texture != NULL) {
+        //render the texture
+        SDL_RenderCopy(&renderer,
+                       texture,
+                       &sample_bounds,
+                       &image_bounds);
+      }
     }
   }
 }}

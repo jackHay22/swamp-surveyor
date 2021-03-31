@@ -44,6 +44,7 @@ namespace ui {
     //free the texture
     if (texture != NULL) {
       SDL_DestroyTexture(texture);
+      texture = NULL;
     }
   }
 
@@ -175,10 +176,12 @@ namespace ui {
     SDL_Rect sample_bounds = {0,0,texture_w,texture_h};
     SDL_Rect text_bounds = {x_pos,y_pos,texture_w,texture_h};
 
-    //render the texture
-    SDL_RenderCopy(&renderer,
-                   texture,
-                   &sample_bounds,
-                   &text_bounds);
+    if (texture != NULL) {
+      //render the texture
+      SDL_RenderCopy(&renderer,
+                     texture,
+                     &sample_bounds,
+                     &text_bounds);
+    }
   }
 }}
