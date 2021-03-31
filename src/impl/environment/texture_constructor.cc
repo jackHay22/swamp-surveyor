@@ -157,7 +157,13 @@ namespace environment {
    * Erase the pixel at a given position (if exists)
    */
   void texture_constructor_t::erase(int x, int y, int frame) {
-    //TODO
+    //get the frame
+    frame_t& f = (frame < 0) ? get_frame(0) : get_frame(frame);
+    std::map<pos_t,px_t>::iterator it = f.find(std::make_pair(x,y));
+
+    if (it != f.end()) {
+      f.erase(it);
+    }
   }
 
   /**

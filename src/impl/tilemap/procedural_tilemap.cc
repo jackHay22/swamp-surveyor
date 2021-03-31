@@ -113,8 +113,8 @@ namespace tilemap {
 
       //get the height at this position
       size_t height = clamp(TERRAIN_MIN_IDX,
-                            ground - (int) (noise_val * ground),
-                            tiles_across);
+                            ground - (int) (noise_val * 10),
+                            tiles_down);
 
       //at the edge: add a wall
       if ((i == 0) || (i == (tiles_across - 1))) {
@@ -128,7 +128,7 @@ namespace tilemap {
     }
 
     //erode the corners of the surface tiles
-    erode_grnd_corners(tileset_constructor);
+    //erode_grnd_corners(tileset_constructor);
 
     //tileset texture dimensions
     int tsw,tsh;
@@ -225,7 +225,21 @@ namespace tilemap {
   void procedural_tilemap_t::mk_ground_tile(environment::texture_constructor_t& constructor,
                                             int type,
                                             grnd_tile_type slp) {
-  //  MAX_TILESET_WIDTH
+
+    //offset into the map
+    int offset_x = type % MAX_TILESET_WIDTH;
+    int offset_y = type / MAX_TILESET_WIDTH;
+
+    //set a rectangle
+    constructor.set_rect(offset_x, offset_y, dim, dim);
+
+    if (slp == SLOPE_L) {
+
+    } else if (slp == SLOPE_R) {
+
+    } else if (slp == SLOPE_BOTH) {
+
+    }
   }
 
   /**

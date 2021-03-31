@@ -62,7 +62,7 @@ namespace noise {
    */
   float fractal_brownian_motion(float seed, float x) {
     float total = 0.f;
-    float persistence = 0.5f;
+    float persistence = 0.75f;
     int octaves = 8;
 
     for(int i = 1; i <= octaves; i++) {
