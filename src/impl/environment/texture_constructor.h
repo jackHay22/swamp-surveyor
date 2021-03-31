@@ -10,11 +10,27 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
 #include <tuple>
+#include <map>
 #include <vector>
+#include <memory>
 #include <limits.h>
+#include <functional>
 
 namespace impl {
 namespace environment {
+
+  //position in map type
+  typedef std::pair<int,int> pos_t;
+
+  //pixel information type
+  typedef std::tuple<pos_t,int,std::tuple<Uint8,Uint8,Uint8>> px_t;
+
+  //an animation frame
+  typedef std::map<pos_t,px_t> frame_t;
+
+  #define PINFO_POS 0
+  #define PINFO_FRAME 1
+  #define PINFO_RGB 2
 
   /**
    * Create an SDL texture from a map of rgb pixels
@@ -28,17 +44,35 @@ namespace environment {
     int min_y;
     //min x value seen
     int min_x;
-    //the number of times we mirror the existing texture when rendering
-    //(used for animation)
-    int frames;
 
     //default colors
     int r;
     int g;
     int b;
     //the rgb values of pixels in this texture
-    //Format: (x,y,frame,(r,g,b))
-    std::vector<std::tuple<int,int,int,std::tuple<Uint8,Uint8,Uint8>>> pixels;
+    //Format: (x,y) -> (x,y,frame,(r,g,b))
+    std::vector<std::unique_ptr<frame_t>> frame_sets;
+
+    /**
+     * Execute some function on each pixel
+     * If the function returns false, we exit the loop
+     * @param fn the function
+     */
+    void for_each(std::function<bool(px_t&)> fn);
+
+    /**
+     * Execute some function on each pixel
+     * If the function returns false, we exit the loop
+     * @param fn the function
+     */
+    void for_each(std::function<bool(const px_t&)> fn) const;
+
+    /**
+     * Get the frame for a given index (create if not yet set)
+     * @param  frame frame index
+     * @return       the frame
+     */
+    frame_t& get_frame(size_t frame);
 
   public:
     /**
@@ -58,7 +92,7 @@ namespace environment {
      * Get the current width of the texture
      * @return the width of the texture so far
      */
-    int get_width() const { return (w - min_x) / frames; }
+    int get_width() const { return (w - min_x) / get_frames(); }
 
     /**
      * Get the height of the texture
@@ -70,7 +104,7 @@ namespace environment {
      * Get the number of frames in this texture (set when adding pixels)
      * @return the number of frames (>= 1)
      */
-    int get_frames() const { return frames; }
+    int get_frames() const { return std::max(1,(int)frame_sets.size()); }
 
     /**
      * Check if a given position has a texture already
@@ -101,6 +135,11 @@ namespace environment {
      * Set a rectangle, takes position, dimension and frame
      */
     void set_rect(int x, int y, int w, int h, int frame=-1);
+
+    /**
+     * Erase the pixel at a given position (if exists)
+     */
+    void erase(int x, int y, int frame=-1);
 
     /**
      * Render a line between two points

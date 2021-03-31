@@ -41,6 +41,12 @@ namespace tilemap {
     tile_t& operator=(const tile_t&) = delete;
 
     /**
+     * Get the height of this tile
+     * @return height
+     */
+    int get_y_depth() const { return y * dim; }
+
+    /**
      * Get the type of this tile
      * @return the type of this tile
      */

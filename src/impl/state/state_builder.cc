@@ -30,7 +30,7 @@ namespace state {
 
   //procedural map dimensions in tiles
   #define PROC_WIDTH_T 300
-  #define PROC_HEIGHT_T 30
+  #define PROC_HEIGHT_T 60
 
   typedef nlohmann::json json;
 

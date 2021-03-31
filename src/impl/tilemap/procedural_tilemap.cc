@@ -9,7 +9,8 @@
 #include <algorithm>
 #include <stdlib.h>
 #include <cmath>
-#include "../environment/texture_constructor.h"
+#include "noise.h"
+#include <iostream>
 
 namespace impl {
 namespace tilemap {
@@ -30,6 +31,27 @@ namespace tilemap {
   #define DARK_R 8
   #define DARK_G 17
   #define DARK_B 0
+
+  //the minimum terrain index in the tilemap (headroom)
+  #define TERRAIN_MIN_IDX 10
+  #define MAX_TILESET_WIDTH 64
+
+  /**
+   * Clamp a value
+   * @param min  the min value (incl)
+   * @param  val the value
+   * @param  max the max
+   * @return     clamped [min,max)
+   */
+  size_t clamp(size_t min, int val, size_t max) {
+    if (val < (int)min) {
+      return min;
+    }
+    if (val >= (int)max) {
+      return max - 1;
+    }
+    return val;
+  }
 
   /**
    * Constructor
@@ -81,22 +103,32 @@ namespace tilemap {
     //make tile 0
     tileset_constructor.set_rect(0,0,dim,dim);
 
+    //create a random seed
+    float seed = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+
     //walk around and generate a surface level
     for (size_t i=0; i<tiles_across; i++) {
-      //add a wall
+      //create an fbm value
+      float noise_val = noise::fractal_brownian_motion(seed,(float)i/tiles_across);
+
+      //get the height at this position
+      size_t height = clamp(TERRAIN_MIN_IDX,
+                            ground - (int) (noise_val * ground),
+                            tiles_across);
+
+      //at the edge: add a wall
       if ((i == 0) || (i == (tiles_across - 1))) {
-        tiles.at(ground-1).at(i).set_type(0);
-        tiles.at(ground-1).at(i).set_solid(true);
-        tiles.at(ground-2).at(i).set_type(0);
-        tiles.at(ground-2).at(i).set_solid(true);
+        tiles.at(height-1).at(i).set_type(0);
+        tiles.at(height-1).at(i).set_solid(true);
+        tiles.at(height-2).at(i).set_type(0);
+        tiles.at(height-2).at(i).set_solid(true);
       }
-
-      //generate a new tile
-      tiles.at(ground).at(i).set_type(0);
-
-      //set solid
-      tiles.at(ground).at(i).set_solid(true);
+      tiles.at(height).at(i).set_type(0);
+      tiles.at(height).at(i).set_solid(true);
     }
+
+    //erode the corners of the surface tiles
+    erode_grnd_corners(tileset_constructor);
 
     //tileset texture dimensions
     int tsw,tsh;
@@ -105,6 +137,69 @@ namespace tilemap {
       tileset_constructor.generate(renderer,tsw,tsh),
       tsw,tsh,dim
     );
+  }
+
+  /**
+   * Erode the corners of ground tiles based on slope
+   * @param constructor texture constructor
+   */
+  void procedural_tilemap_t::erode_grnd_corners(environment::texture_constructor_t& tileset_constructor) {
+    //get the height of the first tile
+    tile_t& prev_tile = get_grnd_tile(0);
+    int prev_y_depth = prev_tile.get_y_depth();
+    int curr_y_depth;
+    int last_type_assignment = 0;
+    grnd_tile_type prev_slope = FLAT;
+
+    //for each column
+    for (size_t i=1; i<(tiles.at(0).size() - 1); i++) {
+      //get the current ground tile
+      tile_t& curr_tile = get_grnd_tile(i);
+      curr_y_depth = curr_tile.get_y_depth();
+
+      //check if this tile should slope up
+      if (curr_y_depth < prev_y_depth) {
+        //create a new tile
+        last_type_assignment++;
+
+        prev_slope = SLOPE_L;
+        //make a new tile
+        mk_ground_tile(tileset_constructor,
+                       last_type_assignment,
+                       SLOPE_L);
+        //update the type
+        curr_tile.set_type(last_type_assignment);
+
+      } else if (curr_y_depth > prev_y_depth) {
+        //previous tile should slope down or both
+        if (prev_slope == SLOPE_L) {
+          //switch to slope in both directions
+          mk_ground_tile(tileset_constructor,
+                         prev_tile.get_type(),
+                         SLOPE_BOTH);
+
+          //no change to current tile
+          prev_slope = FLAT;
+
+        } else {
+          //create a new tile
+          last_type_assignment++;
+          //make a new tile
+          mk_ground_tile(tileset_constructor,
+                         last_type_assignment,
+                         SLOPE_L);
+          //update the type
+          prev_tile.set_type(last_type_assignment);
+
+          //no change to current tile
+          prev_slope = FLAT;
+        }
+
+      } else {
+        //no change to current tile
+        prev_slope = FLAT;
+      }
+    }
   }
 
   /**
@@ -122,11 +217,74 @@ namespace tilemap {
   }
 
   /**
+   * Make a new tile
+   * @param constructor texture constructor
+   * @param type        the type of the tile (tileset idx)
+   * @param slp         the slope of the tile
+   */
+  void procedural_tilemap_t::mk_ground_tile(environment::texture_constructor_t& constructor,
+                                            int type,
+                                            grnd_tile_type slp) {
+  //  MAX_TILESET_WIDTH
+  }
+
+  /**
    * Get a tile (PRECOND: in_bounds called)
    * @return   the tile at that position
    */
   const tile_t& procedural_tilemap_t::get_tile(int x, int y) const {
     return this->tiles.at(y / dim).at(x / dim);
+  }
+
+  /**
+   * Get the ground tile for a given column
+   * @param  x col
+   * @return   tile
+   */
+  tile_t& procedural_tilemap_t::get_grnd_tile(int x) {
+    //look through each row
+    for (size_t i=0; i<this->tiles.size(); i++) {
+      //check if the x coord is in the bounds of this row
+      if ((x >= 0) && (x < (int)tiles.at(i).size())) {
+        //return first solid in col
+        if (tiles.at(i).at(x).is_solid()) {
+          return tiles.at(i).at(x);
+        }
+      }
+    }
+    return tiles.back().at(x);
+  }
+
+  /**
+   * Get the ground tile for a given column
+   * @param  x col
+   * @return   tile
+   */
+  const tile_t& procedural_tilemap_t::get_grnd_tile(int x) const {
+    //look through each row
+    for (size_t i=0; i<this->tiles.size(); i++) {
+      //check if the x coord is in the bounds of this row
+      if ((x >= 0) && (x < (int)tiles.at(i).size())) {
+        //return first solid in col
+        if (tiles.at(i).at(x).is_solid()) {
+          return tiles.at(i).at(x);
+        }
+      }
+    }
+    return tiles.back().at(x);
+  }
+
+  /**
+   * Get the ground height at some x coordinate
+   * @param  x the x coordinate
+   * @return   the ground height (y)
+   */
+  int procedural_tilemap_t::ground_height(int x) const {
+    //check bounds
+    if ((x >= 0) && (x <= (width_p / dim))) {
+      return get_grnd_tile(x).get_y_depth();
+    }
+    return 0;
   }
 
   /**

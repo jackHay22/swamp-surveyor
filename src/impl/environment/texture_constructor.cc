@@ -22,23 +22,73 @@ namespace environment {
     : w(0), h(0),
       min_y(INT_MAX),
       min_x(INT_MAX),
-      frames(1),
       r(0), g(0), b(0),
-      pixels() {}
+      frame_sets() {}
+
+  /**
+   * Execute some function on each pixel
+   * @param fn the function
+   */
+  void texture_constructor_t::for_each(std::function<bool(px_t&)> fn) {
+    for (size_t i=0; i<frame_sets.size(); i++) {
+      //execute fn on all pixels in set
+      for (std::map<pos_t,px_t>::iterator it = frame_sets.at(i)->begin(); it != frame_sets.at(i)->end(); ++it) {
+        if (!fn(it->second)) {
+          return;
+        }
+      }
+    }
+  }
+
+  /**
+   * Execute some function on each pixel
+   * If the function returns false, we exit the loop
+   * @param fn the function
+   */
+  void texture_constructor_t::for_each(std::function<bool(const px_t&)> fn) const {
+    for (size_t i=0; i<frame_sets.size(); i++) {
+      //execute fn on all pixels in set
+      for (std::map<pos_t,px_t>::const_iterator it = frame_sets.at(i)->begin(); it != frame_sets.at(i)->end(); ++it) {
+        if (!fn(it->second)) {
+          return;
+        }
+      }
+    }
+  }
+
+  /**
+   * Get the frame for a given index (create if not yet set)
+   * @param  frame frame index
+   * @return       the frame
+   */
+  frame_t& texture_constructor_t::get_frame(size_t frame) {
+    while (frame_sets.size() <= frame) {
+      //create a new frame
+      frame_sets.push_back(std::make_unique<frame_t>());
+    }
+
+    //get a deref
+    return *frame_sets.at(frame);
+  }
 
   /**
    * Clamp the bounds of the texture based on pixels added so far
    */
   void texture_constructor_t::clamp(int buffer) {
 
+    //the adjustment to make
     int x_adjust = min_x - buffer;
     int y_adjust = min_y - buffer;
 
-    //reposition all of the pixels added so far
-    for (size_t i=0; i<pixels.size(); i++) {
-      std::get<0>(pixels.at(i)) -= x_adjust;
-      std::get<1>(pixels.at(i)) -= y_adjust;
-    }
+    //adjust the position of each pixel
+    for_each([x_adjust,y_adjust](px_t& px) {
+      std::get<PINFO_POS>(px).first -= x_adjust;
+      std::get<PINFO_POS>(px).second -= y_adjust;
+
+      //continue
+      return true;
+    });
+
     w -= x_adjust;
     h -= y_adjust;
     min_x -= x_adjust;
@@ -52,15 +102,21 @@ namespace environment {
    * @return   whether a pixel is set at this position already
    */
   bool texture_constructor_t::is_set(int x, int y) const {
-    for (size_t i=0; i<pixels.size(); i++) {
-      const std::tuple<int,int,int,std::tuple<Uint8,Uint8,Uint8>>& curr = pixels.at(i);
 
-      //check if the coordinates match
-      if ((std::get<0>(curr) == x) && (std::get<1>(curr) == y)) {
-        return true;
+    bool set = false;
+
+    //iterate over pixels
+    for_each([x,y,&set](const px_t& px) {
+      if ((std::get<PINFO_POS>(px).first == x) &&
+          (std::get<PINFO_POS>(px).second == y)) {
+        set = true;
+        return false;
       }
-    }
-    return false;
+      //keep looking
+      return true;
+    });
+
+    return set;
   }
 
   /**
@@ -95,6 +151,13 @@ namespace environment {
         this->set(i,j,frame);
       }
     }
+  }
+
+  /**
+   * Erase the pixel at a given position (if exists)
+   */
+  void texture_constructor_t::erase(int x, int y, int frame) {
+    //TODO
   }
 
   /**
@@ -178,13 +241,22 @@ namespace environment {
       min_x = x;
     }
 
-    //update the number of frames if not yet set
-    if (frame >= frames) {
-      frames = frame + 1;
-    }
+    std::pair<int,int> pos = std::make_pair(x,y);
 
-    //add the pixel information
-    pixels.push_back(std::make_tuple(x,y,frame,std::make_tuple(r,g,b)));
+    if (frame < 0) {
+      //insert into zero (the generate call handles replication)
+      get_frame(0).insert_or_assign(
+        pos,
+        std::make_tuple(pos,frame,std::make_tuple(r,g,b))
+      );
+
+    } else {
+      //insert the pixel info
+      get_frame(frame).insert_or_assign(
+        pos,
+        std::make_tuple(pos,frame,std::make_tuple(r,g,b))
+      );
+    }
   }
 
   /**
@@ -195,7 +267,7 @@ namespace environment {
    * @return the      texture
    */
   SDL_Texture* texture_constructor_t::generate(SDL_Renderer& renderer, int& w, int& h) const {
-    if (pixels.empty()) {
+    if (frame_sets.empty() || frame_sets.at(0)->empty()) {
       logger::log_err("cannot create texture from empty pixel set");
       exit(1);
     }
@@ -220,7 +292,7 @@ namespace environment {
 
     //create the surface (adjust height based on the min y, min x values, number of animation frames)
     surface = SDL_CreateRGBSurface(0,
-                                   (this->w - min_x) * frames,
+                                   (this->w - min_x) * get_frames(),
                                    (this->h - min_y),
                                    32,
                                    rmask,
@@ -236,24 +308,24 @@ namespace environment {
     //edit the pixel data
     SDL_LockSurface(surface);
 
-    for (size_t i=0; i<pixels.size(); i++) {
-      const std::tuple<int,int,int,std::tuple<int,int,int>>& curr = pixels.at(i);
+    //iterate over pixels
+    for_each([&surface,this](const px_t& px) {
 
       //generate the pixel rgba data based on the surface format (depends on endianess)
       Uint32 pfmt = SDL_MapRGBA(surface->format,
-                                std::get<0>(std::get<3>(curr)),
-                                std::get<1>(std::get<3>(curr)),
-                                std::get<2>(std::get<3>(curr)), ALPHA_CHAN);
+                                std::get<0>(std::get<PINFO_RGB>(px)),
+                                std::get<1>(std::get<PINFO_RGB>(px)),
+                                std::get<2>(std::get<PINFO_RGB>(px)), ALPHA_CHAN);
 
       //check if we add to all frames
-      if (std::get<2>(curr) == -1) {
+      if (std::get<PINFO_FRAME>(px) == -1) {
 
         //add to each frame
-        for (int f=0; f<frames; f++) {
+        for (size_t f=0; f<this->frame_sets.size(); f++) {
           //get the pixel position in the surface buffer and set
           Uint8 *surface_pixel = (Uint8*)surface->pixels;
-          surface_pixel += ((std::get<1>(curr) - min_y) * surface->pitch) +
-                           (((std::get<0>(curr) - min_x) + ((this->w - min_x) * f))
+          surface_pixel += ((std::get<PINFO_POS>(px).second - this->min_y) * surface->pitch) +
+                           (((std::get<PINFO_POS>(px).first - this->min_x) + ((this->w - this->min_x) * f))
                             * sizeof(Uint32));
           *((Uint32*)surface_pixel) = pfmt;
         }
@@ -261,12 +333,16 @@ namespace environment {
       } else { //set in a specific frame
         //get the pixel position in the surface buffer and set
         Uint8 *surface_pixel = (Uint8*)surface->pixels;
-        surface_pixel += ((std::get<1>(curr) - min_y) * surface->pitch) +
-                         (((std::get<0>(curr) - min_x) + ((this->w - min_x) * std::get<2>(curr)))
+        surface_pixel += ((std::get<PINFO_POS>(px).second - this->min_y) * surface->pitch) +
+                         (((std::get<PINFO_POS>(px).first - this->min_x) + ((this->w - this->min_x)
+                            * std::get<PINFO_FRAME>(px)))
                           * sizeof(Uint32));
         *((Uint32*)surface_pixel) = pfmt;
       }
-    }
+
+      //continue
+      return true;
+    });
 
     SDL_UnlockSurface(surface);
 
