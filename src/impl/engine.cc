@@ -132,6 +132,11 @@ namespace engine {
         }
       }
 
+      //avoid rendering after stopping
+      if (!manager->is_running()) {
+        break;
+      }
+
       //Clear screen
       SDL_SetRenderDrawColor(&renderer,0xFF,0xFF,0xFF,0xFF);
       SDL_RenderClear(&renderer);

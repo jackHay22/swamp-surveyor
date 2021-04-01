@@ -27,10 +27,11 @@ namespace tilemap {
                    int offset)
     : width(width),
       height(height),
+      offset(offset),
       texture(NULL) {
 
     //generate textures
-    this->generate(renderer,fbm_persist,amplitude,r,g,b,offset);
+    this->generate(renderer,fbm_persist,amplitude,r,g,b);
   }
 
   /**
@@ -39,7 +40,7 @@ namespace tilemap {
   static_hill_bg_t::~static_hill_bg_t() {
     if (this->texture != NULL) {
       SDL_DestroyTexture(this->texture);
-      texture=NULL;
+      this->texture=NULL;
     }
   }
 
@@ -49,8 +50,7 @@ namespace tilemap {
   void static_hill_bg_t::generate(SDL_Renderer& renderer,
                                  float fbm_persist,
                                  int amplitude,
-                                 int r, int g, int b,
-                                 int offset) {
+                                 int r, int g, int b) {
 
     //fbm random seed
     float fbm_seed = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
@@ -71,14 +71,14 @@ namespace tilemap {
         hill_height = height - 4;
       }
 
-      //render this slice
+      //draw this slice
       texture_constructor.set_line(
-        i,hill_height + offset,i,height + offset,1
+        i,hill_height,i,height,1
       );
     }
 
     //set the texture
-    texture = texture_constructor.generate(renderer,width,height);
+    this->texture = texture_constructor.generate(renderer,width,height);
   }
 
   /**
@@ -93,7 +93,7 @@ namespace tilemap {
       SDL_Rect sample_bounds = {camera.x, 0, camera.w, height};
 
       //the x y position to render at
-      SDL_Rect image_bounds = {0,0,camera.w,height};
+      SDL_Rect image_bounds = {0,offset,camera.w,height};
 
       SDL_RenderCopy(&renderer,
                      this->texture,

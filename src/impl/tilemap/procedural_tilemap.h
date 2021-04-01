@@ -14,8 +14,9 @@
 #include "abstract_tilemap.h"
 #include "tile.h"
 #include "tileset.h"
-#include "../environment/texture_constructor.h"
 #include "static_hill_bg.h"
+#include "tileset_constructor.h"
+#include "near_ground.h"
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
 
@@ -56,6 +57,9 @@ namespace tilemap {
     //hills
     std::vector<std::unique_ptr<static_hill_bg_t>> hills;
 
+    //near ground map components
+    std::unique_ptr<near_ground_t> near_ground;
+
     /**
      * Called by the constructor _after_ generating ground layer
      * @param renderer the renderer
@@ -72,7 +76,7 @@ namespace tilemap {
      * Erode the corners of ground tiles based on slope
      * @param constructor texture constructor
      */
-    void erode_grnd_corners(environment::texture_constructor_t& tileset_constructor);
+    void erode_grnd_corners(tileset_constructor_t& tileset_constructor);
 
     /**
      * Check that a position is in bounds
@@ -83,11 +87,10 @@ namespace tilemap {
     /**
      * Make a new tile
      * @param constructor texture constructor
-     * @param type        the type of the tile (tileset idx)
      * @param slp         the slope of the tile
+     * @param type        the type of the new tile
      */
-    void mk_ground_tile(environment::texture_constructor_t& constructor,
-                        int type,
+    int mk_ground_tile(tileset_constructor_t& constructor,
                         grnd_tile_type slp);
 
     /**

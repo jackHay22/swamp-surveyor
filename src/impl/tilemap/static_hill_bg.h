@@ -22,6 +22,8 @@ namespace tilemap {
     //the dimensions of the texture
     int width;
     int height;
+    //height offset during render
+    int offset;
 
     //the hill texture
     SDL_Texture* texture;
@@ -32,8 +34,7 @@ namespace tilemap {
     void generate(SDL_Renderer& renderer,
                   float fbm_persist,
                   int amplitude,
-                  int r, int g, int b,
-                  int offset);
+                  int r, int g, int b);
   public:
     /**
      * Constructor

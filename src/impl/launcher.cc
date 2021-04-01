@@ -135,46 +135,48 @@ namespace launcher {
     //create the camera
     SDL_Rect camera = {0,0,cfg.window_width_p,cfg.window_height_p};
 
-    //the game state manager
-    std::shared_ptr<state::state_manager_t> state_manager =
-      std::make_shared<state::state_manager_t>(*renderer,
-                                               camera,
-                                               cfg.tile_dim,
-                                               cfg.font,
-                                               win_scale,
-                                               cfg.debug);
-
-    //add the title state
-    state_manager->add_state(std::make_unique<state::title_state_t>(cfg.window_width_p,
-                                                                    cfg.window_height_p,
-                                                                    cfg.title_image,
-                                                                    cfg.caret_image,
-                                                                    cfg.font,
-                                                                    cfg.base_path,
-                                                                    *renderer,
-                                                                    *state_manager));
-
-    //set the configuration paths in the state manager for future load
-    state_manager->load_defer(cfg.level_cfgs, cfg.base_path, cfg.font);
-
-    //title state not shown in debug mode
-    if (cfg.debug) {
-      //load first level right away
-      state_manager->set_state(SWAMP_STATE);
-    }
-
-
     //return value after cleaning resources
     bool success = true;
 
-    //start entity update loop
-    if (!engine::start_update_thread(state_manager)) {
-      logger::log_err("failed to start update thread");
-      success = false;
-    } else {
-      if (!engine::start_renderer(*renderer,state_manager,cfg.debug,cfg.font)) {
-        logger::log_err("failed to start renderer");
+    { //scope destroys state manager before renderer
+
+      //the game state manager
+      std::shared_ptr<state::state_manager_t> state_manager =
+        std::make_shared<state::state_manager_t>(*renderer,
+                                                 camera,
+                                                 cfg.tile_dim,
+                                                 cfg.font,
+                                                 win_scale,
+                                                 cfg.debug);
+
+      //add the title state
+      state_manager->add_state(std::make_unique<state::title_state_t>(cfg.window_width_p,
+                                                                      cfg.window_height_p,
+                                                                      cfg.title_image,
+                                                                      cfg.caret_image,
+                                                                      cfg.font,
+                                                                      cfg.base_path,
+                                                                      *renderer,
+                                                                      *state_manager));
+
+      //set the configuration paths in the state manager for future load
+      state_manager->load_defer(cfg.level_cfgs, cfg.base_path, cfg.font);
+
+      //title state not shown in debug mode
+      if (cfg.debug) {
+        //load first level right away
+        state_manager->set_state(SWAMP_STATE);
+      }
+
+      //start entity update loop
+      if (!engine::start_update_thread(state_manager)) {
+        logger::log_err("failed to start update thread");
         success = false;
+      } else {
+        if (!engine::start_renderer(*renderer,state_manager,cfg.debug,cfg.font)) {
+          logger::log_err("failed to start renderer");
+          success = false;
+        }
       }
     }
 

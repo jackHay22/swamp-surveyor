@@ -37,7 +37,10 @@ namespace tilemap {
   #define MAX_TILESET_WIDTH 64
 
   #define HILL_NOISE_AMP 65
-  #define HILL_NOISE_AMP2 55
+  #define HILL_NOISE_AMP2 85
+
+  //the basic ground tile
+  #define GRND_TILE 0
 
   /**
    * Clamp a value
@@ -67,7 +70,8 @@ namespace tilemap {
       width_p(width_p),
       height_p(height_p),
       tiles(),
-      hills() {
+      hills(),
+      near_ground() {
     //generate terrain procedurally
     this->generate_terrain(renderer);
     //generate background procedurally
@@ -86,7 +90,7 @@ namespace tilemap {
       FBM_PERSISTENCE_0_66,
       width_p,200,
       HILL_NOISE_AMP,
-      100
+      8
     ));
 
     //add near hills
@@ -96,7 +100,7 @@ namespace tilemap {
       FBM_PERSISTENCE_0_66,
       width_p,200,
       HILL_NOISE_AMP2,
-      150
+      32
     ));
   }
 
@@ -121,11 +125,14 @@ namespace tilemap {
       }
     }
 
+    near_ground = std::make_unique<near_ground_t>();
+
     //start ground height roughly 1/3 of total height
     int ground = (int) 2 * (tiles_down / 3);
 
     //type 0 is the fully solid ground tile
-    environment::texture_constructor_t tileset_constructor;
+    tileset_constructor_t tileset_constructor(dim);
+
     //set to default ground cover
     tileset_constructor.set_default_color(
       DARK_GREEN_R,
@@ -133,7 +140,7 @@ namespace tilemap {
       DARK_GREEN_B);
 
     //make tile 0
-    tileset_constructor.set_rect(0,0,dim,dim);
+    tileset_constructor.draw_rect(GRND_TILE,0,0,dim,dim);
 
     //create a random seed
     float seed = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
@@ -145,44 +152,37 @@ namespace tilemap {
                                                        (float)i/tiles_across,
                                                        FBM_PERSISTENCE_0_75);
 
-      //get the height at this position
-      size_t height = clamp(TERRAIN_MIN_IDX,
-                            ground - (int) (noise_val * 10),
-                            tiles_down);
+      //get the tile height at this position
+      size_t theight = clamp(TERRAIN_MIN_IDX,
+                             ground - (noise_val * 10),
+                             tiles_down);
 
       //at the edge: add a wall
       if ((i == 0) || (i == (tiles_across - 1))) {
-        tiles.at(height-1).at(i).set_type(0);
-        tiles.at(height-1).at(i).set_solid(true);
-        tiles.at(height-2).at(i).set_type(0);
-        tiles.at(height-2).at(i).set_solid(true);
+        tiles.at(theight-1).at(i).set_type(GRND_TILE);
+        tiles.at(theight-1).at(i).set_solid(true);
+        tiles.at(theight-2).at(i).set_type(GRND_TILE);
+        tiles.at(theight-2).at(i).set_solid(true);
       }
-      tiles.at(height).at(i).set_type(0);
-      tiles.at(height).at(i).set_solid(true);
+      tiles.at(theight).at(i).set_type(GRND_TILE);
+      tiles.at(theight).at(i).set_solid(true);
     }
-
     //erode the corners of the surface tiles
-    //erode_grnd_corners(tileset_constructor);
+    erode_grnd_corners(tileset_constructor);
 
-    //tileset texture dimensions
-    int tsw,tsh;
     //generate the tileset
-    tileset = std::make_shared<tileset_t>(
-      tileset_constructor.generate(renderer,tsw,tsh),
-      tsw,tsh,dim
-    );
+    tileset = tileset_constructor.generate_tileset(renderer);
   }
 
   /**
    * Erode the corners of ground tiles based on slope
    * @param constructor texture constructor
    */
-  void procedural_tilemap_t::erode_grnd_corners(environment::texture_constructor_t& tileset_constructor) {
+  void procedural_tilemap_t::erode_grnd_corners(tileset_constructor_t& tileset_constructor) {
     //get the height of the first tile
     tile_t& prev_tile = get_grnd_tile(0);
     int prev_y_depth = prev_tile.get_y_depth();
     int curr_y_depth;
-    int last_type_assignment = 0;
     grnd_tile_type prev_slope = FLAT;
 
     //for each column
@@ -193,37 +193,28 @@ namespace tilemap {
 
       //check if this tile should slope up
       if (curr_y_depth < prev_y_depth) {
-        //create a new tile
-        last_type_assignment++;
-
         prev_slope = SLOPE_L;
         //make a new tile
-        mk_ground_tile(tileset_constructor,
-                       last_type_assignment,
-                       SLOPE_L);
-        //update the type
-        curr_tile.set_type(last_type_assignment);
+        curr_tile.set_type(mk_ground_tile(tileset_constructor,
+                                          SLOPE_L));
 
       } else if (curr_y_depth > prev_y_depth) {
         //previous tile should slope down or both
         if (prev_slope == SLOPE_L) {
-          //switch to slope in both directions
-          mk_ground_tile(tileset_constructor,
-                         prev_tile.get_type(),
-                         SLOPE_BOTH);
-
-          //no change to current tile
+          int type = prev_tile.get_type();
+          //modify the tile to slope to the right as well
+          tileset_constructor.erase(type,dim-3,0);
+          tileset_constructor.erase(type,dim-2,0);
+          tileset_constructor.erase(type,dim-1,0);
+          tileset_constructor.erase(type,dim-2,1);
+          tileset_constructor.erase(type,dim-1,1);
+          tileset_constructor.erase(type,dim-1,2);
           prev_slope = FLAT;
 
         } else {
-          //create a new tile
-          last_type_assignment++;
           //make a new tile
-          mk_ground_tile(tileset_constructor,
-                         last_type_assignment,
-                         SLOPE_L);
-          //update the type
-          prev_tile.set_type(last_type_assignment);
+          prev_tile.set_type(mk_ground_tile(tileset_constructor,
+                                            SLOPE_L));
 
           //no change to current tile
           prev_slope = FLAT;
@@ -253,19 +244,15 @@ namespace tilemap {
   /**
    * Make a new tile
    * @param constructor texture constructor
-   * @param type        the type of the tile (tileset idx)
    * @param slp         the slope of the tile
+   * @param type         the tile type
    */
-  void procedural_tilemap_t::mk_ground_tile(environment::texture_constructor_t& constructor,
-                                            int type,
+  int procedural_tilemap_t::mk_ground_tile(tileset_constructor_t& constructor,
                                             grnd_tile_type slp) {
-
-    //offset into the map
-    int offset_x = type % MAX_TILESET_WIDTH;
-    int offset_y = type / MAX_TILESET_WIDTH;
+    int type = constructor.add_tile();
 
     //set a rectangle
-    constructor.set_rect(offset_x, offset_y, dim, dim);
+    constructor.draw_rect(type,0,0, dim, dim);
 
     if (slp == SLOPE_L) {
 
@@ -274,6 +261,8 @@ namespace tilemap {
     } else if (slp == SLOPE_BOTH) {
 
     }
+
+    return type;
   }
 
   /**
@@ -449,6 +438,8 @@ namespace tilemap {
     for (size_t i=0; i<hills.size(); i++) {
       hills.at(i)->render(renderer,camera);
     }
+
+    near_ground->render(renderer,camera);
 
     //draw tiles
     for (size_t r=0; r<tiles.size(); r++) {
