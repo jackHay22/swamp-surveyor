@@ -43,6 +43,16 @@ namespace tilemap {
   }
 
   /**
+   * Set a pixel
+   */
+  void tileset_constructor_t::set(int tile, int x, int y) {
+    texture_constructor.set(
+      offset_x(tile) + x,
+      offset_y(tile) + y
+    );
+  }
+
+  /**
    * Fill a tile with some color
    */
   void tileset_constructor_t::fill_tile(int tile, Uint8 r, Uint8 g, Uint8 b) {

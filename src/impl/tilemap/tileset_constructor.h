@@ -67,6 +67,11 @@ namespace tilemap {
     void set_default_color(Uint8 r, Uint8 g, Uint8 b);
 
     /**
+     * Set a pixel
+     */
+    void set(int tile, int x, int y);
+
+    /**
      * Fill a tile with some color
      */
     void fill_tile(int tile, Uint8 r, Uint8 g, Uint8 b);

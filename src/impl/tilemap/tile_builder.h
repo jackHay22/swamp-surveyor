@@ -59,6 +59,25 @@ namespace tile_builder {
                                    tile_slope s);
 
   /**
+   * Make a non collidable tile that eases height differences
+   * @param  tileset_constructor tileset constructor
+   * @param  s                   slope direction
+   * @return                     the tile id
+   */
+  [[nodiscard]] int make_low_slope_grnd_tile(tileset_constructor_t& tileset_constructor,
+                                             tile_slope s);
+
+  /**
+   * Edit the slope of a ground tile
+   * @param tileset_constructor the tileset constructor
+   * @param id                  the id of the tile to edit
+   * @param s                   the slope to edit to
+   */
+  void edit_grnd_tile(tileset_constructor_t& tileset_constructor,
+                      int id,
+                      tile_slope s);
+
+  /**
    * Make a non ground tile
    * @param  tileset_constructor the tileset constructor
    * @param  s                   the slope of the tile

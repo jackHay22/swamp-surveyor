@@ -41,6 +41,12 @@ namespace tilemap {
     tile_t& operator=(const tile_t& other);
 
     /**
+     * Get the y index of this tile
+     * @return y index 
+     */
+    int get_y_idx() const { return y; }
+
+    /**
      * Get the height of this tile
      * @return height
      */

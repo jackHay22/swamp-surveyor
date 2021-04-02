@@ -169,31 +169,52 @@ namespace tilemap {
    */
   void procedural_tilemap_t::erode_grnd_corners(tileset_constructor_t& tileset_constructor) {
     //get the height of the first tile
-    tile_t& prev_tile = get_grnd_tile(0);
-    int prev_y_depth = prev_tile.get_y_depth();
-    int curr_y_depth;
     tile_builder::tile_slope prev_slope = tile_builder::FLAT;
+
+    //whether we need to fill in a one-wide gap (looks bad)
+    bool dropped_down = false;
 
     //for each column
     for (size_t i=1; i<(tiles.at(0).size() - 1); i++) {
       //get the current ground tile
       tile_t& curr_tile = get_grnd_tile(i);
-      curr_y_depth = curr_tile.get_y_depth();
-      prev_tile = get_grnd_tile(i-1);
-      prev_y_depth = prev_tile.get_y_depth();
+      int curr_y_depth = curr_tile.get_y_depth();
+      tile_t& prev_tile = get_grnd_tile(i-1);
+      int prev_y_depth = prev_tile.get_y_depth();
 
       //check if this tile should slope up
       if (curr_y_depth < prev_y_depth) {
-        prev_slope = tile_builder::SLOPE_L;
-        //make a new tile
-        curr_tile.set_type(tile_builder::make_grnd_tile(tileset_constructor,
-                                                        tile_builder::SLOPE_L));
+        if (dropped_down) {
+          //fill in gap
+          tiles.at(prev_tile.get_y_idx() - 1).at(i-1).set_type(0);
+          tiles.at(prev_tile.get_y_idx() - 1).at(i-2).set_type(0);
+
+        } else {
+          prev_slope = tile_builder::SLOPE_L;
+
+          //make a new tile
+          curr_tile.set_type(tile_builder::make_grnd_tile(tileset_constructor,
+                                                          tile_builder::SLOPE_L));
+
+          //add non colliding slope
+          tiles.at(prev_tile.get_y_idx() - 1).at(i-1).set_type(
+            tile_builder::make_low_slope_grnd_tile(tileset_constructor,
+                                                   tile_builder::SLOPE_L)
+          );
+        }
+
+        dropped_down = false;
 
       } else if (curr_y_depth > prev_y_depth) {
+        //we dropped down
+        dropped_down = true;
+
         //previous tile should slope down or both
         if (prev_slope == tile_builder::SLOPE_L) {
           //int type = prev_tile.get_type();
-          //modify the tile to slope to the right as well
+          tile_builder::edit_grnd_tile(tileset_constructor,
+                                       prev_tile.get_type(),
+                                       tile_builder::SLOPE_BOTH);
 
           prev_slope = tile_builder::FLAT;
 
@@ -206,9 +227,18 @@ namespace tilemap {
           prev_slope = tile_builder::FLAT;
         }
 
+        //add non colliding slope
+        tiles.at(curr_tile.get_y_idx() - 1).at(i).set_type(
+          tile_builder::make_low_slope_grnd_tile(tileset_constructor,
+                                                 tile_builder::SLOPE_R)
+        );
+
       } else {
         //no change to current tile
         prev_slope = tile_builder::FLAT;
+
+        //flat (looking for single wide hollows)
+        dropped_down = false;
       }
     }
   }
