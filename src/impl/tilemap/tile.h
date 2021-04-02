@@ -38,7 +38,7 @@ namespace tilemap {
     //constructor
     tile_t(int x, int y, int dim, int type);
     tile_t(const tile_t&);
-    tile_t& operator=(const tile_t&) = delete;
+    tile_t& operator=(const tile_t& other);
 
     /**
      * Get the height of this tile

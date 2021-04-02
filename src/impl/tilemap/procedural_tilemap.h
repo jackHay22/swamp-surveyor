@@ -17,23 +17,12 @@
 #include "static_hill_bg.h"
 #include "tileset_constructor.h"
 #include "near_ground.h"
+#include "tile_builder.h"
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
 
 namespace impl {
 namespace tilemap {
-
-  /*
-   * ground tiles can be flat, slope
-   * down to the left, slope down
-   * to the right, or slope both ways
-   */
-  enum grnd_tile_type {
-    FLAT,
-    SLOPE_L,
-    SLOPE_R,
-    SLOPE_BOTH
-  };
 
   /**
    * Defines a procedurally generated tilemap
@@ -83,15 +72,6 @@ namespace tilemap {
      * @return   whether the position is in bounds
      */
     bool in_bounds(int x, int y) const;
-
-    /**
-     * Make a new tile
-     * @param constructor texture constructor
-     * @param slp         the slope of the tile
-     * @param type        the type of the new tile
-     */
-    int mk_ground_tile(tileset_constructor_t& constructor,
-                        grnd_tile_type slp);
 
     /**
      * Get a tile (PRECOND: in_bounds called)

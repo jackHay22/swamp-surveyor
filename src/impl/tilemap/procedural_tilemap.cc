@@ -15,23 +15,6 @@
 namespace impl {
 namespace tilemap {
 
-  //COLORS
-  #define LIGHT_GREEN_R 125
-  #define LIGHT_GREEN_G 174
-  #define LIGHT_GREEN_B 109
-  #define MED_LIGHT_GREEN_R 104
-  #define MED_LIGHT_GREEN_G 156
-  #define MED_LIGHT_GREEN_B 91
-  #define MED_DARK_GREEN_R 72
-  #define MED_DARK_GREEN_G 110
-  #define MED_DARK_GREEN_B 67
-  #define DARK_GREEN_R 41
-  #define DARK_GREEN_G 58
-  #define DARK_GREEN_B 0
-  #define DARK_R 8
-  #define DARK_G 17
-  #define DARK_B 0
-
   //the minimum terrain index in the tilemap (headroom)
   #define TERRAIN_MIN_IDX 10
   #define MAX_TILESET_WIDTH 64
@@ -139,8 +122,10 @@ namespace tilemap {
       DARK_GREEN_G,
       DARK_GREEN_B);
 
+    //add the zero tile
+    int grnd_tile = tileset_constructor.add_tile();
     //make tile 0
-    tileset_constructor.draw_rect(GRND_TILE,0,0,dim,dim);
+    tileset_constructor.draw_rect(grnd_tile,0,0,dim,dim);
 
     //create a random seed
     float seed = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
@@ -155,17 +140,21 @@ namespace tilemap {
       //get the tile height at this position
       size_t theight = clamp(TERRAIN_MIN_IDX,
                              ground - (noise_val * 10),
-                             tiles_down);
+                             tiles_down-3);
 
       //at the edge: add a wall
       if ((i == 0) || (i == (tiles_across - 1))) {
-        tiles.at(theight-1).at(i).set_type(GRND_TILE);
+        tiles.at(theight-1).at(i).set_type(grnd_tile);
         tiles.at(theight-1).at(i).set_solid(true);
-        tiles.at(theight-2).at(i).set_type(GRND_TILE);
+        tiles.at(theight-2).at(i).set_type(grnd_tile);
         tiles.at(theight-2).at(i).set_solid(true);
+        tiles.at(theight-3).at(i).set_type(grnd_tile);
+        tiles.at(theight-3).at(i).set_solid(true);
       }
-      tiles.at(theight).at(i).set_type(GRND_TILE);
+      tiles.at(theight).at(i).set_type(grnd_tile);
       tiles.at(theight).at(i).set_solid(true);
+      tiles.at(theight+1).at(i).set_type(grnd_tile);
+      tiles.at(theight+2).at(i).set_type(grnd_tile);
     }
     //erode the corners of the surface tiles
     erode_grnd_corners(tileset_constructor);
@@ -183,46 +172,43 @@ namespace tilemap {
     tile_t& prev_tile = get_grnd_tile(0);
     int prev_y_depth = prev_tile.get_y_depth();
     int curr_y_depth;
-    grnd_tile_type prev_slope = FLAT;
+    tile_builder::tile_slope prev_slope = tile_builder::FLAT;
 
     //for each column
     for (size_t i=1; i<(tiles.at(0).size() - 1); i++) {
       //get the current ground tile
       tile_t& curr_tile = get_grnd_tile(i);
       curr_y_depth = curr_tile.get_y_depth();
+      prev_tile = get_grnd_tile(i-1);
+      prev_y_depth = prev_tile.get_y_depth();
 
       //check if this tile should slope up
       if (curr_y_depth < prev_y_depth) {
-        prev_slope = SLOPE_L;
+        prev_slope = tile_builder::SLOPE_L;
         //make a new tile
-        curr_tile.set_type(mk_ground_tile(tileset_constructor,
-                                          SLOPE_L));
+        curr_tile.set_type(tile_builder::make_grnd_tile(tileset_constructor,
+                                                        tile_builder::SLOPE_L));
 
       } else if (curr_y_depth > prev_y_depth) {
         //previous tile should slope down or both
-        if (prev_slope == SLOPE_L) {
-          int type = prev_tile.get_type();
+        if (prev_slope == tile_builder::SLOPE_L) {
+          //int type = prev_tile.get_type();
           //modify the tile to slope to the right as well
-          tileset_constructor.erase(type,dim-3,0);
-          tileset_constructor.erase(type,dim-2,0);
-          tileset_constructor.erase(type,dim-1,0);
-          tileset_constructor.erase(type,dim-2,1);
-          tileset_constructor.erase(type,dim-1,1);
-          tileset_constructor.erase(type,dim-1,2);
-          prev_slope = FLAT;
+
+          prev_slope = tile_builder::FLAT;
 
         } else {
           //make a new tile
-          prev_tile.set_type(mk_ground_tile(tileset_constructor,
-                                            SLOPE_L));
+          prev_tile.set_type(tile_builder::make_grnd_tile(tileset_constructor,
+                                                          tile_builder::SLOPE_R));
 
           //no change to current tile
-          prev_slope = FLAT;
+          prev_slope = tile_builder::FLAT;
         }
 
       } else {
         //no change to current tile
-        prev_slope = FLAT;
+        prev_slope = tile_builder::FLAT;
       }
     }
   }
@@ -239,30 +225,6 @@ namespace tilemap {
     return (idx_x >= 0) && (idx_y >= 0) &&
            (idx_y < (int)this->tiles.size()) &&
            (idx_x < (int)this->tiles.at(idx_y).size());
-  }
-
-  /**
-   * Make a new tile
-   * @param constructor texture constructor
-   * @param slp         the slope of the tile
-   * @param type         the tile type
-   */
-  int procedural_tilemap_t::mk_ground_tile(tileset_constructor_t& constructor,
-                                            grnd_tile_type slp) {
-    int type = constructor.add_tile();
-
-    //set a rectangle
-    constructor.draw_rect(type,0,0, dim, dim);
-
-    if (slp == SLOPE_L) {
-
-    } else if (slp == SLOPE_R) {
-
-    } else if (slp == SLOPE_BOTH) {
-
-    }
-
-    return type;
   }
 
   /**

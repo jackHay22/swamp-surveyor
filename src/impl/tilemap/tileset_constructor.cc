@@ -43,6 +43,19 @@ namespace tilemap {
   }
 
   /**
+   * Fill a tile with some color
+   */
+  void tileset_constructor_t::fill_tile(int tile, Uint8 r, Uint8 g, Uint8 b) {
+    //set the default color
+    texture_constructor.set_default_color(r,g,b);
+
+    texture_constructor.set_rect(
+      offset_x(tile), offset_y(tile),
+      dim,dim
+    );
+  }
+
+  /**
    * Draw a rectangle in some tile
    * @param tile the tile
    * @param x,y   origin

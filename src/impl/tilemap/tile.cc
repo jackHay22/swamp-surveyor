@@ -38,6 +38,21 @@ namespace tilemap {
         dim(other.dim) {}
 
     /**
+     * Assignment operator
+     * @param  other the tile to construct from
+     * @return       ref to this
+     */
+    tile_t& tile_t::operator=(const tile_t& other) {
+      this->type = other.type;
+      this->solid = other.solid;
+      this->liquid = other.liquid;
+      this->x = other.x;
+      this->y = other.y;
+      this->dim = other.dim;
+      return *this;
+    }
+
+    /**
      * Check if a bounding box collides with this tile
      * @param  other the other bounding box
      * @return       whether the two boxes collide

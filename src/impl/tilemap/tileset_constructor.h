@@ -56,9 +56,20 @@ namespace tilemap {
     tileset_constructor_t& operator=(const tileset_constructor_t&) = delete;
 
     /**
+     * Get the tile dim
+     * @return dim
+     */
+    int get_dim() const { return dim; }
+
+    /**
      * Set the default drawing color
      */
     void set_default_color(Uint8 r, Uint8 g, Uint8 b);
+
+    /**
+     * Fill a tile with some color
+     */
+    void fill_tile(int tile, Uint8 r, Uint8 g, Uint8 b);
 
     /**
      * Draw a rectangle in some tile
