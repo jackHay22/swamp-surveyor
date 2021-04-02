@@ -68,6 +68,13 @@ namespace tile_builder {
                                              tile_slope s);
 
   /**
+   * Make a tile that adds roughness to flat ground
+   * @param  tileset_constructor the tileset constuctor
+   * @return                     the tileid
+   */
+  [[nodiscard]] int make_flat_grnd_tile(tileset_constructor_t& tileset_constructor);
+
+  /**
    * Edit the slope of a ground tile
    * @param tileset_constructor the tileset constructor
    * @param id                  the id of the tile to edit

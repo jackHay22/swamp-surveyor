@@ -237,6 +237,12 @@ namespace tilemap {
         //no change to current tile
         prev_slope = tile_builder::FLAT;
 
+        // TODO don't draw on top of slopes
+        //add ground uneveness
+        // tiles.at(curr_tile.get_y_idx() - 1).at(i).set_type(
+        //   tile_builder::make_flat_grnd_tile(tileset_constructor)
+        // );
+
         //flat (looking for single wide hollows)
         dropped_down = false;
       }

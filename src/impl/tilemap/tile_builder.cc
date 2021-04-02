@@ -83,6 +83,24 @@ namespace tile_builder {
   }
 
   /**
+   * Make a tile that adds roughness to flat ground
+   * @param  tileset_constructor the tileset constuctor
+   * @return                     the tileid
+   */
+  [[nodiscard]] int make_flat_grnd_tile(tileset_constructor_t& tileset_constructor) {
+    int new_id = tileset_constructor.add_tile();
+    int dim = tileset_constructor.get_dim();
+
+    for (int i=0; i<dim; i++) {
+      if (rand() % 3 == 0) {
+        tileset_constructor.set(new_id,i,dim-1);
+      }
+    }
+
+    return new_id;
+  }
+
+  /**
    * Edit the slope of a ground tile
    * @param tileset_constructor the tileset constructor
    * @param id                  the id of the tile to edit
