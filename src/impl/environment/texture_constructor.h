@@ -10,14 +10,23 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
 #include <tuple>
-#include <map>
+#include <unordered_map>
 #include <vector>
+#include <utility>
 #include <memory>
 #include <limits.h>
 #include <functional>
 
 namespace impl {
 namespace environment {
+
+  //hash positions as keys in unordered map
+  struct pos_t_hash {
+    template <typename T0, typename T1>
+    std::size_t operator() (const std::pair<T0,T1>& pair) const {
+        return std::hash<T0>()(pair.first) ^ std::hash<T1>()(pair.second);
+    }
+  };
 
   //position in map type
   typedef std::pair<int,int> pos_t;
@@ -26,7 +35,7 @@ namespace environment {
   typedef std::tuple<pos_t,int,std::tuple<Uint8,Uint8,Uint8>> px_t;
 
   //an animation frame
-  typedef std::map<pos_t,px_t> frame_t;
+  typedef std::unordered_map<pos_t,px_t,pos_t_hash> frame_t;
 
   #define PINFO_POS 0
   #define PINFO_FRAME 1

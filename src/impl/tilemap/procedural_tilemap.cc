@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include <cmath>
 #include "noise.h"
+#include "../environment/proc_generation.h"
+#include "../environment/texture_constructor.h"
 #include <iostream>
 
 namespace impl {
@@ -24,6 +26,15 @@ namespace tilemap {
 
   //the basic ground tile
   #define GRND_TILE 0
+
+  // 1/FG_TREE_RATE chance of a tree @ each tile position
+  #define FG_TREE_RATE 8
+  // 1/FG_ANIM_RATE the rate at which foreground trees have animated foliage
+  #define FG_ANIM_RATE 4
+  //foreground tree leaf density
+  #define FG_LEAF_COUNT 200
+  //foliage animation frame duration
+  #define FG_TREE_FRAME_DURATION 10
 
   /**
    * Clamp a value
@@ -53,8 +64,10 @@ namespace tilemap {
       width_p(width_p),
       height_p(height_p),
       tiles(),
+      fg_tiles(),
       hills(),
-      near_ground() {
+      near_ground(std::make_unique<map_components_t>()),
+      fore_ground(std::make_unique<map_components_t>()) {
     //generate terrain procedurally
     this->generate_terrain(renderer);
     //generate background procedurally
@@ -97,18 +110,20 @@ namespace tilemap {
     size_t tiles_down = height_p / dim;
 
     tiles.reserve(tiles_down);
+    fg_tiles.reserve(tiles_down);
 
     for (size_t r=0; r<tiles_down; r++) {
       tiles.emplace_back();
       tiles.back().reserve(tiles_across);
+      fg_tiles.emplace_back();
+      fg_tiles.back().reserve(tiles_across);
 
       for (size_t c=0; c<tiles_across; c++) {
         //all tiles start as empty
         tiles.back().push_back(tile_t((int)c,(int)r,dim,-1));
+        fg_tiles.back().push_back(tile_t((int)c,(int)r,dim,-1));
       }
     }
-
-    near_ground = std::make_unique<near_ground_t>();
 
     //start ground height roughly 1/3 of total height
     int ground = (int) 2 * (tiles_down / 3);
@@ -130,6 +145,8 @@ namespace tilemap {
     //create a random seed
     float seed = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 
+    size_t prev_height = ground;
+
     //walk around and generate a surface level
     for (size_t i=0; i<tiles_across; i++) {
       //create an fbm value
@@ -141,6 +158,17 @@ namespace tilemap {
       size_t theight = clamp(TERRAIN_MIN_IDX,
                              ground - (noise_val * 10),
                              tiles_down-3);
+
+      if (i > 0) {
+        //make sure the height diff within 1
+        int diff = (theight - prev_height);
+        if (diff > 1) {
+          theight = prev_height + 1;
+
+        } else if (diff < -1) {
+          theight = prev_height - 1;
+        }
+      }
 
       //at the edge: add a wall
       if ((i == 0) || (i == (tiles_across - 1))) {
@@ -155,9 +183,14 @@ namespace tilemap {
       tiles.at(theight).at(i).set_solid(true);
       tiles.at(theight+1).at(i).set_type(grnd_tile);
       tiles.at(theight+2).at(i).set_type(grnd_tile);
+
+      prev_height = theight;
     }
     //erode the corners of the surface tiles
     erode_grnd_corners(tileset_constructor);
+
+    //generate foreground terrain and tiles
+    generate_fg(tileset_constructor,renderer);
 
     //generate the tileset
     tileset = tileset_constructor.generate_tileset(renderer);
@@ -187,7 +220,9 @@ namespace tilemap {
         if (dropped_down) {
           //fill in gap
           tiles.at(prev_tile.get_y_idx() - 1).at(i-1).set_type(0);
+          tiles.at(prev_tile.get_y_idx() - 1).at(i-1).set_solid(true);
           tiles.at(prev_tile.get_y_idx() - 1).at(i-2).set_type(0);
+          tiles.at(prev_tile.get_y_idx() - 1).at(i-2).set_solid(true);
 
         } else {
           prev_slope = tile_builder::SLOPE_L;
@@ -245,6 +280,94 @@ namespace tilemap {
 
         //flat (looking for single wide hollows)
         dropped_down = false;
+      }
+    }
+  }
+
+  /**
+   * Generate the foreground
+   * @param tileset_constructor the tileset constructor
+   * @param renderer            the sdl renderer
+   */
+  void procedural_tilemap_t::generate_fg(tileset_constructor_t& tileset_constructor,
+                                         SDL_Renderer& renderer) {
+    //add dark tiles
+    tileset_constructor.set_default_color(
+      DARK_R,
+      DARK_G,
+      DARK_B
+    );
+
+    //create a dark foreground tile
+    int dark_tile = tileset_constructor.add_tile();
+    tileset_constructor.fill_tile(
+      dark_tile,
+      DARK_R,
+      DARK_G,
+      DARK_B
+    );
+
+    for (size_t i=0; i<fg_tiles.at(0).size(); i++) {
+      //get the terrain height here
+      tile_t& grnd = get_grnd_tile(i);
+      int gidx = grnd.get_y_idx();
+
+      //add a tree with some probability
+      if (rand() % FG_TREE_RATE == 0) {
+        environment::texture_constructor_t tree_constructor;
+        //generate a tree
+        environment::proc_generation::branching_tree_growth(
+          tree_constructor,
+          50,150,
+          DARK_R,
+          DARK_G,
+          DARK_B
+        );
+
+        if (rand() % FG_ANIM_RATE == 0) {
+          //add foliage
+          environment::proc_generation::trunk_foliage(tree_constructor,
+                                                      FG_LEAF_COUNT,
+                                                      DARK_GREEN_R,
+                                                      DARK_GREEN_G,
+                                                      DARK_GREEN_B,
+                                                      true, //foreground (1 color)
+                                                      DARK_GREEN_R,
+                                                      DARK_GREEN_G,
+                                                      DARK_GREEN_B);
+
+          int w,h;
+          SDL_Texture *tr = tree_constructor.generate(renderer,w,h);
+          int frames = tree_constructor.get_frames();
+
+          //add a dynamic texture
+          fore_ground->add_dynamic(
+            tr,
+            {(int)i*dim,(gidx+3)*dim,w,h},
+            frames,
+            FG_TREE_FRAME_DURATION
+          );
+
+        } else {
+          int w,h;
+          SDL_Texture *tr = tree_constructor.generate(renderer,w,h);
+
+          //add a static texture
+          fore_ground->add_static(
+            tr,
+            {(int)i*dim - (w / 2),(gidx+2)*dim - h,w,h}
+          );
+        }
+      }
+
+      //create a rough ground tile at this level
+      fg_tiles.at(gidx).at(i).set_type(
+        tile_builder::make_fg_surface_tile(tileset_constructor)
+      );
+
+      //add solid tiles below this point
+      for (int t=(gidx+1); t<(int)fg_tiles.size(); t++) {
+        fg_tiles.at(t).at(i).set_type(dark_tile);
       }
     }
   }
@@ -413,7 +536,8 @@ namespace tilemap {
    * Update any updatable tiles
    */
   void procedural_tilemap_t::update() {
-    //TODO
+    near_ground->update();
+    //fore_ground->update();
   }
 
   /**
@@ -437,8 +561,6 @@ namespace tilemap {
       hills.at(i)->render(renderer,camera);
     }
 
-    near_ground->render(renderer,camera);
-
     //draw tiles
     for (size_t r=0; r<tiles.size(); r++) {
       for (size_t c=0; c<tiles.at(r).size(); c++) {
@@ -452,6 +574,9 @@ namespace tilemap {
         );
       }
     }
+
+    //render near ground components
+    near_ground->render(renderer,camera);
   }
 
 
@@ -462,6 +587,21 @@ namespace tilemap {
    * @param debug    whether debug mode enabled
    */
   void procedural_tilemap_t::render_fg(SDL_Renderer& renderer, const SDL_Rect& camera, bool debug) const {
-    //TODO
+    //draw foreground components
+    fore_ground->render(renderer,camera);
+
+    //draw tiles
+    for (size_t r=0; r<fg_tiles.size(); r++) {
+      for (size_t c=0; c<fg_tiles.at(r).size(); c++) {
+        //render the tile
+        fg_tiles.at(r).at(c).render(
+          renderer,
+          camera,
+          tileset,
+          false,
+          debug
+        );
+      }
+    }
   }
 }}

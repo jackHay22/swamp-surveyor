@@ -12,6 +12,7 @@
 #include <memory>
 #include "../tilemap/tilemap.h"
 #include "../tilemap/procedural_tilemap.h"
+#include "../tilemap/abstract_tilemap.h"
 #include "../tilemap/tileset.h"
 #include "../tilemap/transparent_block.h"
 #include "../entity/entity.h"
@@ -218,6 +219,15 @@ namespace state {
     entities.push_back(player);
     player->set_position(16,16);
 
+    //create a procedural map
+    std::shared_ptr<tilemap::abstract_tilemap_t> tilemap =
+      std::make_shared<tilemap::procedural_tilemap_t>(
+        tile_dim,
+        PROC_WIDTH_T * tile_dim,
+        PROC_HEIGHT_T * tile_dim,
+        renderer
+    );
+
     //TODO random insect generation
     std::shared_ptr<entity::insects_t> insects = std::make_shared<entity::insects_t>();
     std::shared_ptr<environment::environment_t> env = std::make_shared<environment::environment_t>();
@@ -232,12 +242,7 @@ namespace state {
     //create a new tilemap state
     return std::make_unique<state::tilemap_state_t>(
       //create a procedural tilemap
-      std::make_shared<tilemap::procedural_tilemap_t>(
-        tile_dim,
-        PROC_WIDTH_T * tile_dim,
-        PROC_HEIGHT_T * tile_dim,
-        renderer
-      ),
+      tilemap,
       entities,
       insects,
       env,

@@ -16,7 +16,7 @@
 #include "tileset.h"
 #include "static_hill_bg.h"
 #include "tileset_constructor.h"
-#include "near_ground.h"
+#include "map_components.h"
 #include "tile_builder.h"
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
@@ -43,11 +43,17 @@ namespace tilemap {
     //ground tiles
     std::vector<std::vector<tile_t>> tiles;
 
+    //foreground tiles
+    std::vector<std::vector<tile_t>> fg_tiles;
+
     //hills
     std::vector<std::unique_ptr<static_hill_bg_t>> hills;
 
     //near ground map components
-    std::unique_ptr<near_ground_t> near_ground;
+    std::unique_ptr<map_components_t> near_ground;
+
+    //foreground map components
+    std::unique_ptr<map_components_t> fore_ground;
 
     /**
      * Called by the constructor _after_ generating ground layer
@@ -66,6 +72,15 @@ namespace tilemap {
      * @param constructor texture constructor
      */
     void erode_grnd_corners(tileset_constructor_t& tileset_constructor);
+
+    /**
+     * Generate the foreground
+     * Created after the ground layer is generated
+     * @param tileset_constructor the tileset constructor
+     * @param renderer            the sdl renderer
+     */
+    void generate_fg(tileset_constructor_t& tileset_constructor,
+                     SDL_Renderer& renderer);
 
     /**
      * Check that a position is in bounds

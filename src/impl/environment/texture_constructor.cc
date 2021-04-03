@@ -32,7 +32,7 @@ namespace environment {
   void texture_constructor_t::for_each(std::function<bool(px_t&)> fn) {
     for (size_t i=0; i<frame_sets.size(); i++) {
       //execute fn on all pixels in set
-      for (std::map<pos_t,px_t>::iterator it = frame_sets.at(i)->begin(); it != frame_sets.at(i)->end(); ++it) {
+      for (std::unordered_map<pos_t,px_t>::iterator it = frame_sets.at(i)->begin(); it != frame_sets.at(i)->end(); ++it) {
         if (!fn(it->second)) {
           return;
         }
@@ -48,7 +48,7 @@ namespace environment {
   void texture_constructor_t::for_each(std::function<bool(const px_t&)> fn) const {
     for (size_t i=0; i<frame_sets.size(); i++) {
       //execute fn on all pixels in set
-      for (std::map<pos_t,px_t>::const_iterator it = frame_sets.at(i)->begin(); it != frame_sets.at(i)->end(); ++it) {
+      for (std::unordered_map<pos_t,px_t>::const_iterator it = frame_sets.at(i)->begin(); it != frame_sets.at(i)->end(); ++it) {
         if (!fn(it->second)) {
           return;
         }
@@ -159,7 +159,7 @@ namespace environment {
   void texture_constructor_t::erase(int x, int y, int frame) {
     //get the frame
     frame_t& f = (frame < 0) ? get_frame(0) : get_frame(frame);
-    std::map<pos_t,px_t>::iterator it = f.find(std::make_pair(x,y));
+    std::unordered_map<pos_t,px_t>::iterator it = f.find(std::make_pair(x,y));
 
     if (it != f.end()) {
       f.erase(it);

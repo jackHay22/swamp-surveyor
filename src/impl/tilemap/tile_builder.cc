@@ -5,6 +5,7 @@
  */
 
 #include "tile_builder.h"
+#include "noise.h"
 #include <stdlib.h>
 
 namespace impl {
@@ -96,6 +97,37 @@ namespace tile_builder {
         tileset_constructor.set(new_id,i,dim-1);
       }
     }
+
+    return new_id;
+  }
+
+  /**
+   * Make a foreground surface tile
+   * @param  tileset_constructor the tileset constructor
+   * @return                     the tile id
+   */
+  [[nodiscard]] int make_fg_surface_tile(tileset_constructor_t& tileset_constructor) {
+    int new_id = tileset_constructor.add_tile();
+    int dim = tileset_constructor.get_dim();
+
+    //create random fbm seed
+    float seed = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+
+    for (int i=0; i<dim; i++) {
+      //create noise
+      float noise_val = noise::fractal_brownian_motion(seed,
+                                                       (float)i/dim,
+                                                       FBM_PERSISTENCE_0_75);
+
+      //draw line to height
+      tileset_constructor.draw_line(
+        new_id,
+        i,(noise_val * (dim / 2)),
+        i,dim
+      );
+    }
+
+    //add trees
 
     return new_id;
   }

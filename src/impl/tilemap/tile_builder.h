@@ -75,6 +75,13 @@ namespace tile_builder {
   [[nodiscard]] int make_flat_grnd_tile(tileset_constructor_t& tileset_constructor);
 
   /**
+   * Make a foreground surface tile
+   * @param  tileset_constructor the tileset constructor
+   * @return                     the tile id
+   */
+  [[nodiscard]] int make_fg_surface_tile(tileset_constructor_t& tileset_constructor);
+
+  /**
    * Edit the slope of a ground tile
    * @param tileset_constructor the tileset constructor
    * @param id                  the id of the tile to edit
