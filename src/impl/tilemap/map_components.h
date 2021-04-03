@@ -81,8 +81,9 @@ namespace tilemap {
      * Render the texture
      * @param renderer sdl renderer
      * @param camera   camera position
+     * @param debug    debug mode
      */
-    void render(SDL_Renderer& renderer, const SDL_Rect& camera) const;
+    void render(SDL_Renderer& renderer, const SDL_Rect& camera, bool debug) const;
   };
 
 }}

@@ -28,13 +28,16 @@ namespace tilemap {
   #define GRND_TILE 0
 
   // 1/FG_TREE_RATE chance of a tree @ each tile position
-  #define FG_TREE_RATE 8
+  #define FG_TREE_RATE 6
   // 1/FG_ANIM_RATE the rate at which foreground trees have animated foliage
   #define FG_ANIM_RATE 4
   //foreground tree leaf density
   #define FG_LEAF_COUNT 200
   //foliage animation frame duration
   #define FG_TREE_FRAME_DURATION 10
+
+  //whether to add a bush (only if we didn't add a tree)
+  #define FG_BUSH_RATE 3
 
   /**
    * Clamp a value
@@ -343,7 +346,7 @@ namespace tilemap {
           //add a dynamic texture
           fore_ground->add_dynamic(
             tr,
-            {(int)i*dim,(gidx+3)*dim,w,h},
+            {(int)i*dim,(gidx+1)*dim - h,w,h},
             frames,
             FG_TREE_FRAME_DURATION
           );
@@ -358,6 +361,27 @@ namespace tilemap {
             {(int)i*dim - (w / 2),(gidx+2)*dim - h,w,h}
           );
         }
+
+      } else if (rand() % FG_BUSH_RATE == 0) {
+        environment::texture_constructor_t bush_constructor;
+        //generate a tree
+        environment::proc_generation::branching_tree_growth(
+          bush_constructor,
+          50,150,
+          DARK_R,
+          DARK_G,
+          DARK_B,
+          1 // starting volume
+        );
+
+        int w,h;
+        SDL_Texture *tr = bush_constructor.generate(renderer,w,h);
+
+        //add a static texture
+        fore_ground->add_static(
+          tr,
+          {(int)i*dim - (w / 2),(gidx+3)*dim - h,w,h}
+        );
       }
 
       //create a rough ground tile at this level
@@ -537,7 +561,7 @@ namespace tilemap {
    */
   void procedural_tilemap_t::update() {
     near_ground->update();
-    //fore_ground->update();
+    fore_ground->update();
   }
 
   /**
@@ -576,7 +600,7 @@ namespace tilemap {
     }
 
     //render near ground components
-    near_ground->render(renderer,camera);
+    near_ground->render(renderer,camera,debug);
   }
 
 
@@ -588,7 +612,7 @@ namespace tilemap {
    */
   void procedural_tilemap_t::render_fg(SDL_Renderer& renderer, const SDL_Rect& camera, bool debug) const {
     //draw foreground components
-    fore_ground->render(renderer,camera);
+    fore_ground->render(renderer,camera,debug);
 
     //draw tiles
     for (size_t r=0; r<fg_tiles.size(); r++) {

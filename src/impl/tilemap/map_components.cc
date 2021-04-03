@@ -105,8 +105,9 @@ namespace tilemap {
    * Render the texture
    * @param renderer sdl renderer
    * @param camera   camera position
+   * @param debug    whether debug enabled
    */
-  void map_components_t::render(SDL_Renderer& renderer, const SDL_Rect& camera) const {
+  void map_components_t::render(SDL_Renderer& renderer, const SDL_Rect& camera, bool debug) const {
 
     //draw statics first
     for (size_t i=0; i<statics.size(); i++) {
@@ -138,9 +139,21 @@ namespace tilemap {
         const SDL_Rect& curr_bounds = anim_bounds.at(i);
         //render the animation
         anims.at(i)->render(renderer,
-                            curr_bounds.x - (curr_bounds.w / 2) - camera.x,
-                            curr_bounds.y - (curr_bounds.h / 2) - camera.y,
+                            curr_bounds.x + (curr_bounds.w / 2) - camera.x,
+                            curr_bounds.y + (curr_bounds.h / 2) - camera.y,
                             false);
+
+        if (debug) {
+          SDL_Rect debug_bounds = {curr_bounds.x - camera.x,
+                                   curr_bounds.y - camera.y,
+                                   curr_bounds.w, curr_bounds.h};
+
+          //set the draw color
+          SDL_SetRenderDrawColor(&renderer,255,102,0,255);
+
+          //render the bounds
+          SDL_RenderDrawRect(&renderer,&debug_bounds);
+        }
       }
     }
   }

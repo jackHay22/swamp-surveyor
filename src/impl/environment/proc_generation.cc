@@ -463,10 +463,11 @@ namespace proc_generation {
    */
   void branching_tree_growth(texture_constructor_t& constructor,
                              int x, int y,
-                             int r, int g, int b) {
+                             int r, int g, int b,
+                             int start_vol) {
     constructor.set_default_color(r,g,b);
     //trunk starts with volume 4
-    branch_at_angle(constructor,x,y,0,4.0,-1);
+    branch_at_angle(constructor,x,y,0,(float)start_vol,-1);
   }
 
 }}}

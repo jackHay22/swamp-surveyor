@@ -64,7 +64,8 @@ namespace proc_generation {
    */
   void branching_tree_growth(texture_constructor_t& constructor,
                              int x, int y,
-                             int r, int g, int b);
+                             int r, int g, int b,
+                             int start_vol=4);
 
 }}}
 
